@@ -8,8 +8,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -49,25 +51,57 @@ class MainActivity : ComponentActivity() {
                                 fontSize = 25.sp,
                                 textAlign = TextAlign.Center)
                         }
-                        Row(modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween) {
-                            Column(modifier = Modifier.fillMaxSize().clickable {
+                        Spacer(modifier = Modifier.size(200.dp))
+                        Box(modifier = Modifier.fillMaxSize()) {
+                                Row(
+                                    modifier = Modifier.fillMaxSize(),
+                                    horizontalArrangement = Arrangement.SpaceEvenly
+                                ) {
+                                    Column(
+                                        modifier = Modifier.clickable {
 
-                            },
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally) {
-                                Image(
-                                    modifier = Modifier.size(150.dp)
-                                        .border(BorderStroke(1.dp, Color.Black), CircleShape)
-                                        .clip(CircleShape),
-                                    painter = painterResource(R.drawable.license_plate),
-                                    contentDescription = "License plate",
-                                    contentScale = ContentScale.Crop)
-                                Text("By License Plate")
+                                        }.weight(1f),
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Image(
+                                            modifier = Modifier
+                                                .size(150.dp)
+                                                .border(
+                                                    BorderStroke(1.dp, Color.Black),
+                                                    CircleShape
+                                                )
+                                                .clip(CircleShape),
+                                            painter = painterResource(R.drawable.license_plate),
+                                            contentDescription = "License plate",
+                                            contentScale = ContentScale.Crop
+                                        )
+                                        Text("By Picture")
+                                    }
+                                    Column(
+                                        modifier = Modifier.clickable {
+
+                                        }.weight(1f),
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Image(
+                                            modifier = Modifier
+                                                .size(150.dp)
+                                                .border(
+                                                    BorderStroke(1.dp, Color.Black),
+                                                    CircleShape
+                                                )
+                                                .clip(CircleShape),
+                                            painter = painterResource(R.drawable.keyboard),
+                                            contentDescription = "Keyboard",
+                                            contentScale = ContentScale.Crop
+                                        )
+                                        Text("By Typing")
+                                    }
+                                }
                             }
                         }
-                    }
                 }
             }
         }
