@@ -17,14 +17,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.tomerpacific.caridentifier.model.LicensePlateNumberSearchOption
+import com.tomerpacific.caridentifier.model.MainViewModel
 
 @Composable
-fun CarLicensePlateSearchOptionButton(buttonText: String,
+fun CarLicensePlateSearchOptionButton(viewModel: MainViewModel,
+                                      buttonText: String,
                                       drawableId: Int,
                                       drawableContentDescription: String) {
     Column(
         modifier = Modifier.clickable {
-
+            val option = when (drawableId) {
+                R.drawable.license_plate -> LicensePlateNumberSearchOption.IMAGE
+                else -> LicensePlateNumberSearchOption.TEXT
+            }
+            viewModel.handleClickOnSearchOption(option)
         },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
