@@ -64,7 +64,8 @@ fun LicensePlateNumberDialog() {
                         focusedBorderColor = Color.Blue,
                         unfocusedBorderColor = Color.Black,
                     ),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    isError = !isLicensePlateValid(licensePlateNumber.value, pattern)
                 )
             }
 
@@ -75,7 +76,9 @@ fun LicensePlateNumberDialog() {
         confirmButton = {
             TextButton(
                 onClick = {
-                    mainViewModel.toggleDialogToTypeLicenseNumber()
+                    if (isLicensePlateValid(licensePlateNumber.value, pattern)) {
+                        mainViewModel.toggleDialogToTypeLicenseNumber()
+                    }
                 },
                 enabled = licensePlateNumber.value.isNotEmpty()
             ) {
@@ -92,4 +95,11 @@ fun LicensePlateNumberDialog() {
             }
         }
     )
+}
+
+fun isLicensePlateValid(licensePlateNumber: String, pattern: Regex): Boolean {
+    return  pattern.matches(licensePlateNumber) &&
+            licensePlateNumber.length >= 7 &&
+            licensePlateNumber.length <= 8
+
 }
