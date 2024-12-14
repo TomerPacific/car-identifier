@@ -22,6 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.tomerpacific.caridentifier.model.MainViewModel
 
 @Composable
 fun LicensePlateNumberDialog() {
@@ -36,9 +38,11 @@ fun LicensePlateNumberDialog() {
 
     val pattern = remember { Regex("^\\d+\$") }
 
+    val mainViewModel: MainViewModel = viewModel()
+
     AlertDialog(
         onDismissRequest = {
-
+            mainViewModel.toggleDialogToTypeLicenseNumber()
         },
         text = {
             Column {
@@ -71,7 +75,7 @@ fun LicensePlateNumberDialog() {
         confirmButton = {
             TextButton(
                 onClick = {
-
+                    mainViewModel.toggleDialogToTypeLicenseNumber()
                 },
                 enabled = licensePlateNumber.value.isNotEmpty()
             ) {
@@ -81,7 +85,7 @@ fun LicensePlateNumberDialog() {
         dismissButton = {
             TextButton(
                 onClick = {
-
+                    mainViewModel.toggleDialogToTypeLicenseNumber()
                 }
             ) {
                 Text("Cancel")
