@@ -16,4 +16,8 @@ class MainViewModel: ViewModel() {
         }
     }
 
+    fun toggleDialogToTypeLicenseNumber() {
+        _shouldDisplayDialogToTypeLicenseNumber.value = !_shouldDisplayDialogToTypeLicenseNumber.value
+    }
+
 }
