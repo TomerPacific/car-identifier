@@ -34,6 +34,8 @@ fun LicensePlateNumberDialog() {
         mutableStateOf("")
     }
 
+    val pattern = remember { Regex("^\\d+\$") }
+
     AlertDialog(
         onDismissRequest = {
 
@@ -47,7 +49,9 @@ fun LicensePlateNumberDialog() {
                     textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
                     value = licensePlateNumber.value,
                     onValueChange = {
-                        licensePlateNumber.value = it
+                        if (it.isEmpty() || pattern.matches(it)) {
+                            licensePlateNumber.value = it
+                        }
                     },
                     placeholder = {
                         Text("License Plate Number")
