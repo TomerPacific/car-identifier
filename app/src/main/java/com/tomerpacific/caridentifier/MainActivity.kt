@@ -26,7 +26,7 @@ import com.tomerpacific.caridentifier.ui.theme.CarIdentifierTheme
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel by viewModels<MainViewModel>()
+    private val mainViewModel by viewModels<MainViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -53,13 +53,11 @@ class MainActivity : ComponentActivity() {
                                     horizontalArrangement = Arrangement.SpaceEvenly
                                 ) {
                                     CarLicensePlateSearchOptionButton(
-                                        viewModel,
                                         buttonText = "Search By Picture",
                                         drawableId = R.drawable.license_plate,
                                         drawableContentDescription = "License Plate"
                                     )
                                     CarLicensePlateSearchOptionButton(
-                                        viewModel,
                                         buttonText = "Search By Typing",
                                         drawableId = R.drawable.keyboard,
                                         drawableContentDescription = "Smartphone Keyboard"
