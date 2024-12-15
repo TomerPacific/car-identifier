@@ -63,16 +63,23 @@ fun LicensePlateNumberDialog() {
                     textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
                     value = licensePlateNumberState,
                     onValueChange = {
+                        // Handle deletion
+                          if (it.text.length < licensePlateNumberState.text.length) {
+                              licensePlateNumberState = it
+                              return@OutlinedTextField
+                          }
                         if (it.text.isEmpty() || pattern.matches(it.text)) {
                             licensePlateNumberState = it
                         }
-                        if (it.text.length == 2 || it.text.length == 6) {
-                            val textWithDash = licensePlateNumberState.text.plus("-")
-                            licensePlateNumberState = TextFieldValue(
-                                text = textWithDash,
-                                selection = TextRange(textWithDash.length)
+                          val formattedText = when (it.text.length) {
+                              2 -> "${it.text.substring(0,2)}-"
+                              6 -> "${it.text.substring(0,2)}-${it.text.substring(3,6)}-"
+                              else -> it.text
+                          }
+                        licensePlateNumberState = TextFieldValue(
+                                text = formattedText,
+                                selection = TextRange(formattedText.length)
                             )
-                        }
                     },
                     placeholder = {
                         Text("License Plate Number")
