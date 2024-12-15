@@ -74,6 +74,7 @@ fun LicensePlateNumberDialog() {
                           val formattedText = when (it.text.length) {
                               2 -> "${it.text.substring(0,2)}-"
                               6 -> "${it.text.substring(0,2)}-${it.text.substring(3,6)}-"
+                              in 7..8 -> "${it.text.substring(0,2)}${it.text.substring(3,4)}-${it.text.substring(4, 6)}-${it.text.substring(7, it.text.length)}"
                               else -> it.text
                           }
                         licensePlateNumberState = TextFieldValue(
