@@ -44,9 +44,9 @@ fun LicensePlateNumberDialog() {
         )
     }
 
-    val pattern = remember { Regex("^[0-9-]*\$") }
+    val licensePlateInputPattern = remember { Regex("^[0-9-]*\$") }
 
-    val licensePlatePattern = Regex("^[0-9]{2,3}-[0-9]{2,3}-[0-9]{2,3}")
+    val validLicensePlatePattern = Regex("^[0-9]{2,3}-[0-9]{2,3}-[0-9]{2,3}")
 
     val mainViewModel: MainViewModel = viewModel()
 
@@ -73,7 +73,7 @@ fun LicensePlateNumberDialog() {
                             return@OutlinedTextField
                         }
 
-                        if (it.text.isEmpty() || pattern.matches(it.text)) {
+                        if (it.text.isEmpty() || licensePlateInputPattern.matches(it.text)) {
                             licensePlateNumberState = it
                         }
                         val formattedText = when (it.text.length) {
@@ -105,7 +105,7 @@ fun LicensePlateNumberDialog() {
         confirmButton = {
             TextButton(
                 onClick = {
-                    if (isLicensePlateValid(licensePlateNumberState.text, licensePlatePattern)) {
+                    if (isLicensePlateValid(licensePlateNumberState.text, validLicensePlatePattern)) {
                         mainViewModel.toggleDialogToTypeLicenseNumber()
                     }
                 },
