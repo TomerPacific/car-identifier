@@ -56,7 +56,7 @@ fun LicensePlateNumberDialog() {
         },
         text = {
             Column {
-                Text("Enter License Plate Number", fontWeight = FontWeight.Bold)
+                Text("Enter a 7 or 8 digit license plate number", fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(10.dp))
                 OutlinedTextField(
                     modifier = Modifier.focusRequester(focusRequester),
@@ -88,14 +88,13 @@ fun LicensePlateNumberDialog() {
                             )
                     },
                     placeholder = {
-                        Text("License Plate Number")
+                        Text("License plate number goes here...")
                     },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color.Blue,
                         unfocusedBorderColor = Color.Black,
                     ),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-//                    isError = !isLicensePlateValid(licensePlateNumber.value, licensePlatePattern)
                 )
             }
 
