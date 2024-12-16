@@ -52,7 +52,7 @@ fun LicensePlateNumberDialog() {
 
     AlertDialog(
         onDismissRequest = {
-            mainViewModel.toggleDialogToTypeLicenseNumber()
+            mainViewModel.dismissLicensePlateInputDialog()
         },
         text = {
             Column {
@@ -106,7 +106,7 @@ fun LicensePlateNumberDialog() {
             TextButton(
                 onClick = {
                     if (isLicensePlateValid(licensePlateNumberState.text, validLicensePlatePattern)) {
-                        mainViewModel.toggleDialogToTypeLicenseNumber()
+                        mainViewModel.getCarDetails(licensePlateNumberState.text)
                     }
                 },
                 enabled = licensePlateNumberState.text.isNotEmpty()
@@ -117,7 +117,7 @@ fun LicensePlateNumberDialog() {
         dismissButton = {
             TextButton(
                 onClick = {
-                    mainViewModel.toggleDialogToTypeLicenseNumber()
+                    mainViewModel.dismissLicensePlateInputDialog()
                 }
             ) {
                 Text("Cancel")
