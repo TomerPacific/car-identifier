@@ -16,8 +16,12 @@ class MainViewModel: ViewModel() {
         }
     }
 
-    fun toggleDialogToTypeLicenseNumber() {
-        _shouldDisplayDialogToTypeLicenseNumber.value = !_shouldDisplayDialogToTypeLicenseNumber.value
+    fun getCarDetails(licensePlateNumber: String) {
+
+    }
+
+    fun dismissLicensePlateInputDialog() {
+        _shouldDisplayDialogToTypeLicenseNumber.value = false
     }
 
 }
