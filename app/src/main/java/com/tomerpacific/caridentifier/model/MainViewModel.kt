@@ -3,6 +3,7 @@ package com.tomerpacific.caridentifier.model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -22,7 +23,7 @@ class MainViewModel: ViewModel() {
     }
 
     fun getCarDetails(licensePlateNumber: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             carDetailsRepository.getCarDetails(licensePlateNumber)
         }
     }
