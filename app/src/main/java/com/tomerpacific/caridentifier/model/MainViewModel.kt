@@ -1,14 +1,19 @@
 package com.tomerpacific.caridentifier.model
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class MainViewModel: ViewModel() {
 
     private val _shouldDisplayDialogToTypeLicenseNumber = MutableStateFlow(false)
     val shouldDisplayDialogToTypeLicenseNumber: StateFlow<Boolean>
         get() = _shouldDisplayDialogToTypeLicenseNumber
+
+    private val carDetailsRepository = CarDetailsRepository()
 
     fun handleClickOnSearchOption(searchOption: LicensePlateNumberSearchOption) {
         if (searchOption == LicensePlateNumberSearchOption.TEXT) {
@@ -17,7 +22,9 @@ class MainViewModel: ViewModel() {
     }
 
     fun getCarDetails(licensePlateNumber: String) {
-
+        viewModelScope.launch {
+            carDetailsRepository.getCarDetails(licensePlateNumber)
+        }
     }
 
     fun dismissLicensePlateInputDialog() {
