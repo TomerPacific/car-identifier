@@ -30,7 +30,7 @@ data class CarDetails(
     @SerialName("front_wheel")
     val frontWheel: String = "",
     @SerialName("rear_wheel")
-    val rearWhell: String = "",
+    val rearWheel: String = "",
     @SerialName("fuel_type")
     val fuelType: String = "",
     @SerialName("first_on_road_date")
