@@ -44,7 +44,7 @@ fun LicensePlateNumberDialog() {
         )
     }
 
-    val licensePlateInputPattern = remember { Regex("^[0-9-]*\$") }
+    val licensePlateInputPattern = Regex("^[0-9-]*\$")
 
     val validLicensePlatePattern = Regex("^[0-9]{2,3}-[0-9]{2,3}-[0-9]{2,3}")
 
