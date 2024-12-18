@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CarDetails(
     @SerialName("license_plate_number")
-    val licensePlateNumber: Int,
+    val licensePlateNumber: Int = 0,
     @SerialName("manufacture_country")
     val manufactureCountry: String = "",
     @SerialName("trim_level")
