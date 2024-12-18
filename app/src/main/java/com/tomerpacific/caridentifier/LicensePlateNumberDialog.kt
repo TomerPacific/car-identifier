@@ -88,7 +88,7 @@ fun LicensePlateNumberDialog() {
                             )
                     },
                     placeholder = {
-                        Text("License plate number goes here...")
+                        Text("הקלד מספר לוחית רישוי")
                     },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color.Blue,
