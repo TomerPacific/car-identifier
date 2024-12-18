@@ -23,8 +23,9 @@ class MainViewModel: ViewModel() {
     }
 
     fun getCarDetails(licensePlateNumber: String) {
+        dismissLicensePlateInputDialog()
+        val licensePlateNumberWithoutDashes = licensePlateNumber.replace("-", "")
         viewModelScope.launch(Dispatchers.IO) {
-            val licensePlateNumberWithoutDashes = licensePlateNumber.replace("-", "")
             carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes)
         }
     }
