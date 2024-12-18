@@ -29,7 +29,7 @@ data class CarDetails(
     val color: String = "",
     @SerialName("front_wheel")
     val frontWheel: String = "",
-    @SerialName("rear_whell")
+    @SerialName("rear_wheel")
     val rearWhell: String = "",
     @SerialName("fuel_type")
     val fuelType: String = "",
