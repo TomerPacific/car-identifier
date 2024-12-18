@@ -59,12 +59,12 @@ class MainActivity : ComponentActivity() {
                                     horizontalArrangement = Arrangement.SpaceEvenly
                                 ) {
                                     CarLicensePlateSearchOptionButton(
-                                        buttonText = "Search By Picture",
+                                        buttonText = "חפש לפי תמונה",
                                         drawableId = R.drawable.license_plate,
                                         drawableContentDescription = "License Plate"
                                     )
                                     CarLicensePlateSearchOptionButton(
-                                        buttonText = "Search By Typing",
+                                        buttonText = "חפש לי מספר",
                                         drawableId = R.drawable.keyboard,
                                         drawableContentDescription = "Smartphone Keyboard"
                                     )
