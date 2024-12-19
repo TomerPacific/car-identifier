@@ -1,5 +1,6 @@
 package com.tomerpacific.caridentifier
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -27,10 +28,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.model.MainViewModel
 
 @Composable
-fun LicensePlateNumberDialog() {
+fun LicensePlateNumberDialog(navController: NavController) {
 
     val focusRequester = remember {
         FocusRequester()
@@ -52,14 +54,14 @@ fun LicensePlateNumberDialog() {
 
     AlertDialog(
         onDismissRequest = {
-            mainViewModel.dismissLicensePlateInputDialog()
+            navController.popBackStack()
         },
         text = {
             Column {
-                Text("Enter a 7 or 8 digit license plate number", fontWeight = FontWeight.Bold)
+                Text("הכנס מספר לוחית רישוי בן 7 אן 8 ספרות", fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(10.dp))
                 OutlinedTextField(
-                    modifier = Modifier.focusRequester(focusRequester),
+                    modifier = Modifier.focusRequester(focusRequester).background(Color(211,178,13,255)),
                     textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
                     value = licensePlateNumberState,
                     onValueChange = {
@@ -107,6 +109,7 @@ fun LicensePlateNumberDialog() {
                 onClick = {
                     if (isLicensePlateValid(licensePlateNumberState.text, validLicensePlatePattern)) {
                         mainViewModel.getCarDetails(licensePlateNumberState.text)
+                        navController.popBackStack()
                     }
                 },
                 enabled = licensePlateNumberState.text.isNotEmpty()
@@ -117,7 +120,7 @@ fun LicensePlateNumberDialog() {
         dismissButton = {
             TextButton(
                 onClick = {
-                    mainViewModel.dismissLicensePlateInputDialog()
+                    navController.popBackStack()
                 }
             ) {
                 Text("Cancel")
