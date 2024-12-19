@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import com.tomerpacific.caridentifier.model.Screen
 
@@ -25,7 +26,7 @@ class MainActivity : ComponentActivity() {
             composable(route = Screen.MainScreen.route) {
                 MainScreen(navController = navController)
             }
-            composable(route = Screen.LicensePlateNumberInput.route) { LicensePlateNumberDialog(navController)}
+            dialog(route = Screen.LicensePlateNumberInput.route) { LicensePlateNumberDialog(navController)}
         }
     }
 }
