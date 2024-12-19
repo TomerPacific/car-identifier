@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.model.LicensePlateNumberSearchOption
+import com.tomerpacific.caridentifier.model.Screen
 
 @Composable
 fun CarLicensePlateSearchOptionButton(buttonText: String,
@@ -32,7 +33,7 @@ fun CarLicensePlateSearchOptionButton(buttonText: String,
                 R.drawable.license_plate -> LicensePlateNumberSearchOption.IMAGE
                 else -> LicensePlateNumberSearchOption.TEXT
             }
-            navController.navigate(route = "license_plate_number_input")
+            navController.navigate(route = Screen.LicensePlateNumberInput.route)
         },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally

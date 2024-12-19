@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.tomerpacific.caridentifier.model.Screen
 
 class MainActivity : ComponentActivity() {
 
@@ -20,11 +21,11 @@ class MainActivity : ComponentActivity() {
     }
     @Composable
     private fun CreateNavigationGraph(navController: NavHostController) {
-        NavHost(navController, startDestination = "main") {
-            composable(route = "main") {
+        NavHost(navController, startDestination = Screen.MainScreen.route) {
+            composable(route = Screen.MainScreen.route) {
                 MainScreen(navController = navController)
             }
-            composable(route = "license_plate_number_input") { LicensePlateNumberDialog(navController)}
+            composable(route = Screen.LicensePlateNumberInput.route) { LicensePlateNumberDialog(navController)}
         }
     }
 }
