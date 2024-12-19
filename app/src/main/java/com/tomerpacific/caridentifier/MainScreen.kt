@@ -38,12 +38,12 @@ fun MainScreen(navController: NavController) {
                     .padding(top = 30.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center) {
-                    Text("Car Identifier",
+                    Text("בחר/י באפשרות לחפש פרטים בנוגע לרכב",
                         fontWeight = FontWeight.Bold,
                         fontSize = 25.sp,
                         textAlign = TextAlign.Center)
                 }
-                Spacer(modifier = Modifier.size(200.dp))
+                Spacer(modifier = Modifier.size(150.dp))
                 Box(modifier = Modifier.fillMaxSize()) {
                     Row(
                         modifier = Modifier.fillMaxSize(),
