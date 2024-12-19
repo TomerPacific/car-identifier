@@ -1,16 +1,19 @@
 package com.tomerpacific.caridentifier
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -52,27 +55,40 @@ fun LicensePlateNumberDialog(navController: NavController) {
 
     val mainViewModel: MainViewModel = viewModel()
 
+    var isLicensePlateLengthLimitReached by remember {
+        mutableStateOf(false)
+    }
+
     AlertDialog(
         onDismissRequest = {
             navController.popBackStack()
         },
         text = {
             Column {
-                Text("הכנס מספר לוחית רישוי בן 7 אן 8 ספרות", fontWeight = FontWeight.Bold)
+                Text("הכנס מספר לוחית רישוי בן 7 או 8 ספרות", fontWeight = FontWeight.Bold)
                 Spacer(Modifier.height(10.dp))
-                OutlinedTextField(
-                    modifier = Modifier.focusRequester(focusRequester).background(Color(211,178,13,255)),
+                TextField(
+                    modifier = Modifier.focusRequester(focusRequester),
                     textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+                    colors = TextFieldDefaults.colors().copy(
+                        unfocusedContainerColor = Color(211,178,13,255),
+                        focusedContainerColor = Color(211,178,13,255),
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
                     value = licensePlateNumberState,
                     onValueChange = {
-                        // Handle deletion
-                        if (it.text.length < licensePlateNumberState.text.length) {
-                          licensePlateNumberState = it
-                          return@OutlinedTextField
+
+                        if (wasCharacterDeleted(it.text, licensePlateNumberState.text)) {
+                            isLicensePlateLengthLimitReached = false
+                            licensePlateNumberState = it
+                            return@TextField
                         }
 
+
                         if (it.text.length > 10) {
-                            return@OutlinedTextField
+                            isLicensePlateLengthLimitReached = true
+                            return@TextField
                         }
 
                         if (it.text.isEmpty() || licensePlateInputPattern.matches(it.text)) {
@@ -92,11 +108,21 @@ fun LicensePlateNumberDialog(navController: NavController) {
                     placeholder = {
                         Text("הקלד מספר לוחית רישוי")
                     },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = Color.Blue,
-                        unfocusedBorderColor = Color.Black,
-                    ),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    isError = isLicensePlateLengthLimitReached,
+                    supportingText = {
+                        if (isLicensePlateLengthLimitReached) {
+                            Text(
+                                "מספר לוחית רישוי יכול להכיל עד 10 תווים",
+                                modifier = Modifier.fillMaxWidth(),
+                                color = Color.Red)
+                        }
+                    },
+                    trailingIcon = {
+                        if (isLicensePlateLengthLimitReached) {
+                            Icon(Icons.Filled.Info,"error", tint = Color.Red)
+                        }
+                    }
                 )
             }
 
@@ -129,9 +155,13 @@ fun LicensePlateNumberDialog(navController: NavController) {
     )
 }
 
-fun isLicensePlateValid(licensePlateNumber: String, pattern: Regex): Boolean {
+private fun isLicensePlateValid(licensePlateNumber: String, pattern: Regex): Boolean {
     return  pattern.matches(licensePlateNumber) &&
             licensePlateNumber.length >= 9 &&
             licensePlateNumber.length <= 10
 
+}
+
+private fun wasCharacterDeleted(currentText: String, previousText: String): Boolean {
+    return currentText.length < previousText.length
 }
