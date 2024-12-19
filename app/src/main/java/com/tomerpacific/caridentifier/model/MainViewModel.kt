@@ -10,28 +10,18 @@ import kotlinx.coroutines.launch
 
 class MainViewModel: ViewModel() {
 
-    private val _shouldDisplayDialogToTypeLicenseNumber = MutableStateFlow(false)
-    val shouldDisplayDialogToTypeLicenseNumber: StateFlow<Boolean>
-        get() = _shouldDisplayDialogToTypeLicenseNumber
-
     private val carDetailsRepository = CarDetailsRepository()
 
-    fun handleClickOnSearchOption(searchOption: LicensePlateNumberSearchOption) {
-        if (searchOption == LicensePlateNumberSearchOption.TEXT) {
-            _shouldDisplayDialogToTypeLicenseNumber.value = true
-        }
-    }
+    private val _carDetails = MutableStateFlow<CarDetails?>(null)
+
+    val carDetails: StateFlow<CarDetails?>
+        get() = _carDetails
+
 
     fun getCarDetails(licensePlateNumber: String) {
-        dismissLicensePlateInputDialog()
         val licensePlateNumberWithoutDashes = licensePlateNumber.replace("-", "")
         viewModelScope.launch(Dispatchers.IO) {
-            carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes)
+            _carDetails.value = carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes)
         }
     }
-
-    fun dismissLicensePlateInputDialog() {
-        _shouldDisplayDialogToTypeLicenseNumber.value = false
-    }
-
 }
