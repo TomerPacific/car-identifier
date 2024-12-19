@@ -18,8 +18,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.tomerpacific.caridentifier.model.LicensePlateNumberSearchOption
 import com.tomerpacific.caridentifier.model.Screen
+
+enum class LicensePlateNumberSearchOption {
+    IMAGE, TEXT
+}
 
 @Composable
 fun CarLicensePlateSearchOptionButton(buttonText: String,
