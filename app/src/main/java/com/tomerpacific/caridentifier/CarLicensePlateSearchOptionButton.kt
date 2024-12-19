@@ -17,16 +17,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.model.LicensePlateNumberSearchOption
-import com.tomerpacific.caridentifier.model.MainViewModel
 
 @Composable
 fun CarLicensePlateSearchOptionButton(buttonText: String,
                                       drawableId: Int,
-                                      drawableContentDescription: String) {
-
-    val mainViewModel: MainViewModel = viewModel()
+                                      drawableContentDescription: String,
+                                      navController: NavController) {
 
     Column(
         modifier = Modifier.clickable {
@@ -34,7 +32,7 @@ fun CarLicensePlateSearchOptionButton(buttonText: String,
                 R.drawable.license_plate -> LicensePlateNumberSearchOption.IMAGE
                 else -> LicensePlateNumberSearchOption.TEXT
             }
-            mainViewModel.handleClickOnSearchOption(option)
+            navController.navigate(route = "license_plate_number_input")
         },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
