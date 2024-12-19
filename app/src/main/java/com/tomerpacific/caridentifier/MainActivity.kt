@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
             composable(route = "main") {
                 MainScreen(navController = navController)
             }
-            composable(route = "license_plate_number_input") { LicensePlateNumberDialog()}
+            composable(route = "license_plate_number_input") { LicensePlateNumberDialog(navController)}
         }
     }
 }
