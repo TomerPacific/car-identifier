@@ -81,7 +81,15 @@ fun LicensePlateNumberDialog(navController: NavController) {
 
                         if (wasCharacterDeleted(it.text, licensePlateNumberState.text)) {
                             isLicensePlateLengthLimitReached = false
-                            licensePlateNumberState = it
+                            licensePlateNumberState = if (it.text.length == 9) {
+                                val formattedText = "${it.text.substring(0,2)}-${it.text.substring(2,3)}${it.text.substring(4,6)}-${it.text.substring(7,9)}"
+                                TextFieldValue(
+                                    text = formattedText,
+                                    selection = TextRange(formattedText.length)
+                                )
+                            } else {
+                                it
+                            }
                             return@TextField
                         }
 
@@ -94,12 +102,8 @@ fun LicensePlateNumberDialog(navController: NavController) {
                         if (it.text.isEmpty() || licensePlateInputPattern.matches(it.text)) {
                             licensePlateNumberState = it
                         }
-                        val formattedText = when (it.text.length) {
-                          2 -> "${it.text.substring(0,2)}-"
-                          6 -> "${it.text.substring(0,2)}-${it.text.substring(3,6)}-"
-                          in 10..11 -> "${it.text.substring(0,2)}${it.text.substring(3,4)}-${it.text.substring(4, 6)}-${it.text.substring(7, it.text.length)}"
-                          else -> it.text
-                        }
+                        val formattedText = formatLicensePlateWithDashes(it.text)
+
                         licensePlateNumberState = TextFieldValue(
                                 text = formattedText,
                                 selection = TextRange(formattedText.length)
@@ -164,4 +168,13 @@ private fun isLicensePlateValid(licensePlateNumber: String, pattern: Regex): Boo
 
 private fun wasCharacterDeleted(currentText: String, previousText: String): Boolean {
     return currentText.length < previousText.length
+}
+
+private fun formatLicensePlateWithDashes(input: String): String {
+    return when (input.length) {
+        2 -> "${input.substring(0,2)}-"
+        6 -> "${input.substring(0,2)}-${input.substring(3,6)}-"
+        in 10..11 -> "${input.substring(0,2)}${input.substring(3,4)}-${input.substring(4, 6)}-${input.substring(7, input.length)}"
+        else -> input
+    }
 }
