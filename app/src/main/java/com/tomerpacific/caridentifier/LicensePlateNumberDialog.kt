@@ -30,13 +30,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 
 @Composable
-fun LicensePlateNumberDialog(navController: NavController) {
+fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainViewModel) {
 
     val focusRequester = remember {
         FocusRequester()
@@ -53,8 +52,6 @@ fun LicensePlateNumberDialog(navController: NavController) {
     val licensePlateInputPattern = Regex("^[0-9-]*\$")
 
     val validLicensePlatePattern = Regex("^[0-9]{2,3}-[0-9]{2,3}-[0-9]{2,3}")
-
-    val mainViewModel: MainViewModel = viewModel()
 
     var isLicensePlateLengthLimitReached by remember {
         mutableStateOf(false)
@@ -139,7 +136,7 @@ fun LicensePlateNumberDialog(navController: NavController) {
             TextButton(
                 onClick = {
                     if (isLicensePlateValid(licensePlateNumberState.text, validLicensePlatePattern)) {
-                        mainViewModel.getCarDetails(licensePlateNumberState.text)
+                        mainViewModel.getCarDetails(licensePlateNumberState.text, navController)
                         navController.navigate(Screen.CarDetailsScreen.route)
                     }
                 },
