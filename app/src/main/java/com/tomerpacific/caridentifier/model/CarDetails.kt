@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 data class CarDetails(
     @SerialName("license_plate_number")
     val licensePlateNumber: Int = 0,
-    @SerialName("manufacture_country")
-    val manufactureCountry: String = "",
+    @SerialName("manufacturer_country")
+    val manufacturerCountry: String = "",
     @SerialName("trim_level")
     val trimLevel: String = "",
     @SerialName("safety_feature_level")
@@ -36,5 +36,7 @@ data class CarDetails(
     @SerialName("first_on_road_date")
     val firstOnRoadDate: String = "",
     @SerialName("commercial_name")
-    val commercialName: String = ""
+    val commercialName: String = "",
+    @SerialName("manufacturer_name")
+    val manufacturerName: String = "",
 )
