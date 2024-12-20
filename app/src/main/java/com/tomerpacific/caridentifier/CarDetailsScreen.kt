@@ -16,15 +16,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tomerpacific.caridentifier.model.MainViewModel
 
 @Composable
-fun CarDetailsScreen() {
+fun CarDetailsScreen(mainViewModel: MainViewModel) {
 
-    val mainViewModel: MainViewModel = viewModel()
-
-    val carDetails = mainViewModel.carDetails.collectAsState()
+     val carDetails = mainViewModel.carDetails.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -44,7 +41,7 @@ fun CarDetailsScreen() {
             Spacer(modifier = Modifier.height(100.dp))
             Row(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center) {
-                Text("${carDetails.value?.commercialName}")
+                Text(carDetails.value?.commercialName!!)
             }
         }
 
