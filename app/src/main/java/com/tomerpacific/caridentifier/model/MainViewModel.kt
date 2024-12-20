@@ -2,11 +2,13 @@ package com.tomerpacific.caridentifier.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainViewModel: ViewModel() {
 
@@ -16,7 +18,6 @@ class MainViewModel: ViewModel() {
 
     val carDetails: StateFlow<CarDetails?>
         get() = _carDetails
-
 
     fun getCarDetails(licensePlateNumber: String) {
         val licensePlateNumberWithoutDashes = licensePlateNumber.replace("-", "")

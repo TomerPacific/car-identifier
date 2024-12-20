@@ -136,7 +136,7 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
             TextButton(
                 onClick = {
                     if (isLicensePlateValid(licensePlateNumberState.text, validLicensePlatePattern)) {
-                        mainViewModel.getCarDetails(licensePlateNumberState.text, navController)
+                        mainViewModel.getCarDetails(licensePlateNumberState.text)
                         navController.navigate(Screen.CarDetailsScreen.route)
                     }
                 },
