@@ -27,6 +27,7 @@ class MainActivity : ComponentActivity() {
                 MainScreen(navController = navController)
             }
             dialog(route = Screen.LicensePlateNumberInput.route) { LicensePlateNumberDialog(navController)}
+            composable(route = Screen.CarDetailsScreen.route) { CarDetailsScreen()}
         }
     }
 }
