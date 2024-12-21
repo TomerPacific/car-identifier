@@ -26,14 +26,14 @@ fun CarDetailsScreen(mainViewModel: MainViewModel) {
 
     val carDetails = mainViewModel.carDetails.collectAsState()
 
-    val arrangement: Arrangement.Vertical = when (carDetails.value) {
+    val columnVerticalArrangement: Arrangement.Vertical = when (carDetails.value) {
         null -> Arrangement.Center
         else -> Arrangement.Top
     }
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = arrangement
+        verticalArrangement = columnVerticalArrangement
     ) {
 
         when (carDetails.value) {
