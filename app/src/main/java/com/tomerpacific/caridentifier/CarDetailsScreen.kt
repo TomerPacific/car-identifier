@@ -8,13 +8,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,6 +62,31 @@ fun Spinner() {
 
 @Composable
 fun CarInformation(details: CarDetails) {
+
+    val keysId = "keysIcon"
+    val text = buildAnnotatedString {
+        append(" בעלות נוכחית: ${details.ownership} ")
+        appendInlineContent(keysId, "[icon]")
+    }
+
+    val inlineContent = mapOf(
+        Pair(
+            keysId,
+            InlineTextContent(
+
+                Placeholder(
+                    width = 20.sp,
+                    height = 20.sp,
+                    placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+                )
+            ) {
+                Icon(painterResource(id = R.drawable.ic_key_icon),"Key Icon",
+                    tint = Color(254, 219, 0),
+                    modifier = Modifier.fillMaxSize())
+            }
+        )
+    )
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
@@ -79,7 +112,7 @@ fun CarInformation(details: CarDetails) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        Text(" בעלות נוכחית: ${details.ownership}", fontSize = 20.sp)
+        Text(text, inlineContent = inlineContent, fontSize = 20.sp)
     }
 }
 
