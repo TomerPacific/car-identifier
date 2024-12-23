@@ -64,16 +64,15 @@ fun Spinner() {
 fun CarInformation(details: CarDetails) {
 
     val keysId = "keysIcon"
-    val text = buildAnnotatedString {
+    val currentOwnershipText = buildAnnotatedString {
         append(" בעלות נוכחית: ${details.ownership} ")
         appendInlineContent(keysId, "[icon]")
     }
 
-    val inlineContent = mapOf(
+    val currentOwnershipInlineContent = mapOf(
         Pair(
             keysId,
             InlineTextContent(
-
                 Placeholder(
                     width = 20.sp,
                     height = 20.sp,
@@ -112,7 +111,7 @@ fun CarInformation(details: CarDetails) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        Text(text, inlineContent = inlineContent, fontSize = 20.sp)
+        Text(currentOwnershipText, inlineContent = currentOwnershipInlineContent, fontSize = 20.sp)
     }
 }
 
