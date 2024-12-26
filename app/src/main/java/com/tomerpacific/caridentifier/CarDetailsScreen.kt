@@ -83,42 +83,15 @@ fun CarInformation(details: CarDetails) {
     ) {
         Text(" טסט אחרון בוצע בתאריך: ${details.lastTestDate}", fontSize = 20.sp)
     }
-    CurrentOwnership(details.ownership)
-    FuelType(details.fuelType)
-}
 
-@Composable
-fun CurrentOwnership(currentOwnership: String) {
-
-    val keysId = "keysIcon"
-    val currentOwnershipText = buildAnnotatedString {
-        append(" בעלות נוכחית: $currentOwnership ")
-        appendInlineContent(keysId, "[icon]")
-    }
-
-    val currentOwnershipInlineContent = mapOf(
-        Pair(
-            keysId,
-            InlineTextContent(
-                Placeholder(
-                    width = 20.sp,
-                    height = 20.sp,
-                    placeholderVerticalAlign = PlaceholderVerticalAlign.Center
-                )
-            ) {
-                Icon(painterResource(id = R.drawable.ic_key_icon),"Key Icon",
-                    tint = Color(254, 219, 0),
-                    modifier = Modifier.fillMaxSize())
-            }
-        )
+    CarDetailWithIcon(
+        iconId = "keysIcon",
+        text = " בעלות נוכחית: ${details.ownership} ",
+        iconResourceId = R.drawable.ic_key_icon,
+        contentDescription = "Key Icon"
     )
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Text(currentOwnershipText, inlineContent = currentOwnershipInlineContent, fontSize = 20.sp)
-    }
+    FuelType(details.fuelType)
 }
 
 @Composable
