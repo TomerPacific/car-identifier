@@ -1,9 +1,11 @@
 package com.tomerpacific.caridentifier
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -20,10 +22,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -124,6 +128,15 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                         if (isLicensePlateLengthLimitReached) {
                             Icon(Icons.Filled.Info,"error", tint = Color.Red)
                         }
+                    },
+                    leadingIcon = {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Image(painterResource(id = R.drawable.israel_flag),
+                                "flag",
+                                modifier = Modifier.width(30.dp).height(30.dp))
+                            Text("IL", textAlign = TextAlign.Center, fontWeight = FontWeight.Bold, color = Color.White)
+                        }
+
                     }
                 )
             }
