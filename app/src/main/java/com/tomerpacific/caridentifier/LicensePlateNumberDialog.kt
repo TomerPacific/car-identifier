@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -74,6 +75,7 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                 TextField(
                     modifier = Modifier.focusRequester(focusRequester),
                     textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+                    singleLine = true,
                     colors = TextFieldDefaults.colors().copy(
                         unfocusedContainerColor = Color(211,178,13,255),
                         focusedContainerColor = Color(211,178,13,255),
@@ -132,21 +134,22 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                         }
                     },
                     leadingIcon = {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.background(Color.Blue)) {
-                            Image(painterResource(id = R.drawable.israel_flag),
-                                "flag",
-                                modifier = Modifier.width(30.dp).height(30.dp))
-                            Text("IL",
-                                textAlign = TextAlign.Center,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White,
-                                fontSize = 16.sp)
-                            Text("ישראל",
-                                textAlign = TextAlign.Center,
-                                color = Color.White)
+                            Column(horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.offset(x= (-9).dp).background(Color.Blue)) {
+                                Image(painterResource(id = R.drawable.israel_flag),
+                                    "flag",
+                                    modifier = Modifier.width(20.dp).height(20.dp))
+                                Text("IL",
+                                    textAlign = TextAlign.Center,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White,
+                                    fontSize = 12.sp)
+                                Text("ישראל",
+                                    textAlign = TextAlign.Center,
+                                    color = Color.White,
+                                    fontSize = 10.sp)
+                            }
                         }
-
-                    }
                 )
             }
 
