@@ -1,6 +1,7 @@
 package com.tomerpacific.caridentifier
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,6 +35,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
@@ -130,11 +132,18 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                         }
                     },
                     leadingIcon = {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.background(Color.Blue)) {
                             Image(painterResource(id = R.drawable.israel_flag),
                                 "flag",
                                 modifier = Modifier.width(30.dp).height(30.dp))
-                            Text("IL", textAlign = TextAlign.Center, fontWeight = FontWeight.Bold, color = Color.White)
+                            Text("IL",
+                                textAlign = TextAlign.Center,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White,
+                                fontSize = 16.sp)
+                            Text("ישראל",
+                                textAlign = TextAlign.Center,
+                                color = Color.White)
                         }
 
                     }
