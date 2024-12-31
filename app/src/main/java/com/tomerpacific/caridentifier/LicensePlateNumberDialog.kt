@@ -77,8 +77,8 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                     textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
                     singleLine = true,
                     colors = TextFieldDefaults.colors().copy(
-                        unfocusedContainerColor = Color(211,178,13,255),
-                        focusedContainerColor = Color(211,178,13,255),
+                        unfocusedContainerColor = Color(253,209,63,255),
+                        focusedContainerColor = Color(253,209,63,255),
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent
                     ),
