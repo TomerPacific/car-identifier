@@ -8,9 +8,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
 
 @Composable
-fun HandleCameraPermission() {
+fun HandleCameraPermission(navController: NavController) {
 
     val context = LocalContext.current
 
@@ -26,22 +27,25 @@ fun HandleCameraPermission() {
 
         }
         PackageManager.PERMISSION_DENIED -> {
-                val launcher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            cameraPermissionStatus = PackageManager.PERMISSION_DENIED
-            when(isGranted) {
-                true -> {
+            val cameraPermissionRequestLauncher = rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+                    cameraPermissionStatus = when(isGranted) {
+                        true -> PackageManager.PERMISSION_GRANTED
+                        false -> PackageManager.PERMISSION_DENIED
+                    }
+                    when(isGranted) {
+                        true -> {
+        
+                        }
+                        false -> {
+                            navController.popBackStack()
+                        }
 
-                }
-                false -> {
-
-                }
-
-                }
+                    }
             }
+
             LaunchedEffect(cameraPermissionStatus) {
-                launcher.launch(android.Manifest.permission.CAMERA)
+                cameraPermissionRequestLauncher.launch(android.Manifest.permission.CAMERA)
             }
         }
     }
