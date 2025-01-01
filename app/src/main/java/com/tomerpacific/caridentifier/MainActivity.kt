@@ -28,11 +28,11 @@ class MainActivity : ComponentActivity() {
     private fun CreateNavigationGraph(navController: NavHostController) {
         NavHost(navController, startDestination = Screen.MainScreen.route) {
             composable(route = Screen.MainScreen.route) {
-                MainScreen(navController = navController)
+                MainScreen(navController, mainViewModel)
             }
             dialog(route = Screen.LicensePlateNumberInput.route) { LicensePlateNumberDialog(navController, mainViewModel) }
             composable(route = Screen.CarDetailsScreen.route) { CarDetailsScreen(mainViewModel) }
-            dialog(route = Screen.CameraPermission.route) { HandleCameraPermission(navController) }
+            dialog(route = Screen.CameraPermission.route) { HandleCameraPermission(navController, mainViewModel) }
         }
     }
 }
