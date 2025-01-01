@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -20,10 +21,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.ui.theme.CarIdentifierTheme
 
 @Composable
-fun MainScreen(navController: NavController) {
+fun MainScreen(navController: NavController,
+               mainViewModel: MainViewModel) {
+
+    val cameraPermissionState =  mainViewModel.isCameraPermissionGranted.collectAsState()
 
     CarIdentifierTheme {
         Surface(
@@ -53,7 +58,8 @@ fun MainScreen(navController: NavController) {
                             buttonText = "חפש לפי תמונה",
                             drawableId = R.drawable.license_plate,
                             drawableContentDescription = "License Plate",
-                            navController
+                            navController,
+                            cameraPermissionState.value
                         )
                         CarLicensePlateSearchOptionButton(
                             buttonText = "חפש לפי מספר",
