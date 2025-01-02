@@ -1,5 +1,6 @@
 package com.tomerpacific.caridentifier
 
+import android.content.pm.PackageManager.PERMISSION_DENIED
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,21 +15,40 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.ui.theme.CarIdentifierTheme
 
 @Composable
 fun MainScreen(navController: NavController,
-               mainViewModel: MainViewModel) {
+               mainViewModel: MainViewModel,
+               activity: MainActivity) {
 
-    val cameraPermissionState =  mainViewModel.isCameraPermissionGranted.collectAsState()
+    val cameraPermissionStatus = remember {
+        ContextCompat.checkSelfPermission(
+            activity,
+            android.Manifest.permission.CAMERA
+        )
+    }
+
+    val shouldShowRationale = remember {
+        shouldShowRequestPermissionRationale(activity, android.Manifest.permission.CAMERA)
+    }
+
+    val didRequestPermission = mainViewModel.didRequestCameraPermission.collectAsState()
+
+    val shouldDisableButton = didRequestPermission.value &&
+            cameraPermissionStatus == PERMISSION_DENIED &&
+            !shouldShowRationale
 
     CarIdentifierTheme {
         Surface(
@@ -59,7 +79,7 @@ fun MainScreen(navController: NavController,
                             drawableId = R.drawable.license_plate,
                             drawableContentDescription = "License Plate",
                             navController,
-                            cameraPermissionState.value
+                            shouldDisableButton
                         )
                         CarLicensePlateSearchOptionButton(
                             buttonText = "חפש לפי מספר",
