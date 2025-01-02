@@ -1,17 +1,16 @@
 package com.tomerpacific.caridentifier
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -32,23 +32,21 @@ fun CarLicensePlateSearchOptionButton(buttonText: String,
                                       navController: NavController,
                                       shouldDisableButton:Boolean = false) {
 
+    val context = LocalContext.current
+
     Column(
-        modifier = Modifier.then(
-            if (shouldDisableButton) {
-                Modifier.clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = {}
-                )
-            } else {
+        modifier =
                 Modifier.clickable {
+                    if (shouldDisableButton) {
+                        Toast.makeText(context, "You need to allow camera permissions through the Settings screen", Toast.LENGTH_LONG).show()
+                        return@clickable
+                    }
                     val navigationRoute = when (drawableId) {
                         R.drawable.license_plate -> Screen.CameraPermission.route
                         else -> Screen.LicensePlateNumberInput.route
                     }
                     navController.navigate(route = navigationRoute)
-                }
-            }),
+                },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
