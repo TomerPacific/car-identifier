@@ -59,14 +59,14 @@ fun MainScreen(navController: NavController,
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         CarLicensePlateSearchOptionButton(
-                            buttonText = "חפש לפי תמונה",
+                            buttonText = "חפש/י לפי תמונה",
                             drawableId = R.drawable.license_plate,
                             drawableContentDescription = "License Plate",
                             navController,
                             shouldDisableButton
                         )
                         CarLicensePlateSearchOptionButton(
-                            buttonText = "חפש לפי מספר",
+                            buttonText = "חפש/י לפי מספר",
                             drawableId = R.drawable.keyboard,
                             drawableContentDescription = "Smartphone Keyboard",
                             navController
