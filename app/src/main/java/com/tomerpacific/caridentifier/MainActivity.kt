@@ -3,7 +3,6 @@ package com.tomerpacific.caridentifier
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -16,9 +15,14 @@ import com.tomerpacific.caridentifier.model.Screen
 class MainActivity : ComponentActivity() {
 
 
-    private val mainViewModel: MainViewModel by viewModels()
+    private lateinit var mainViewModel: MainViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val sharedPreferences = getPreferences(MODE_PRIVATE)
+
+        mainViewModel = MainViewModel(sharedPreferences)
+
         setContent {
             val navController = rememberNavController()
             CreateNavigationGraph(navController)
@@ -28,7 +32,7 @@ class MainActivity : ComponentActivity() {
     private fun CreateNavigationGraph(navController: NavHostController) {
         NavHost(navController, startDestination = Screen.MainScreen.route) {
             composable(route = Screen.MainScreen.route) {
-                MainScreen(navController, mainViewModel)
+                MainScreen(navController, mainViewModel, this@MainActivity)
             }
             dialog(route = Screen.LicensePlateNumberInput.route) { LicensePlateNumberDialog(navController, mainViewModel) }
             composable(route = Screen.CarDetailsScreen.route) { CarDetailsScreen(mainViewModel) }
