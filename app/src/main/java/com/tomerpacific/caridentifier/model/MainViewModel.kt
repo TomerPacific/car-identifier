@@ -1,5 +1,6 @@
 package com.tomerpacific.caridentifier.model
 
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
@@ -8,19 +9,26 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class MainViewModel: ViewModel() {
+class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
 
     private val carDetailsRepository = CarDetailsRepository()
+
+    private val _sharedPreferences = sharedPreferences
 
     private val _carDetails = MutableStateFlow<CarDetails?>(null)
 
     val carDetails: StateFlow<CarDetails?>
         get() = _carDetails
 
-    private val _isCameraPermissionGranted = MutableStateFlow<Boolean?>(null)
+    private val _didRequestCameraPermission = MutableStateFlow<Boolean>(false)
 
-    val isCameraPermissionGranted: StateFlow<Boolean?>
-        get() = _isCameraPermissionGranted
+    val didRequestCameraPermission: StateFlow<Boolean>
+        get() = _didRequestCameraPermission
+
+    init {
+        _didRequestCameraPermission.value = _sharedPreferences.getBoolean("didRequestCameraPermission", false)
+    }
+
 
     fun getCarDetails(licensePlateNumber: String) {
         val licensePlateNumberWithoutDashes = licensePlateNumber.replace("-", "")
@@ -29,7 +37,8 @@ class MainViewModel: ViewModel() {
         }
     }
 
-    fun setCameraPermissionState(isGranted: Boolean) {
-        _isCameraPermissionGranted.value = isGranted
+    fun setDidRequestCameraPermission(didRequest: Boolean) {
+        _didRequestCameraPermission.value = didRequest
+        _sharedPreferences.edit().putBoolean("didRequestCameraPermission", didRequest).apply()
     }
 }
