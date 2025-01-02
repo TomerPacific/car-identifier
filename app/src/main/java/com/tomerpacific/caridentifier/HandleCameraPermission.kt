@@ -29,42 +29,35 @@ fun HandleCameraPermission(navController: NavController,
         )
     }
 
-    when (cameraPermissionStatus) {
-        PackageManager.PERMISSION_GRANTED -> {
+    val cameraPermissionRequestLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            cameraPermissionStatus = when(isGranted) {
+                true -> PackageManager.PERMISSION_GRANTED
+                false -> PackageManager.PERMISSION_DENIED
+            }
 
-        }
-        PackageManager.PERMISSION_DENIED -> {
-            val activity = context.getActivityOrNull()
-            activity?.let {
-                if (shouldShowRequestPermissionRationale(it, android.Manifest.permission.CAMERA)) {
-                    Toast.makeText(context, "Camera permission is needed to scan license plate", Toast.LENGTH_LONG).show()
+            when(isGranted) {
+                true -> {
+
                 }
-            }
-
-            val cameraPermissionRequestLauncher = rememberLauncherForActivityResult(
-                ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-                    cameraPermissionStatus = when(isGranted) {
-                        true -> PackageManager.PERMISSION_GRANTED
-                        false -> PackageManager.PERMISSION_DENIED
-                    }
-
-                mainViewModel.setDidRequestCameraPermission(true)
-                    when(isGranted) {
-                        true -> {
-
+                false -> {
+                    val activity = context.getActivityOrNull()
+                    activity?.let {
+                        val shouldShowRationale = shouldShowRequestPermissionRationale(it, android.Manifest.permission.CAMERA)
+                        mainViewModel.setShouldShowRationale(shouldShowRationale)
+                        if (shouldShowRationale) {
+                            Toast.makeText(context, "Camera permission is needed to scan license plate", Toast.LENGTH_LONG).show()
                         }
-                        false -> {
-                            navController.popBackStack()
-
-                        }
-
                     }
-            }
+                    mainViewModel.setDidRequestCameraPermission(true)
+                    navController.popBackStack()
+                }
 
-            LaunchedEffect(cameraPermissionStatus) {
-                cameraPermissionRequestLauncher.launch(android.Manifest.permission.CAMERA)
             }
-        }
+    }
+
+    LaunchedEffect(cameraPermissionStatus) {
+        cameraPermissionRequestLauncher.launch(android.Manifest.permission.CAMERA)
     }
 
 }
