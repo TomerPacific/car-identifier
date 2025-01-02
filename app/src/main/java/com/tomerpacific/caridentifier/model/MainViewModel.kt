@@ -20,10 +20,15 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
     val carDetails: StateFlow<CarDetails?>
         get() = _carDetails
 
-    private val _didRequestCameraPermission = MutableStateFlow<Boolean>(false)
+    private val _didRequestCameraPermission = MutableStateFlow(false)
 
     val didRequestCameraPermission: StateFlow<Boolean>
         get() = _didRequestCameraPermission
+
+    private val _shouldShowRationale = MutableStateFlow(false)
+
+    val shouldShowRationale: StateFlow<Boolean>
+        get() = _shouldShowRationale
 
     init {
         _didRequestCameraPermission.value = _sharedPreferences.getBoolean("didRequestCameraPermission", false)
@@ -38,7 +43,13 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
     }
 
     fun setDidRequestCameraPermission(didRequest: Boolean) {
-        _didRequestCameraPermission.value = didRequest
-        _sharedPreferences.edit().putBoolean("didRequestCameraPermission", didRequest).apply()
+        if (!_didRequestCameraPermission.value) {
+            _didRequestCameraPermission.value = didRequest
+            _sharedPreferences.edit().putBoolean("didRequestCameraPermission", didRequest).apply()
+        }
+    }
+
+    fun setShouldShowRationale(shouldShow: Boolean) {
+        _shouldShowRationale.value = shouldShow
     }
 }
