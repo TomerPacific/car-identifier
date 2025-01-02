@@ -30,11 +30,11 @@ fun CarLicensePlateSearchOptionButton(buttonText: String,
                                       drawableId: Int,
                                       drawableContentDescription: String,
                                       navController: NavController,
-                                      isCameraPermissionGranted:Boolean? = false) {
+                                      shouldDisableButton:Boolean = false) {
 
     Column(
         modifier = Modifier.then(
-            if (isCameraPermissionGranted != null && !isCameraPermissionGranted) {
+            if (shouldDisableButton) {
                 Modifier.clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
@@ -63,14 +63,14 @@ fun CarLicensePlateSearchOptionButton(buttonText: String,
             painter = painterResource(drawableId),
             contentDescription = drawableContentDescription,
             contentScale = ContentScale.Crop,
-            colorFilter = decideOnColorFilter(drawableId, isCameraPermissionGranted)
+            colorFilter = decideOnColorFilter(drawableId, shouldDisableButton)
         )
         Text(buttonText)
     }
 }
 
-private fun decideOnColorFilter(drawableId: Int, isCameraPermissionGranted: Boolean?): ColorFilter? {
-    if (drawableId == R.drawable.license_plate && isCameraPermissionGranted != null && !isCameraPermissionGranted) {
+private fun decideOnColorFilter(drawableId: Int, shouldDisableButton: Boolean): ColorFilter? {
+    if (drawableId == R.drawable.license_plate && shouldDisableButton) {
         return ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
     }
     return null
