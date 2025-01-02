@@ -38,8 +38,6 @@ fun HandleCameraPermission(navController: NavController,
             activity?.let {
                 if (shouldShowRequestPermissionRationale(it, android.Manifest.permission.CAMERA)) {
                     Toast.makeText(context, "Camera permission is needed to scan license plate", Toast.LENGTH_LONG).show()
-                } else {
-                    navController.popBackStack()
                 }
             }
 
@@ -50,7 +48,7 @@ fun HandleCameraPermission(navController: NavController,
                         false -> PackageManager.PERMISSION_DENIED
                     }
 
-                mainViewModel.setCameraPermissionState(isGranted)
+                mainViewModel.setDidRequestCameraPermission(true)
                     when(isGranted) {
                         true -> {
 
