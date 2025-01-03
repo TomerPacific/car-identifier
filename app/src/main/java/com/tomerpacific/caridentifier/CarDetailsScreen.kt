@@ -57,45 +57,55 @@ fun Spinner() {
 
 @Composable
 fun CarInformation(details: CarDetails) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Text("פרטי הרכב", fontSize = 25.sp, fontWeight = FontWeight.Bold)
-    }
-    Spacer(modifier = Modifier.height(20.dp))
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Text("${getCarManufacturer(details.manufacturerName)} ${details.commercialName.lowercase().replaceFirstChar { it.titlecase() }} ${details.trimLevel.lowercase().replaceFirstChar { it.titlecase() }} ${details.yearOfProduction}",
-            fontSize = 20.sp)
-    }
-    Spacer(modifier = Modifier.height(100.dp))
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Text(" טסט אחרון בוצע בתאריך: ${details.lastTestDate}", fontSize = 20.sp)
-    }
 
-    CarDetailWithIcon(
-        iconId = "keysIcon",
-        text = " בעלות נוכחית: ${details.ownership} "
-    ) {
-        Icon(painterResource(id = R.drawable.ic_key_icon),"Key Icon",
-            tint = Color(254, 219, 0),
-            modifier = Modifier.fillMaxSize())
-    }
+    if (details.licensePlateNumber == 0) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text("לא ניתן להשיג את פרטי הרכב. נסו שנית.", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+        }
+    } else {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text("פרטי הרכב", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text("${getCarManufacturer(details.manufacturerName)} ${details.commercialName.lowercase().replaceFirstChar { it.titlecase() }} ${details.trimLevel.lowercase().replaceFirstChar { it.titlecase() }} ${details.yearOfProduction}",
+                fontSize = 20.sp)
+        }
+        Spacer(modifier = Modifier.height(100.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(" טסט אחרון בוצע בתאריך: ${details.lastTestDate}", fontSize = 20.sp)
+        }
 
-    CarDetailWithIcon(
-        iconId = "fuelIcon",
-        text = " סוג דלק: ${details.fuelType} "
-    ) {
-        Icon(
-            painterResource(id = R.drawable.ic_fuel_type), "Fuel Icon",
-            tint = Color(18, 80, 255),
-            modifier = Modifier.fillMaxSize()
-        )
+        CarDetailWithIcon(
+            iconId = "keysIcon",
+            text = " בעלות נוכחית: ${details.ownership} "
+        ) {
+            Icon(painterResource(id = R.drawable.ic_key_icon),"Key Icon",
+                tint = Color(254, 219, 0),
+                modifier = Modifier.fillMaxSize())
+        }
+
+        CarDetailWithIcon(
+            iconId = "fuelIcon",
+            text = " סוג דלק: ${details.fuelType} "
+        ) {
+            Icon(
+                painterResource(id = R.drawable.ic_fuel_type), "Fuel Icon",
+                tint = Color(18, 80, 255),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
