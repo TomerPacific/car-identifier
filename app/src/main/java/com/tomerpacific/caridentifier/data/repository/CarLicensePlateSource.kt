@@ -19,6 +19,7 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
                 url {
                     protocol = URLProtocol.HTTPS
                     host = "car-license-number-fetcher.onrender.com/"
+                    port = 10000
                     encodedPath = "/vehicle/${licensePlateNumber}"
                 }
             }
