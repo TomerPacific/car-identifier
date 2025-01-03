@@ -6,37 +6,37 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CarDetails(
     @SerialName("license_plate_number")
-    val licensePlateNumber: Int = 0,
+    val licensePlateNumber: Int,
     @SerialName("manufacturer_country")
-    val manufacturerCountry: String = "",
+    val manufacturerCountry: String,
     @SerialName("trim_level")
-    val trimLevel: String = "",
+    val trimLevel: String,
     @SerialName("safety_feature_level")
-    val safetyFeatureLevel: Int = 0,
+    val safetyFeatureLevel: Int,
     @SerialName("pollution_level")
-    val pollutionLevel: Int = 0,
+    val pollutionLevel: Int,
     @SerialName("year_of_production")
-    val yearOfProduction: Int = 0,
+    val yearOfProduction: Int,
     @SerialName("last_test_date")
-    val lastTestDate: String = "",
+    val lastTestDate: String,
     @SerialName("valid_date")
-    val validDate: String = "",
+    val validDate: String,
     @SerialName("ownership")
-    val ownership: String = "",
+    val ownership: String,
     @SerialName("frame_number")
-    val frameNumber: String = "",
+    val frameNumber: String,
     @SerialName("color")
-    val color: String = "",
+    val color: String,
     @SerialName("front_wheel")
-    val frontWheel: String = "",
+    val frontWheel: String,
     @SerialName("rear_wheel")
-    val rearWheel: String = "",
+    val rearWheel: String,
     @SerialName("fuel_type")
-    val fuelType: String = "",
+    val fuelType: String,
     @SerialName("first_on_road_date")
-    val firstOnRoadDate: String = "",
+    val firstOnRoadDate: String,
     @SerialName("commercial_name")
-    val commercialName: String = "",
+    val commercialName: String,
     @SerialName("manufacturer_name")
-    val manufacturerName: String = "",
-)
+    val manufacturerName: String,
+): ApiResponse()
