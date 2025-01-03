@@ -18,18 +18,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tomerpacific.caridentifier.model.ApiResponse
 import com.tomerpacific.caridentifier.model.CarDetails
-import com.tomerpacific.caridentifier.model.FailureResponse
 import com.tomerpacific.caridentifier.model.MainViewModel
 
 @Composable
 fun CarDetailsScreen(mainViewModel: MainViewModel) {
 
     val carDetails = mainViewModel.carDetails.collectAsState()
+
+    val networkError = mainViewModel.networkError.collectAsState()
 
     val columnVerticalArrangement: Arrangement.Vertical = when (carDetails.value) {
         null -> Arrangement.Center
@@ -41,9 +43,22 @@ fun CarDetailsScreen(mainViewModel: MainViewModel) {
         verticalArrangement = columnVerticalArrangement
     ) {
 
-        when (carDetails.value) {
-            null -> Spinner()
-            else -> CarInformation(carDetails.value!!)
+        if (carDetails.value == null && networkError.value == null) {
+            Spinner()
+        } else if (carDetails.value != null) {
+            CarInformation(carDetails.value!!)
+        } else {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    style = TextStyle(textDirection = TextDirection.Rtl)
+                )
+            }
         }
     }
 }
@@ -58,59 +73,46 @@ fun Spinner() {
 }
 
 @Composable
-fun CarInformation(details: ApiResponse) {
-
-    when (details) {
-        is FailureResponse -> {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text("לא ניתן להשיג את פרטי הרכב. נסו שנית.", fontSize = 25.sp, fontWeight = FontWeight.Bold)
-            }
+fun CarInformation(details: CarDetails) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text("פרטי הרכב", fontSize = 25.sp, fontWeight = FontWeight.Bold)
         }
-        is CarDetails -> {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text("פרטי הרכב", fontSize = 25.sp, fontWeight = FontWeight.Bold)
-            }
-            Spacer(modifier = Modifier.height(20.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text("${getCarManufacturer(details.manufacturerName)} ${details.commercialName.lowercase().replaceFirstChar { it.titlecase() }} ${details.trimLevel.lowercase().replaceFirstChar { it.titlecase() }} ${details.yearOfProduction}",
-                    fontSize = 20.sp)
-            }
-            Spacer(modifier = Modifier.height(100.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(" טסט אחרון בוצע בתאריך: ${details.lastTestDate}", fontSize = 20.sp)
-            }
+        Spacer(modifier = Modifier.height(20.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text("${getCarManufacturer(details.manufacturerName)} ${details.commercialName.lowercase().replaceFirstChar { it.titlecase() }} ${details.trimLevel.lowercase().replaceFirstChar { it.titlecase() }} ${details.yearOfProduction}",
+                fontSize = 20.sp)
+        }
+        Spacer(modifier = Modifier.height(100.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(" טסט אחרון בוצע בתאריך: ${details.lastTestDate}", fontSize = 20.sp)
+        }
 
-            CarDetailWithIcon(
-                iconId = "keysIcon",
-                text = " בעלות נוכחית: ${details.ownership} "
-            ) {
-                Icon(painterResource(id = R.drawable.ic_key_icon),"Key Icon",
-                    tint = Color(254, 219, 0),
-                    modifier = Modifier.fillMaxSize())
-            }
+        CarDetailWithIcon(
+            iconId = "keysIcon",
+            text = " בעלות נוכחית: ${details.ownership} "
+        ) {
+            Icon(painterResource(id = R.drawable.ic_key_icon),"Key Icon",
+                tint = Color(254, 219, 0),
+                modifier = Modifier.fillMaxSize())
+        }
 
-            CarDetailWithIcon(
-                iconId = "fuelIcon",
-                text = " סוג דלק: ${details.fuelType} "
-            ) {
-                Icon(
-                    painterResource(id = R.drawable.ic_fuel_type), "Fuel Icon",
-                    tint = Color(18, 80, 255),
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
+        CarDetailWithIcon(
+            iconId = "fuelIcon",
+            text = " סוג דלק: ${details.fuelType} "
+        ) {
+            Icon(
+                painterResource(id = R.drawable.ic_fuel_type), "Fuel Icon",
+                tint = Color(18, 80, 255),
+                modifier = Modifier.fillMaxSize()
+            )
         }
     }
-}
