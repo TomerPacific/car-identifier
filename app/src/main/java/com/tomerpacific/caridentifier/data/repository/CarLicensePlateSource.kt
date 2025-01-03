@@ -1,7 +1,9 @@
 package com.tomerpacific.caridentifier.data.repository
 
 import com.tomerpacific.caridentifier.data.AppHttpClient
+import com.tomerpacific.caridentifier.model.ApiResponse
 import com.tomerpacific.caridentifier.model.CarDetails
+import com.tomerpacific.caridentifier.model.FailureResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.*
@@ -13,7 +15,7 @@ import kotlinx.coroutines.withContext
 
 class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
 
-    private suspend fun HttpClient.getCarDetails(licensePlateNumber: String): CarDetails {
+    private suspend fun HttpClient.getCarDetails(licensePlateNumber: String): ApiResponse {
         try {
             val httpResponse: HttpResponse = get {
                 url {
@@ -29,10 +31,10 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
         } catch (e: Exception) {
             print("Exception when making request ${e.message}")
         }
-        return CarDetails()
+        return FailureResponse("Failed to get car details")
     }
 
-    suspend fun getCarDetails(licensePlateNumber: String): CarDetails = withContext(Dispatchers.IO) {
+    suspend fun getCarDetails(licensePlateNumber: String): ApiResponse = withContext(Dispatchers.IO) {
         client.getCarDetails(licensePlateNumber)
     }
 }
