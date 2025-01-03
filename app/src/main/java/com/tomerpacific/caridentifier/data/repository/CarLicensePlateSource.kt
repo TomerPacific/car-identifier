@@ -5,6 +5,7 @@ import com.tomerpacific.caridentifier.model.CarDetails
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.*
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.URLProtocol
 import io.ktor.http.encodedPath
 import kotlinx.coroutines.Dispatchers
@@ -13,14 +14,21 @@ import kotlinx.coroutines.withContext
 class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
 
     private suspend fun HttpClient.getCarDetails(licensePlateNumber: String): CarDetails {
-        val data = get {
-            url {
-                protocol = URLProtocol.HTTPS
-                host = "api.example.com"
-                encodedPath = "/car-details/${licensePlateNumber}"
+        try {
+            val httpResponse: HttpResponse = get {
+                url {
+                    protocol = URLProtocol.HTTPS
+                    host = "car-license-number-fetcher.onrender.com/"
+                    encodedPath = "/vehicle/${licensePlateNumber}"
+                }
             }
+            if (httpResponse.status.value in 200..299) {
+                return httpResponse.body() as CarDetails
+            }
+        } catch (e: Exception) {
+            print("Exception when making request ${e.message}")
         }
-        return data.body() as CarDetails
+        return CarDetails()
     }
 
     suspend fun getCarDetails(licensePlateNumber: String): CarDetails = withContext(Dispatchers.IO) {
