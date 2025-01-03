@@ -15,9 +15,9 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
 
     private val _sharedPreferences = sharedPreferences
 
-    private val _carDetails = MutableStateFlow<CarDetails?>(null)
+    private val _carDetails = MutableStateFlow<ApiResponse?>(null)
 
-    val carDetails: StateFlow<CarDetails?>
+    val carDetails: StateFlow<ApiResponse?>
         get() = _carDetails
 
     private val _didRequestCameraPermission = MutableStateFlow(false)
