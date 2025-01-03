@@ -3,6 +3,9 @@ package com.tomerpacific.caridentifier.model
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tomerpacific.caridentifier.data.NetworkError
+import com.tomerpacific.caridentifier.data.onError
+import com.tomerpacific.caridentifier.data.onSuccess
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,10 +18,15 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
 
     private val _sharedPreferences = sharedPreferences
 
-    private val _carDetails = MutableStateFlow<ApiResponse?>(null)
+    private val _carDetails = MutableStateFlow<CarDetails?>(null)
 
-    val carDetails: StateFlow<ApiResponse?>
+    val carDetails: StateFlow<CarDetails?>
         get() = _carDetails
+
+    private val _networkError = MutableStateFlow<NetworkError?>(null)
+
+    val networkError: StateFlow<NetworkError?>
+        get() = _networkError
 
     private val _didRequestCameraPermission = MutableStateFlow(false)
 
@@ -38,7 +46,11 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
     fun getCarDetails(licensePlateNumber: String) {
         val licensePlateNumberWithoutDashes = licensePlateNumber.replace("-", "")
         viewModelScope.launch(Dispatchers.IO) {
-            _carDetails.value = carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes)
+            carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess {
+                _carDetails.value = it
+            }.onError {
+                _networkError.value = it
+            }
         }
     }
 
