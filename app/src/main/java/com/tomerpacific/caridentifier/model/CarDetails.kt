@@ -39,4 +39,4 @@ data class CarDetails(
     val commercialName: String,
     @SerialName("manufacturer_name")
     val manufacturerName: String,
-): ApiResponse()
+)
