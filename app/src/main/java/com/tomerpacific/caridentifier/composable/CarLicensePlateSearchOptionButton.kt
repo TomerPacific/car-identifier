@@ -1,4 +1,4 @@
-package com.tomerpacific.caridentifier
+package com.tomerpacific.caridentifier.composable
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.model.Screen
 
 

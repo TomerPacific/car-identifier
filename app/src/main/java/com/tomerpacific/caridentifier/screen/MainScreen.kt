@@ -1,4 +1,4 @@
-package com.tomerpacific.caridentifier
+package com.tomerpacific.caridentifier.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +21,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.tomerpacific.caridentifier.composable.CarLicensePlateSearchOptionButton
+import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.ui.theme.CarIdentifierTheme
 

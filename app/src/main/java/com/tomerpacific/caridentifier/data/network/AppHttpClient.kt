@@ -1,4 +1,4 @@
-package com.tomerpacific.caridentifier.data
+package com.tomerpacific.caridentifier.data.network
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android

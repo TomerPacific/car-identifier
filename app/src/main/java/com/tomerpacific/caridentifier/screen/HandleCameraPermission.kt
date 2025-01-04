@@ -1,4 +1,4 @@
-package com.tomerpacific.caridentifier
+package com.tomerpacific.caridentifier.screen
 
 import android.app.Activity
 import android.content.Context

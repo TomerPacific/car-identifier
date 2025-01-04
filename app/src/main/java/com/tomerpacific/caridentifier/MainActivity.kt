@@ -11,6 +11,10 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
+import com.tomerpacific.caridentifier.screen.CarDetailsScreen
+import com.tomerpacific.caridentifier.screen.HandleCameraPermission
+import com.tomerpacific.caridentifier.screen.LicensePlateNumberDialog
+import com.tomerpacific.caridentifier.screen.MainScreen
 
 class MainActivity : ComponentActivity() {
 

@@ -1,8 +1,8 @@
 package com.tomerpacific.caridentifier.data.repository
 
-import com.tomerpacific.caridentifier.data.AppHttpClient
-import com.tomerpacific.caridentifier.data.NetworkError
-import com.tomerpacific.caridentifier.data.Result
+import com.tomerpacific.caridentifier.data.network.AppHttpClient
+import com.tomerpacific.caridentifier.data.network.NetworkError
+import com.tomerpacific.caridentifier.data.network.Result
 import com.tomerpacific.caridentifier.model.CarDetails
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -38,6 +38,7 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
                 Result.Success(carDetails)
             }
             401 -> Result.Error(NetworkError.UNAUTHORIZED)
+            404 -> Result.Error(NetworkError.NOT_FOUND)
             408 -> Result.Error(NetworkError.REQUEST_TIMEOUT)
             409 -> Result.Error(NetworkError.CONFLICT)
             413 -> Result.Error(NetworkError.PAYLOAD_TOO_LARGE)

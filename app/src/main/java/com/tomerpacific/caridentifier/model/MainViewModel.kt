@@ -3,9 +3,9 @@ package com.tomerpacific.caridentifier.model
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tomerpacific.caridentifier.data.NetworkError
-import com.tomerpacific.caridentifier.data.onError
-import com.tomerpacific.caridentifier.data.onSuccess
+import com.tomerpacific.caridentifier.data.network.NetworkError
+import com.tomerpacific.caridentifier.data.network.onError
+import com.tomerpacific.caridentifier.data.network.onSuccess
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
