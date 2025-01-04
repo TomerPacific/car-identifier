@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
+import com.tomerpacific.caridentifier.composable.CameraPreview
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import com.tomerpacific.caridentifier.screen.CarDetailsScreen
@@ -41,6 +42,7 @@ class MainActivity : ComponentActivity() {
             dialog(route = Screen.LicensePlateNumberInput.route) { LicensePlateNumberDialog(navController, mainViewModel) }
             composable(route = Screen.CarDetailsScreen.route) { CarDetailsScreen(mainViewModel) }
             dialog(route = Screen.CameraPermission.route) { HandleCameraPermission(navController, mainViewModel) }
+            composable(route = Screen.CameraPreview.route) { CameraPreview() }
         }
     }
 }
