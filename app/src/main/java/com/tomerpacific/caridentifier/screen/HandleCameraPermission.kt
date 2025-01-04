@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.model.MainViewModel
+import com.tomerpacific.caridentifier.model.Screen
 
 @Composable
 fun HandleCameraPermission(navController: NavController,
@@ -38,7 +39,7 @@ fun HandleCameraPermission(navController: NavController,
 
             when(isGranted) {
                 true -> {
-
+                    navController.navigate(Screen.CameraPreview.route)
                 }
                 false -> {
                     val activity = context.getActivityOrNull()
