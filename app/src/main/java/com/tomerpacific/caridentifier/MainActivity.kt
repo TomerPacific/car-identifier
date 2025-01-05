@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
             dialog(route = Screen.LicensePlateNumberInput.route) { LicensePlateNumberDialog(navController, mainViewModel) }
             composable(route = Screen.CarDetailsScreen.route) { CarDetailsScreen(mainViewModel) }
             dialog(route = Screen.CameraPermission.route) { HandleCameraPermission(navController, mainViewModel) }
-            composable(route = Screen.CameraPreview.route) { CameraPreview() }
+            composable(route = Screen.CameraPreview.route) { CameraPreview(navController) }
         }
     }
 }

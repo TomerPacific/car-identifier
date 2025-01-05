@@ -23,11 +23,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.NavController
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @Composable
-fun CameraPreview() {
+fun CameraPreview(navController: NavController) {
 
     val lensFacing = CameraSelector.LENS_FACING_BACK
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -49,7 +50,7 @@ fun CameraPreview() {
     }
     Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize()) {
         AndroidView({ previewView }, modifier = Modifier.fillMaxSize())
-        Button(onClick = { captureImage(imageCapture, context) }) {
+        Button(onClick = { captureImage(imageCapture, context, navController) }) {
             Text(text = "Capture Image")
         }
     }
@@ -64,7 +65,8 @@ private suspend fun Context.getCameraProvider(): ProcessCameraProvider =
     }
 }
 
-private fun captureImage(imageCapture: ImageCapture, context: Context) {
+private fun captureImage(imageCapture: ImageCapture,
+                         context: Context, navController: NavController) {
     val name = "CameraxImage.jpeg"
     val contentValues = ContentValues().apply {
         put(MediaStore.MediaColumns.DISPLAY_NAME, name)
@@ -85,11 +87,11 @@ private fun captureImage(imageCapture: ImageCapture, context: Context) {
         ContextCompat.getMainExecutor(context),
         object : ImageCapture.OnImageSavedCallback {
             override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-
+                navController.popBackStack()
             }
 
             override fun onError(exception: ImageCaptureException) {
-
+                navController.popBackStack()
             }
         })
 }
