@@ -85,11 +85,11 @@ private fun captureImage(imageCapture: ImageCapture, context: Context) {
         ContextCompat.getMainExecutor(context),
         object : ImageCapture.OnImageSavedCallback {
             override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                println("Successs")
+
             }
 
             override fun onError(exception: ImageCaptureException) {
-                println("Failed $exception")
+
             }
         })
 }
