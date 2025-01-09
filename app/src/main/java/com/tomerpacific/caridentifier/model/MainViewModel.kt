@@ -1,7 +1,9 @@
 package com.tomerpacific.caridentifier.model
 
+import android.app.Application
+import android.content.Context
 import android.content.SharedPreferences
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.tomerpacific.caridentifier.data.network.NetworkError
 import com.tomerpacific.caridentifier.data.network.onError
@@ -12,9 +14,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
+class MainViewModel(sharedPreferences: SharedPreferences, application: Application): AndroidViewModel(application) {
 
-    private val carDetailsRepository = CarDetailsRepository()
+    private val carDetailsRepository = CarDetailsRepository(application)
 
     private val _sharedPreferences = sharedPreferences
 
@@ -43,10 +45,10 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
     }
 
 
-    fun getCarDetails(licensePlateNumber: String) {
+    fun getCarDetails(licensePlateNumber: String, context: Context) {
         val licensePlateNumberWithoutDashes = licensePlateNumber.replace("-", "")
         viewModelScope.launch(Dispatchers.IO) {
-            carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess {
+            carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes, context).onSuccess {
                 _carDetails.value = it
             }.onError {
                 _networkError.value = it
