@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
 
         val sharedPreferences = getPreferences(MODE_PRIVATE)
 
-        mainViewModel = MainViewModel(sharedPreferences)
+        mainViewModel = MainViewModel(sharedPreferences, application)
 
         setContent {
             val navController = rememberNavController()
