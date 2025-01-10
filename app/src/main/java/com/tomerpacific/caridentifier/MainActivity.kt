@@ -47,15 +47,15 @@ class MainActivity : ComponentActivity() {
             composable(route = Screen.CarDetailsScreen.route) { CarDetailsScreen(mainViewModel) }
             dialog(route = Screen.CameraPermission.route) { HandleCameraPermission(navController, mainViewModel) }
             composable(route = Screen.CameraPreview.route) { CameraPreview(navController, mainViewModel) }
-            composable(route = Screen.ImageOCR.route + "/{imageUri}", arguments = listOf(
+            dialog(route = Screen.VerifyPhoto.route + "/{imageUri}", arguments = listOf(
                 navArgument("imageUri") {
                     type = NavType.StringType
                 }
             )) {
-                it.arguments?.let {
-                    val uri = it.getString("imageUri")
+                it.arguments?.let { bundle ->
+                    val uri = bundle.getString("imageUri")
                     if (uri != null) {
-                        ImageOCRScreen(Uri.parse(uri))
+                        ImageOCRScreen(Uri.parse(uri), navController)
                     }
                 }
             }
