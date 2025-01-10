@@ -17,7 +17,7 @@ import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import com.tomerpacific.caridentifier.screen.CarDetailsScreen
 import com.tomerpacific.caridentifier.screen.HandleCameraPermission
-import com.tomerpacific.caridentifier.screen.ImageOCRScreen
+import com.tomerpacific.caridentifier.screen.VerifyPhotoDialog
 import com.tomerpacific.caridentifier.screen.LicensePlateNumberDialog
 import com.tomerpacific.caridentifier.screen.MainScreen
 
@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() {
                 it.arguments?.let { bundle ->
                     val uri = bundle.getString(IMAGE_URI_KEY)
                     if (uri != null) {
-                        ImageOCRScreen(Uri.parse(uri), navController)
+                        VerifyPhotoDialog(Uri.parse(uri), navController)
                     }
                 }
             }
