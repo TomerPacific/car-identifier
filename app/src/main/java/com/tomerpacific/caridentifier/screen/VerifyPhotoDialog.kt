@@ -29,7 +29,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 
 @Composable
-fun ImageOCRScreen(imageUri: Uri, navController: NavController) {
+fun VerifyPhotoDialog(imageUri: Uri, navController: NavController) {
 
     AlertDialog(
         onDismissRequest = {
