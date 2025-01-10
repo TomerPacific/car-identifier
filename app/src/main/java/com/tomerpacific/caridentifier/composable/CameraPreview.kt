@@ -1,6 +1,7 @@
 package com.tomerpacific.caridentifier.composable
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
@@ -10,6 +11,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -17,14 +19,19 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.CameraFileUtils.takePicture
+import com.tomerpacific.caridentifier.model.MainViewModel
+import com.tomerpacific.caridentifier.model.Screen
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
 @Composable
-fun CameraPreview(navController: NavController) {
+fun CameraPreview(navController: NavController, mainViewModel: MainViewModel) {
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     val executor = remember { Executors.newSingleThreadExecutor() }
+    val coroutineScope = rememberCoroutineScope()
 
     val cameraController: LifecycleCameraController = remember {
         LifecycleCameraController(context).apply {
@@ -45,7 +52,9 @@ fun CameraPreview(navController: NavController) {
         )
         Button(onClick = {
             takePicture(cameraController, context, executor, { uri ->
-
+                coroutineScope.launch(Dispatchers.Main){
+                    navController.navigate(Screen.ImageOCR.route +"/${Uri.encode(uri.toString())}")
+                }
             }, { imageCaptureException ->
                 Log.e("CameraPreview", "Error capturing image", imageCaptureException)
                 navController.popBackStack()
