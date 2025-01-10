@@ -53,7 +53,7 @@ fun CameraPreview(navController: NavController, mainViewModel: MainViewModel) {
         Button(onClick = {
             takePicture(cameraController, context, executor, { uri ->
                 coroutineScope.launch(Dispatchers.Main){
-                    navController.navigate(Screen.ImageOCR.route +"/${Uri.encode(uri.toString())}")
+                    navController.navigate(Screen.VerifyPhoto.route +"/${Uri.encode(uri.toString())}")
                 }
             }, { imageCaptureException ->
                 Log.e("CameraPreview", "Error capturing image", imageCaptureException)
