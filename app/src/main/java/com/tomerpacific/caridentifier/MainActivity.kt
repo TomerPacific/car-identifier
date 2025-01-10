@@ -1,19 +1,23 @@
 package com.tomerpacific.caridentifier
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.tomerpacific.caridentifier.composable.CameraPreview
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import com.tomerpacific.caridentifier.screen.CarDetailsScreen
 import com.tomerpacific.caridentifier.screen.HandleCameraPermission
+import com.tomerpacific.caridentifier.screen.ImageOCRScreen
 import com.tomerpacific.caridentifier.screen.LicensePlateNumberDialog
 import com.tomerpacific.caridentifier.screen.MainScreen
 
@@ -42,7 +46,19 @@ class MainActivity : ComponentActivity() {
             dialog(route = Screen.LicensePlateNumberInput.route) { LicensePlateNumberDialog(navController, mainViewModel) }
             composable(route = Screen.CarDetailsScreen.route) { CarDetailsScreen(mainViewModel) }
             dialog(route = Screen.CameraPermission.route) { HandleCameraPermission(navController, mainViewModel) }
-            composable(route = Screen.CameraPreview.route) { CameraPreview(navController) }
+            composable(route = Screen.CameraPreview.route) { CameraPreview(navController, mainViewModel) }
+            composable(route = Screen.ImageOCR.route + "/{imageUri}", arguments = listOf(
+                navArgument("imageUri") {
+                    type = NavType.StringType
+                }
+            )) {
+                it.arguments?.let {
+                    val uri = it.getString("imageUri")
+                    if (uri != null) {
+                        ImageOCRScreen(Uri.parse(uri))
+                    }
+                }
+            }
         }
     }
 }
