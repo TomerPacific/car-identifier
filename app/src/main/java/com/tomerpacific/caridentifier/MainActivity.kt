@@ -21,6 +21,8 @@ import com.tomerpacific.caridentifier.screen.ImageOCRScreen
 import com.tomerpacific.caridentifier.screen.LicensePlateNumberDialog
 import com.tomerpacific.caridentifier.screen.MainScreen
 
+
+const val IMAGE_URI_KEY = "imageUri"
 class MainActivity : ComponentActivity() {
 
 
@@ -48,12 +50,12 @@ class MainActivity : ComponentActivity() {
             dialog(route = Screen.CameraPermission.route) { HandleCameraPermission(navController, mainViewModel) }
             composable(route = Screen.CameraPreview.route) { CameraPreview(navController, mainViewModel) }
             dialog(route = Screen.VerifyPhoto.route + "/{imageUri}", arguments = listOf(
-                navArgument("imageUri") {
+                navArgument(IMAGE_URI_KEY) {
                     type = NavType.StringType
                 }
             )) {
                 it.arguments?.let { bundle ->
-                    val uri = bundle.getString("imageUri")
+                    val uri = bundle.getString(IMAGE_URI_KEY)
                     if (uri != null) {
                         ImageOCRScreen(Uri.parse(uri), navController)
                     }
