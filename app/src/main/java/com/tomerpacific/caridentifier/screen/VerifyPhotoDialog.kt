@@ -28,11 +28,13 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import java.io.IOException
+
 
 @Composable
 fun VerifyPhotoDialog(imageUri: Uri,
@@ -55,8 +57,11 @@ fun VerifyPhotoDialog(imageUri: Uri,
                         .build(),
                     contentDescription = "icon",
                     contentScale = ContentScale.Inside,
-                    modifier = Modifier.size(300.dp).border(
-                        BorderStroke(3.dp, Color.Black))
+                    modifier = Modifier
+                        .size(300.dp)
+                        .border(
+                            BorderStroke(3.dp, Color.Black)
+                        )
                 )
                 Spacer(modifier = Modifier.size(20.dp))
                 Text(text = "Proceed with this image?", fontSize = 20.sp)
@@ -69,9 +74,11 @@ fun VerifyPhotoDialog(imageUri: Uri,
                     val image = InputImage.fromFilePath(context, imageUri)
                     recognizer.process(image)
                         .addOnSuccessListener { visionText ->
-                            val processedText  = visionText.text
-                            mainViewModel.getCarDetails(processedText, context)
-                            navController.navigate(Screen.CarDetailsScreen.route)
+                            val licensePlateNumber  = getLicensePlateNumberFromImageText(visionText)
+                            licensePlateNumber?.let {
+                                mainViewModel.getCarDetails(it, context)
+                                navController.navigate(Screen.CarDetailsScreen.route)
+                            } ?: navController.popBackStack()
                         }
                         .addOnFailureListener { e ->
                             e.printStackTrace()
@@ -99,5 +106,15 @@ fun VerifyPhotoDialog(imageUri: Uri,
             }
         }
     )
+}
 
+private fun getLicensePlateNumberFromImageText(text: Text): String? {
+    for (block in text.textBlocks) {
+        val blockText = block.text
+        if (blockText.contains("-")) {
+            return blockText
+        }
+    }
+
+    return null
 }
