@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() {
                 it.arguments?.let { bundle ->
                     val uri = bundle.getString(IMAGE_URI_KEY)
                     if (uri != null) {
-                        VerifyPhotoDialog(Uri.parse(uri), navController)
+                        VerifyPhotoDialog(Uri.parse(uri), navController, mainViewModel)
                     }
                 }
             }
