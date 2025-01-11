@@ -27,9 +27,19 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.tomerpacific.caridentifier.model.MainViewModel
+import com.tomerpacific.caridentifier.model.Screen
+import java.io.IOException
 
 @Composable
-fun VerifyPhotoDialog(imageUri: Uri, navController: NavController) {
+fun VerifyPhotoDialog(imageUri: Uri,
+                      navController: NavController,
+                      mainViewModel: MainViewModel) {
+
+    val context = LocalContext.current
 
     AlertDialog(
         onDismissRequest = {
@@ -54,7 +64,21 @@ fun VerifyPhotoDialog(imageUri: Uri, navController: NavController) {
         },
         confirmButton = {
             TextButton(onClick = {
-
+                val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+                try {
+                    val image = InputImage.fromFilePath(context, imageUri)
+                    recognizer.process(image)
+                        .addOnSuccessListener { visionText ->
+                            val processedText  = visionText.text
+                            mainViewModel.getCarDetails(processedText, context)
+                            navController.navigate(Screen.CarDetailsScreen.route)
+                        }
+                        .addOnFailureListener { e ->
+                            e.printStackTrace()
+                        }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
             }, modifier = Modifier.background(Color.Green)) {
                 Text(text = "Yes")
                 Icon(
