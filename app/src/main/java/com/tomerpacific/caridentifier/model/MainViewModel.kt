@@ -1,9 +1,7 @@
 package com.tomerpacific.caridentifier.model
 
-import android.app.Application
-import android.content.Context
 import android.content.SharedPreferences
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tomerpacific.caridentifier.data.network.NetworkError
 import com.tomerpacific.caridentifier.data.network.onError
@@ -15,9 +13,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 const val DID_REQUEST_CAMERA_PERMISSION_KEY = "didRequestCameraPermission"
-class MainViewModel(sharedPreferences: SharedPreferences, application: Application): AndroidViewModel(application) {
+class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
 
-    private val carDetailsRepository = CarDetailsRepository(application)
+    private val carDetailsRepository = CarDetailsRepository()
 
     private val _sharedPreferences = sharedPreferences
 
@@ -47,10 +45,10 @@ class MainViewModel(sharedPreferences: SharedPreferences, application: Applicati
     }
 
 
-    fun getCarDetails(licensePlateNumber: String, context: Context) {
+    fun getCarDetails(licensePlateNumber: String) {
         val licensePlateNumberWithoutDashes = licensePlateNumber.replace("-", "")
         viewModelScope.launch(Dispatchers.IO) {
-            carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes, context).onSuccess {
+            carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess {
                 _carDetails.value = it
             }.onError {
                 _networkError.value = it

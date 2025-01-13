@@ -40,7 +40,7 @@ object CameraFileUtils {
             }
         )
     }
-    
+
     private fun createPhotoFile(context: Context): File {
         val outputDirectory = getOutputDirectory(context)
 
