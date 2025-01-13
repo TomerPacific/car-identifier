@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+const val DID_REQUEST_CAMERA_PERMISSION_KEY = "didRequestCameraPermission"
 class MainViewModel(sharedPreferences: SharedPreferences, application: Application): AndroidViewModel(application) {
 
     private val carDetailsRepository = CarDetailsRepository(application)
@@ -41,7 +42,8 @@ class MainViewModel(sharedPreferences: SharedPreferences, application: Applicati
         get() = _shouldShowRationale
 
     init {
-        _didRequestCameraPermission.value = _sharedPreferences.getBoolean("didRequestCameraPermission", false)
+        _didRequestCameraPermission.value =
+            _sharedPreferences.getBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, false)
     }
 
 
@@ -59,7 +61,7 @@ class MainViewModel(sharedPreferences: SharedPreferences, application: Applicati
     fun setDidRequestCameraPermission(didRequest: Boolean) {
         if (!_didRequestCameraPermission.value) {
             _didRequestCameraPermission.value = didRequest
-            _sharedPreferences.edit().putBoolean("didRequestCameraPermission", didRequest).apply()
+            _sharedPreferences.edit().putBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, didRequest).apply()
         }
     }
 
