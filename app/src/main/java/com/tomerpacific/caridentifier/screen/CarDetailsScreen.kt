@@ -118,4 +118,15 @@ fun CarInformation(details: CarDetails) {
                 modifier = Modifier.fillMaxSize()
             )
         }
+
+        CarDetailWithIcon(
+        iconId = "safetyIcon",
+        text = " רמת אבזור בטיחות: ${details.safetyFeatureLevel} "
+        ) {
+            Icon(
+            painterResource(id = R.drawable.ic_shield), "Safety Icon",
+            tint = Color(0, 0, 0),
+            modifier = Modifier.fillMaxSize()
+            )
+        }
     }
