@@ -129,4 +129,15 @@ fun CarInformation(details: CarDetails) {
             modifier = Modifier.fillMaxSize()
             )
         }
+
+        CarDetailWithIcon(
+            iconId = "pollutionIcon",
+            text = " רמת זיהום אוויר: ${details.pollutionLevel} "
+        ) {
+            Icon(
+                painterResource(id = R.drawable.ic_car_alert), "Pollution Icon",
+                tint = Color(255, 0, 0),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
