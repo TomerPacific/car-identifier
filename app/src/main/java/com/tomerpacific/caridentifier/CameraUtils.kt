@@ -29,12 +29,10 @@ object CameraFileUtils {
             executor,
             object : ImageCapture.OnImageSavedCallback {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-
                     Uri.fromFile(photoFile).let(onImageCaptured)
                 }
 
                 override fun onError(exception: ImageCaptureException) {
-
                     onError(exception)
                 }
             }
@@ -55,7 +53,6 @@ object CameraFileUtils {
 
 
     private fun getOutputDirectory(context: Context): File {
-
         val mediaDir = context.getExternalFilesDir(null)?.let {
             File(it, context.resources.getString(R.string.app_name)).apply { mkdirs() }
         }
