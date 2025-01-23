@@ -140,4 +140,15 @@ fun CarInformation(details: CarDetails) {
                 modifier = Modifier.fillMaxSize()
             )
         }
+
+        CarDetailWithIcon(
+            iconId = "paletteIcon",
+            text = " צבע: ${details.color} "
+        ) {
+            Icon(
+                painterResource(id = R.drawable.ic_palette), "Palette Icon",
+                tint = Color(209, 150, 105),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
