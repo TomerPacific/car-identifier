@@ -151,4 +151,15 @@ fun CarInformation(details: CarDetails) {
                 modifier = Modifier.fillMaxSize()
             )
         }
+
+        CarDetailWithIcon(
+            iconId = "roadIcon",
+            text = " עלה לכביש: ${details.firstOnRoadDate} "
+        ) {
+            Icon(
+                painterResource(id = R.drawable.ic_road), "Road Icon",
+                tint = Color(0, 0, 0),
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
