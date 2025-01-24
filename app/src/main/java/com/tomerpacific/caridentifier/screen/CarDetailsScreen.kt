@@ -34,7 +34,7 @@ fun CarDetailsScreen(mainViewModel: MainViewModel) {
 
     val carDetails = mainViewModel.carDetails.collectAsState()
 
-    val networkError = mainViewModel.networkError.collectAsState()
+    val serverError = mainViewModel.serverError.collectAsState()
 
     val columnVerticalArrangement: Arrangement.Vertical = when (carDetails.value) {
         null -> Arrangement.Center
@@ -46,16 +46,23 @@ fun CarDetailsScreen(mainViewModel: MainViewModel) {
         verticalArrangement = columnVerticalArrangement
     ) {
 
-        if (carDetails.value == null && networkError.value == null) {
+        if (carDetails.value == null && serverError.value == null) {
             Spinner()
         } else if (carDetails.value != null) {
             CarInformation(carDetails.value!!)
-        } else {
-            Row(
+        } else if (serverError.value != null) {
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
                 Text(text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    style = TextStyle(textDirection = TextDirection.Rtl)
+                )
+                Text(text = serverError.value!!,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
@@ -125,7 +132,7 @@ fun CarInformation(details: CarDetails) {
         ) {
             Icon(
             painterResource(id = R.drawable.ic_shield), "Safety Icon",
-            tint = Color(0, 0, 0),
+            tint = Color(0, 255, 0),
             modifier = Modifier.fillMaxSize()
             )
         }
