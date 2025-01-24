@@ -21,10 +21,10 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
     val carDetails: StateFlow<CarDetails?>
         get() = _carDetails
 
-    private val _networkError = MutableStateFlow<String?>(null)
+    private val _serverError = MutableStateFlow<String?>(null)
 
-    val networkError: StateFlow<String?>
-        get() = _networkError
+    val serverError: StateFlow<String?>
+        get() = _serverError
 
     private val _didRequestCameraPermission = MutableStateFlow(false)
 
@@ -48,7 +48,7 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
             carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess {
                 _carDetails.value = it
             }.onFailure {
-                _networkError.value = it.localizedMessage
+                _serverError.value = it.localizedMessage
             }
         }
     }
