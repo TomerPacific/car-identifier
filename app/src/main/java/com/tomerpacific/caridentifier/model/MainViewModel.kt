@@ -3,9 +3,6 @@ package com.tomerpacific.caridentifier.model
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tomerpacific.caridentifier.data.network.NetworkError
-import com.tomerpacific.caridentifier.data.network.onError
-import com.tomerpacific.caridentifier.data.network.onSuccess
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,9 +21,9 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
     val carDetails: StateFlow<CarDetails?>
         get() = _carDetails
 
-    private val _networkError = MutableStateFlow<NetworkError?>(null)
+    private val _networkError = MutableStateFlow<String?>(null)
 
-    val networkError: StateFlow<NetworkError?>
+    val networkError: StateFlow<String?>
         get() = _networkError
 
     private val _didRequestCameraPermission = MutableStateFlow(false)
@@ -50,8 +47,8 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess {
                 _carDetails.value = it
-            }.onError {
-                _networkError.value = it
+            }.onFailure {
+                _networkError.value = it.localizedMessage
             }
         }
     }
