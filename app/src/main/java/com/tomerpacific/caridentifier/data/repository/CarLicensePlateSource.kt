@@ -1,9 +1,8 @@
 package com.tomerpacific.caridentifier.data.repository
 
 import com.tomerpacific.caridentifier.data.network.AppHttpClient
-import com.tomerpacific.caridentifier.data.network.NetworkError
-import com.tomerpacific.caridentifier.data.network.Result
 import com.tomerpacific.caridentifier.model.CarDetails
+import com.tomerpacific.caridentifier.model.ServerError
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.*
@@ -17,7 +16,7 @@ import java.nio.channels.UnresolvedAddressException
 
 class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
 
-    private suspend fun HttpClient.getCarDetails(licensePlateNumber: String): Result<CarDetails, NetworkError> {
+    private suspend fun HttpClient.getCarDetails(licensePlateNumber: String): Result<CarDetails> {
         val httpResponse: HttpResponse = try {
             get {
                 url {
@@ -27,27 +26,24 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
                 }
             }
         } catch (e: UnresolvedAddressException) {
-            return Result.Error(NetworkError.NO_INTERNET)
+            return Result.failure(e)
         } catch (e: SerializationException) {
-            return Result.Error(NetworkError.SERIALIZATION)
+            return Result.failure(e)
         }
 
         return when (httpResponse.status.value) {
             in 200..299 -> {
                 val carDetails = httpResponse.body() as CarDetails
-                Result.Success(carDetails)
+                return Result.success(carDetails)
             }
-            401 -> Result.Error(NetworkError.UNAUTHORIZED)
-            404 -> Result.Error(NetworkError.NOT_FOUND)
-            408 -> Result.Error(NetworkError.REQUEST_TIMEOUT)
-            409 -> Result.Error(NetworkError.CONFLICT)
-            413 -> Result.Error(NetworkError.PAYLOAD_TOO_LARGE)
-            in 500..513 -> Result.Error(NetworkError.SERVER_ERROR)
-            else -> Result.Error(NetworkError.UNKNOWN)
+            else -> {
+                val serverError = httpResponse.body() as ServerError
+                Result.failure(Exception(serverError.errorMsg))
+            }
         }
     }
 
-    suspend fun getCarDetails(licensePlateNumber: String): Result<CarDetails, NetworkError> = withContext(Dispatchers.IO) {
+    suspend fun getCarDetails(licensePlateNumber: String): Result<CarDetails> = withContext(Dispatchers.IO) {
         client.getCarDetails(licensePlateNumber)
     }
 }
