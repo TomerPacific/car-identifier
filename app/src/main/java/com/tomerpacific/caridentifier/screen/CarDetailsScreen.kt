@@ -1,5 +1,7 @@
 package com.tomerpacific.caridentifier.screen
 
+import android.view.ViewGroup
+import android.webkit.WebView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,9 +13,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import com.tomerpacific.caridentifier.composable.CarDetailWithIcon
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.getCarManufacturer
@@ -32,6 +41,32 @@ import com.tomerpacific.caridentifier.model.MainViewModel
 @Composable
 fun CarDetailsScreen(mainViewModel: MainViewModel) {
 
+
+    var tabIndex by remember { mutableStateOf(0) }
+
+    val tabs = listOf("Details", "Reviews")
+
+    val searchTerm: String = mainViewModel.searchTerm
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        TabRow(selectedTabIndex = tabIndex) {
+            tabs.forEachIndexed { index, title ->
+                Tab(text = { Text(title) },
+                    selected = tabIndex == index,
+                    onClick = { tabIndex = index }
+                )
+            }
+        }
+        when (tabIndex) {
+            0 -> Details(mainViewModel)
+            1 -> Reviews(searchTerm)
+        }
+    }
+
+}
+
+@Composable
+fun Details(mainViewModel: MainViewModel) {
     val carDetails = mainViewModel.carDetails.collectAsState()
 
     val serverError = mainViewModel.serverError.collectAsState()
@@ -169,4 +204,19 @@ fun CarInformation(details: CarDetails) {
                 modifier = Modifier.fillMaxSize()
             )
         }
+}
+
+@Composable
+fun Reviews(searchTerm: String) {
+
+    AndroidView(factory = {
+        WebView(it).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
+    }, update = {
+        it.loadUrl("https://www.youtube.com/results?search_query=$searchTerm")
+    })
 }
