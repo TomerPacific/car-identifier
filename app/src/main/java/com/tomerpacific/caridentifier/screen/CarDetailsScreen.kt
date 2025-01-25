@@ -53,7 +53,13 @@ fun CarDetailsScreen(mainViewModel: MainViewModel) {
             tabs.forEachIndexed { index, title ->
                 Tab(text = { Text(title) },
                     selected = tabIndex == index,
-                    onClick = { tabIndex = index }
+                    onClick = { tabIndex = index },
+                    icon = {
+                        when (index) {
+                            0 -> Icon(painterResource(id = R.drawable.ic_fact_check), contentDescription = "list")
+                            1 -> Icon(painterResource(id = R.drawable.ic_reviews), contentDescription = "reviews")
+                        }
+                    }
                 )
             }
         }
