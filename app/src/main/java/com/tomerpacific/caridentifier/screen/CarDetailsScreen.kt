@@ -1,7 +1,7 @@
 package com.tomerpacific.caridentifier.screen
 
-import android.view.ViewGroup
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -208,15 +208,19 @@ fun CarInformation(details: CarDetails) {
 
 @Composable
 fun Reviews(searchTerm: String) {
-
-    AndroidView(factory = {
-        WebView(it).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-        }
-    }, update = {
-        it.loadUrl("https://www.youtube.com/results?search_query=$searchTerm")
-    })
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        AndroidView(factory = {
+            WebView(it).apply {
+                webViewClient = WebViewClient()
+                settings.javaScriptEnabled = true
+                settings.loadWithOverviewMode = true
+                settings.useWideViewPort = true
+                settings.setSupportZoom(true)
+            }
+        }, update = {
+            it.loadUrl("https://www.youtube.com/results?search_query=$searchTerm")
+        })
+    }
 }
