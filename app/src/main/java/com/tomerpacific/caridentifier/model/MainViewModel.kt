@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
+import com.tomerpacific.caridentifier.getCarManufacturer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,6 +37,8 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
     val shouldShowRationale: StateFlow<Boolean>
         get() = _shouldShowRationale
 
+    var searchTerm: String = ""
+
     init {
         _didRequestCameraPermission.value =
             _sharedPreferences.getBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, false)
@@ -45,8 +48,9 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
     fun getCarDetails(licensePlateNumber: String) {
         val licensePlateNumberWithoutDashes = licensePlateNumber.replace("-", "")
         viewModelScope.launch(Dispatchers.IO) {
-            carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess {
+            carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess { it ->
                 _carDetails.value = it
+                searchTerm = "${getCarManufacturer(it.manufacturerName)} ${it.commercialName.lowercase().replaceFirstChar { it.titlecase() }} ${it.trimLevel.lowercase().replaceFirstChar { it.titlecase() }} ${it.yearOfProduction} review"
             }.onFailure {
                 _serverError.value = it.localizedMessage
             }
