@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -44,7 +45,7 @@ fun CarDetailsScreen(mainViewModel: MainViewModel) {
 
     var tabIndex by remember { mutableStateOf(0) }
 
-    val tabs = listOf("Details", "Reviews")
+    val tabs = listOf("Details", "Reviews", "AI")
 
     val searchTerm: String = mainViewModel.searchTerm
 
@@ -58,7 +59,10 @@ fun CarDetailsScreen(mainViewModel: MainViewModel) {
                         when (index) {
                             0 -> Icon(painterResource(id = R.drawable.ic_fact_check), contentDescription = "list")
                             1 -> Icon(painterResource(id = R.drawable.ic_reviews), contentDescription = "reviews")
-                            2 -> Icon(painterResource(id = R.drawable.ic_chatgpt), contentDescription = "chatgpt")
+                            2 -> Icon(painterResource(
+                                id = R.drawable.ic_chatgpt),
+                                contentDescription = "chatgpt",
+                                modifier = Modifier.size(40.dp))
                         }
                     }
                 )
