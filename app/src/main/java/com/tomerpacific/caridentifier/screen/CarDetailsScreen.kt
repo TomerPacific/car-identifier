@@ -58,6 +58,7 @@ fun CarDetailsScreen(mainViewModel: MainViewModel) {
                         when (index) {
                             0 -> Icon(painterResource(id = R.drawable.ic_fact_check), contentDescription = "list")
                             1 -> Icon(painterResource(id = R.drawable.ic_reviews), contentDescription = "reviews")
+                            2 -> Icon(painterResource(id = R.drawable.ic_chatgpt), contentDescription = "chatgpt")
                         }
                     }
                 )
@@ -66,6 +67,7 @@ fun CarDetailsScreen(mainViewModel: MainViewModel) {
         when (tabIndex) {
             0 -> Details(mainViewModel)
             1 -> Reviews(searchTerm)
+            2 -> GenAI(searchTerm)
         }
     }
 
@@ -229,4 +231,9 @@ fun Reviews(searchTerm: String) {
             it.loadUrl("https://www.youtube.com/results?search_query=$searchTerm")
         })
     }
+}
+
+@Composable
+fun GenAI(searchTerm: String) {
+    
 }
