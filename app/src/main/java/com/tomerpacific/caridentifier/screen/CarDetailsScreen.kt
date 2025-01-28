@@ -71,7 +71,7 @@ fun CarDetailsScreen(mainViewModel: MainViewModel) {
         when (tabIndex) {
             0 -> Details(mainViewModel)
             1 -> Reviews(searchTerm)
-            2 -> GenAI(searchTerm)
+            2 -> GenAI(mainViewModel, searchTerm)
         }
     }
 
@@ -238,6 +238,6 @@ fun Reviews(searchTerm: String) {
 }
 
 @Composable
-fun GenAI(searchTerm: String) {
-    
+fun GenAI(mainViewModel: MainViewModel, searchTerm: String) {
+    val carReview = mainViewModel.getCarReview(searchTerm)
 }
