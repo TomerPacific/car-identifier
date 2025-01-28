@@ -39,6 +39,11 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
 
     var searchTerm: String = ""
 
+    private val _searchTermCompletionText = MutableStateFlow("")
+
+    val searchTermCompletionText: StateFlow<String>
+        get() = _searchTermCompletionText
+
     init {
         _didRequestCameraPermission.value =
             _sharedPreferences.getBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, false)
@@ -66,5 +71,15 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
 
     fun setShouldShowRationale(shouldShow: Boolean) {
         _shouldShowRationale.value = shouldShow
+    }
+
+    fun getCarReview(searchQuery: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            carDetailsRepository.getCarReview(searchQuery).onSuccess {
+                _searchTermCompletionText.value = it
+            }.onFailure {
+                _serverError.value = it.localizedMessage
+            }
+        }
     }
 }
