@@ -7,6 +7,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.*
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.URLProtocol
 import io.ktor.http.encodedPath
 import kotlinx.coroutines.Dispatchers
@@ -43,7 +44,29 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
         }
     }
 
+    private suspend fun HttpClient.getCarReview(searchQuery: String): Result<String> {
+        val httpResponse: HttpResponse = try {
+            get {
+                url {
+                    protocol = URLProtocol.HTTPS
+                    host = "car-license-number-fetcher.onrender.com"
+                    encodedPath = "/review/${searchQuery}"
+                }
+            }
+        } catch (e: UnresolvedAddressException) {
+            return Result.failure(e)
+        } catch (e: SerializationException) {
+            return Result.failure(e)
+        }
+
+        return Result.success(httpResponse.bodyAsText())
+    }
+
     suspend fun getCarDetails(licensePlateNumber: String): Result<CarDetails> = withContext(Dispatchers.IO) {
         client.getCarDetails(licensePlateNumber)
+    }
+
+    suspend fun getCarReview(searchQuery: String): Result<String> = withContext(Dispatchers.IO) {
+        client.getCarReview(searchQuery)
     }
 }
