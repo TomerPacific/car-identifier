@@ -74,6 +74,11 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
     }
 
     fun getCarReview(searchQuery: String) {
+
+        if (_searchTermCompletionText.value.isNotEmpty()) {
+            return
+        }
+
         viewModelScope.launch(Dispatchers.IO) {
             carDetailsRepository.getCarReview(searchQuery).onSuccess {
                 _searchTermCompletionText.value = it
