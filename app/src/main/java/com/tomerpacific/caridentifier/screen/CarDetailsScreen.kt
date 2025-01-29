@@ -18,6 +18,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +48,8 @@ fun CarDetailsScreen(mainViewModel: MainViewModel) {
 
     val tabs = listOf("Details", "Reviews", "AI")
 
+    val serverError = mainViewModel.serverError.collectAsState()
+
     val searchTerm: String = mainViewModel.searchTerm
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -69,19 +72,22 @@ fun CarDetailsScreen(mainViewModel: MainViewModel) {
             }
         }
         when (tabIndex) {
-            0 -> Details(mainViewModel)
-            1 -> Reviews(searchTerm)
-            2 -> GenAI(mainViewModel, searchTerm)
+            0 -> Details(mainViewModel, serverError)
+            1 -> Reviews(searchTerm, serverError)
+            2 -> {
+                if (serverError.value == null) {
+                    mainViewModel.getCarReview(searchTerm)
+                }
+                Recommendation(mainViewModel, serverError)
+            }
         }
     }
 
 }
 
 @Composable
-fun Details(mainViewModel: MainViewModel) {
+fun Details(mainViewModel: MainViewModel, serverError: State<String?>) {
     val carDetails = mainViewModel.carDetails.collectAsState()
-
-    val serverError = mainViewModel.serverError.collectAsState()
 
     val columnVerticalArrangement: Arrangement.Vertical = when (carDetails.value) {
         null -> Arrangement.Center
@@ -219,25 +225,82 @@ fun CarInformation(details: CarDetails) {
 }
 
 @Composable
-fun Reviews(searchTerm: String) {
+fun Reviews(searchTerm: String, serverError: State<String?>) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        AndroidView(factory = {
-            WebView(it).apply {
-                webViewClient = WebViewClient()
-                settings.javaScriptEnabled = true
-                settings.loadWithOverviewMode = true
-                settings.useWideViewPort = true
-                settings.setSupportZoom(true)
-            }
-        }, update = {
-            it.loadUrl("https://www.youtube.com/results?search_query=$searchTerm")
-        })
+
+        if (serverError.value != null) {
+            Text(text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                style = TextStyle(textDirection = TextDirection.Rtl)
+            )
+            Text(text = serverError.value!!,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                style = TextStyle(textDirection = TextDirection.Rtl)
+            )
+        } else {
+            AndroidView(factory = {
+                WebView(it).apply {
+                    webViewClient = WebViewClient()
+                    settings.javaScriptEnabled = true
+                    settings.loadWithOverviewMode = true
+                    settings.useWideViewPort = true
+                    settings.setSupportZoom(true)
+                }
+            }, update = {
+                it.loadUrl("https://www.youtube.com/results?search_query=$searchTerm")
+            })
+        }
+
     }
 }
 
 @Composable
-fun GenAI(mainViewModel: MainViewModel, searchTerm: String) {
-    val carReview = mainViewModel.getCarReview(searchTerm)
+fun Recommendation(mainViewModel: MainViewModel, serverError: State<String?>) {
+
+    val carReview = mainViewModel.searchTermCompletionText.collectAsState()
+
+    if (carReview.value.isEmpty() && serverError.value == null) {
+        Spinner()
+    } else if (carReview.value.isNotEmpty()) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = carReview.value,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                style = TextStyle(textDirection = TextDirection.Rtl)
+            )
+        }
+    } else if (serverError.value != null) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "יש בעיה עם הבאת התוכן המבוקש.",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                style = TextStyle(textDirection = TextDirection.Rtl)
+            )
+            Text(
+                text = serverError.value!!,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                style = TextStyle(textDirection = TextDirection.Rtl)
+            )
+        }
+    }
 }
