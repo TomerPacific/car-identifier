@@ -1,5 +1,6 @@
 package com.tomerpacific.caridentifier.screen
 
+
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.Arrangement
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,9 +30,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDirection
+import androidx.compose.ui.text.style.TextIndent
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -104,24 +110,18 @@ fun Details(mainViewModel: MainViewModel, serverError: State<String?>) {
         } else if (carDetails.value != null) {
             CarInformation(carDetails.value!!)
         } else if (serverError.value != null) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    style = TextStyle(textDirection = TextDirection.Rtl)
-                )
-                Text(text = serverError.value!!,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    style = TextStyle(textDirection = TextDirection.Rtl)
-                )
-            }
+            Text(text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                style = TextStyle(textDirection = TextDirection.Rtl)
+            )
+            Text(text = serverError.value!!,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                style = TextStyle(textDirection = TextDirection.Rtl)
+            )
         }
     }
 }
@@ -226,10 +226,6 @@ fun CarInformation(details: CarDetails) {
 
 @Composable
 fun Reviews(searchTerm: String, serverError: State<String?>) {
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
         if (serverError.value != null) {
             Text(text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
                 fontSize = 20.sp,
@@ -253,10 +249,8 @@ fun Reviews(searchTerm: String, serverError: State<String?>) {
                     settings.setSupportZoom(true)
                 }
             }, update = {
-                it.loadUrl("https://www.youtube.com/results?search_query=$searchTerm")
+                it.loadUrl("https://www.youtube.com/results?search_query=$searchTerm Review")
             })
-        }
-
     }
 }
 
@@ -265,41 +259,60 @@ fun Recommendation(mainViewModel: MainViewModel, serverError: State<String?>) {
 
     val carReview = mainViewModel.searchTermCompletionText.collectAsState()
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        if (carReview.value.isEmpty() && serverError.value == null) {
-            Spinner()
-        } else if (carReview.value.isNotEmpty()) {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = carReview.value,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    style = TextStyle(textDirection = TextDirection.Rtl)
-                )
-            }
-        } else if (serverError.value != null) {
-            Text(
-                text = "יש בעיה עם הבאת התוכן המבוקש.",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                style = TextStyle(textDirection = TextDirection.Rtl)
-            )
-            Text(
-                text = serverError.value!!,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                style = TextStyle(textDirection = TextDirection.Rtl)
-            )
+    if (carReview.value == null && serverError.value == null) {
+        Spinner()
+    } else if (carReview.value != null) {
+
+        val prosText: String = createBulletPoints(carReview.value!!.prosList)
+        val consText: String = createBulletPoints(carReview.value!!.consList)
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text("המלצות בינה מלאכותית", fontSize = 25.sp, fontWeight = FontWeight.Bold)
         }
+        Spacer(modifier = Modifier.height(100.dp))
+        Text("Pros:", fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 5.dp))
+        Text(
+            text = prosText,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(start = 10.dp)
+        )
+        Text("Cons:", fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 5.dp))
+        Text(
+            text = consText,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(start = 10.dp)
+        )
+    } else if (serverError.value != null) {
+        Text(
+            text = "יש בעיה עם הבאת התוכן המבוקש.",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            style = TextStyle(textDirection = TextDirection.Rtl)
+        )
+        Text(
+            text = serverError.value!!,
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            style = TextStyle(textDirection = TextDirection.Rtl)
+        )
     }
+}
+
+fun createBulletPoints(list: List<String>): String {
+    val paragraphStyle = ParagraphStyle(textIndent = TextIndent(restLine = 12.sp))
+    return buildAnnotatedString {
+        list.forEach {
+            withStyle(style = paragraphStyle) {
+                append(it)
+                append("\n")
+            }
+        }
+    }.text
 }
