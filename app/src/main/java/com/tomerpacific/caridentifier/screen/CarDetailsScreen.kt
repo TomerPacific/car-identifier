@@ -265,28 +265,27 @@ fun Recommendation(mainViewModel: MainViewModel, serverError: State<String?>) {
 
     val carReview = mainViewModel.searchTermCompletionText.collectAsState()
 
-    if (carReview.value.isEmpty() && serverError.value == null) {
-        Spinner()
-    } else if (carReview.value.isNotEmpty()) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = carReview.value,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                style = TextStyle(textDirection = TextDirection.Rtl)
-            )
-        }
-    } else if (serverError.value != null) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        if (carReview.value.isEmpty() && serverError.value == null) {
+            Spinner()
+        } else if (carReview.value.isNotEmpty()) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = carReview.value,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+                    style = TextStyle(textDirection = TextDirection.Rtl)
+                )
+            }
+        } else if (serverError.value != null) {
             Text(
                 text = "יש בעיה עם הבאת התוכן המבוקש.",
                 fontSize = 20.sp,
