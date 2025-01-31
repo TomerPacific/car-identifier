@@ -3,6 +3,7 @@ package com.tomerpacific.caridentifier.screen
 
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -46,6 +47,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.composable.CarDetailWithIcon
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.getCarManufacturer
@@ -53,7 +55,7 @@ import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.MainViewModel
 
 @Composable
-fun CarDetailsScreen(mainViewModel: MainViewModel) {
+fun CarDetailsScreen(mainViewModel: MainViewModel, navController: NavController) {
 
 
     var tabIndex by remember { mutableStateOf(0) }
@@ -94,6 +96,10 @@ fun CarDetailsScreen(mainViewModel: MainViewModel) {
             }
         }
     }
+    BackHandler {
+        navController.navigateUp()
+        mainViewModel.resetData()
+    }
 
 }
 
@@ -121,7 +127,8 @@ fun Details(mainViewModel: MainViewModel, serverError: State<String?>) {
                     .border(
                         BorderStroke(1.dp, Color.Black),
                         CircleShape
-                    ).clip(CircleShape),
+                    )
+                    .clip(CircleShape),
                 painter = painterResource(R.drawable.broken_car),
                 contentDescription = "broken car",
             )
