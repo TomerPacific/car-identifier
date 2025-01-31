@@ -58,7 +58,7 @@ fun CarDetailsScreen(mainViewModel: MainViewModel) {
 
     var tabIndex by remember { mutableStateOf(0) }
 
-    val tabs = listOf("Details", "Reviews", "AI")
+    val tabs = listOf("Details", "Reviews", "Advice")
 
     val serverError = mainViewModel.serverError.collectAsState()
 
