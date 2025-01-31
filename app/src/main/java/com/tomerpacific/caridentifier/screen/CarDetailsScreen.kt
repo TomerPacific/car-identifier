@@ -125,6 +125,7 @@ fun Details(mainViewModel: MainViewModel, serverError: State<String?>) {
                 painter = painterResource(R.drawable.broken_car),
                 contentDescription = "broken car",
             )
+            Spacer(modifier = Modifier.size(100.dp))
             Text(text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
