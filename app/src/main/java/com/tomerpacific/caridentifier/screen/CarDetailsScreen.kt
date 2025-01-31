@@ -34,6 +34,7 @@ import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
@@ -117,10 +118,9 @@ fun Details(mainViewModel: MainViewModel, serverError: State<String?>) {
                 style = TextStyle(textDirection = TextDirection.Rtl)
             )
             Text(text = serverError.value!!,
+                textAlign = TextAlign.Center,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                style = TextStyle(textDirection = TextDirection.Rtl)
+                fontWeight = FontWeight.Bold
             )
         }
     }
@@ -226,18 +226,24 @@ fun CarInformation(details: CarDetails) {
 
 @Composable
 fun Reviews(searchTerm: String, serverError: State<String?>) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
         if (serverError.value != null) {
-            Text(text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
+            Text(
+                text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
                 style = TextStyle(textDirection = TextDirection.Rtl)
             )
-            Text(text = serverError.value!!,
+            Text(
+                text = serverError.value!!,
+                textAlign = TextAlign.Center,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                style = TextStyle(textDirection = TextDirection.Rtl)
+                fontWeight = FontWeight.Bold
             )
         } else {
             AndroidView(factory = {
@@ -251,6 +257,7 @@ fun Reviews(searchTerm: String, serverError: State<String?>) {
             }, update = {
                 it.loadUrl("https://www.youtube.com/results?search_query=$searchTerm Review")
             })
+        }
     }
 }
 
@@ -259,49 +266,64 @@ fun Recommendation(mainViewModel: MainViewModel, serverError: State<String?>) {
 
     val carReview = mainViewModel.searchTermCompletionText.collectAsState()
 
-    if (carReview.value == null && serverError.value == null) {
-        Spinner()
-    } else if (carReview.value != null) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        if (carReview.value == null && serverError.value == null) {
+            Spinner()
+        } else if (carReview.value != null) {
 
-        val prosText: String = createBulletPoints(carReview.value!!.prosList)
-        val consText: String = createBulletPoints(carReview.value!!.consList)
+            val prosText: String = createBulletPoints(carReview.value!!.prosList)
+            val consText: String = createBulletPoints(carReview.value!!.consList)
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text("המלצות בינה מלאכותית", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text("המלצות בינה מלאכותית", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+            }
+            Spacer(modifier = Modifier.height(100.dp))
+            Text(
+                "Pros:",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 5.dp)
+            )
+            Text(
+                text = prosText,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 10.dp)
+            )
+            Text(
+                "Cons:",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 5.dp)
+            )
+            Text(
+                text = consText,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 10.dp)
+            )
+        } else if (serverError.value != null) {
+            Text(
+                text = "יש בעיה עם הבאת התוכן המבוקש.",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                style = TextStyle(textDirection = TextDirection.Rtl)
+            )
+            Text(
+                text = serverError.value!!,
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
-        Spacer(modifier = Modifier.height(100.dp))
-        Text("Pros:", fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 5.dp))
-        Text(
-            text = prosText,
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(start = 10.dp)
-        )
-        Text("Cons:", fontSize = 20.sp, fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 5.dp))
-        Text(
-            text = consText,
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(start = 10.dp)
-        )
-    } else if (serverError.value != null) {
-        Text(
-            text = "יש בעיה עם הבאת התוכן המבוקש.",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1,
-            style = TextStyle(textDirection = TextDirection.Rtl)
-        )
-        Text(
-            text = serverError.value!!,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            maxLines = 1,
-            style = TextStyle(textDirection = TextDirection.Rtl)
-        )
     }
 }
 
