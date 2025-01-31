@@ -3,6 +3,9 @@ package com.tomerpacific.caridentifier.screen
 
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ParagraphStyle
@@ -105,12 +110,21 @@ fun Details(mainViewModel: MainViewModel, serverError: State<String?>) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = columnVerticalArrangement
     ) {
-
         if (carDetails.value == null && serverError.value == null) {
             Spinner()
         } else if (carDetails.value != null) {
             CarInformation(carDetails.value!!)
         } else if (serverError.value != null) {
+            Image(
+                modifier = Modifier
+                    .size(200.dp)
+                    .border(
+                        BorderStroke(1.dp, Color.Black),
+                        CircleShape
+                    ).clip(CircleShape),
+                painter = painterResource(R.drawable.broken_car),
+                contentDescription = "broken car",
+            )
             Text(text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
