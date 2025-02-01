@@ -50,7 +50,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.composable.CarDetailWithIcon
 import com.tomerpacific.caridentifier.R
-import com.tomerpacific.caridentifier.getCarManufacturer
+import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.MainViewModel
 
@@ -170,7 +170,8 @@ fun CarInformation(details: CarDetails) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            Text("${getCarManufacturer(details.manufacturerName)} ${details.commercialName.lowercase().replaceFirstChar { it.titlecase() }} ${details.trimLevel.lowercase().replaceFirstChar { it.titlecase() }} ${details.yearOfProduction}",
+            Text(
+                concatenateCarMakeAndModel(details),
                 fontSize = 20.sp)
         }
         Spacer(modifier = Modifier.height(100.dp))
