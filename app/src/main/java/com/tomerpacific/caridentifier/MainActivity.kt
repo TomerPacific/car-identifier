@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
                 MainScreen(navController, mainViewModel)
             }
             dialog(route = Screen.LicensePlateNumberInput.route) { LicensePlateNumberDialog(navController, mainViewModel) }
-            composable(route = Screen.CarDetailsScreen.route) { CarDetailsScreen(mainViewModel) }
+            composable(route = Screen.CarDetailsScreen.route) { CarDetailsScreen(mainViewModel, navController) }
             dialog(route = Screen.CameraPermission.route) { HandleCameraPermission(navController, mainViewModel) }
             composable(route = Screen.CameraPreview.route) { CameraPreview(navController) }
             dialog(route = Screen.VerifyPhoto.route + "/{imageUri}", arguments = listOf(
