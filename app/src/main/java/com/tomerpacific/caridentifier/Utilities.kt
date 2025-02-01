@@ -1,5 +1,8 @@
 package com.tomerpacific.caridentifier
 
+import com.tomerpacific.caridentifier.model.CarDetails
+import com.tomerpacific.caridentifier.model.CarReview
+
 fun getCarManufacturer(manufacturer: String): String {
     return when (manufacturer) {
         "סאאב" -> "Saab"
@@ -39,4 +42,39 @@ fun getCarManufacturer(manufacturer: String): String {
         "מיני" -> "Mini"
         else -> "Unknown Manufacturer"
     }
+}
+
+fun formatCarReviewResponse(carReview: String): CarReview {
+    val carReviewSplitIntoLines = carReview.split("\\n")
+    val prosList = mutableListOf<String>()
+    val consList = mutableListOf<String>()
+    var isInProsList = false
+    carReviewSplitIntoLines.forEach { line ->
+        if (line.isEmpty()) {
+            return@forEach
+        }
+
+        if (line.contains("Pros", true)) {
+            isInProsList = true
+            return@forEach
+        } else if (line.contains("Cons", true)) {
+            isInProsList = false
+            return@forEach
+        }
+
+        when (isInProsList) {
+            true -> prosList.add(line)
+            false -> consList.add(line)
+        }
+    }
+
+    return CarReview(prosList, consList)
+}
+
+fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
+    return "${getCarManufacturer(carDetails.manufacturerName)} ${
+        carDetails.commercialName.lowercase().replaceFirstChar { it.titlecase() }
+    } ${
+        carDetails.trimLevel.lowercase().replaceFirstChar { it.titlecase() }
+    } ${carDetails.yearOfProduction}"
 }
