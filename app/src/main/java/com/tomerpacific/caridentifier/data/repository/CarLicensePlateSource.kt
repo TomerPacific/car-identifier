@@ -12,8 +12,6 @@ import io.ktor.http.URLProtocol
 import io.ktor.http.encodedPath
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.SerializationException
-import java.nio.channels.UnresolvedAddressException
 
 class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
 
@@ -26,9 +24,7 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
                     encodedPath = "/vehicle/${licensePlateNumber}"
                 }
             }
-        } catch (e: UnresolvedAddressException) {
-            return Result.failure(e)
-        } catch (e: SerializationException) {
+        } catch (e: Exception) {
             return Result.failure(e)
         }
 
@@ -53,13 +49,20 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
                     encodedPath = "/review/${searchQuery}"
                 }
             }
-        } catch (e: UnresolvedAddressException) {
-            return Result.failure(e)
-        } catch (e: SerializationException) {
+        } catch (e: Exception) {
             return Result.failure(e)
         }
 
-        return Result.success(httpResponse.bodyAsText())
+        return when (httpResponse.status.value) {
+            in 200..299 -> {
+                Result.success(httpResponse.bodyAsText())
+            }
+
+            else -> {
+                val serverError = httpResponse.body() as ServerError
+                Result.failure(Exception(serverError.errorMsg))
+            }
+        }
     }
 
     suspend fun getCarDetails(licensePlateNumber: String): Result<CarDetails> = withContext(Dispatchers.IO) {
