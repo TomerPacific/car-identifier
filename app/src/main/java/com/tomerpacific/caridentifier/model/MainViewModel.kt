@@ -3,8 +3,9 @@ package com.tomerpacific.caridentifier.model
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
-import com.tomerpacific.caridentifier.getCarManufacturer
+import com.tomerpacific.caridentifier.formatCarReviewResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,9 +40,9 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
 
     var searchTerm: String = ""
 
-    private val _searchTermCompletionText = MutableStateFlow("")
+    private val _searchTermCompletionText = MutableStateFlow<CarReview?>(null)
 
-    val searchTermCompletionText: StateFlow<String>
+    val searchTermCompletionText: StateFlow<CarReview?>
         get() = _searchTermCompletionText
 
     init {
@@ -53,11 +54,22 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
     fun getCarDetails(licensePlateNumber: String) {
         val licensePlateNumberWithoutDashes = licensePlateNumber.replace("-", "")
         viewModelScope.launch(Dispatchers.IO) {
-            carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess { it ->
+            carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess {
                 _carDetails.value = it
-                searchTerm = "${getCarManufacturer(it.manufacturerName)} ${it.commercialName.lowercase().replaceFirstChar { it.titlecase() }} ${it.trimLevel.lowercase().replaceFirstChar { it.titlecase() }} ${it.yearOfProduction} review"
-            }.onFailure {
-                _serverError.value = it.localizedMessage
+                searchTerm = concatenateCarMakeAndModel(it)
+            }.onFailure { exception ->
+                exception.localizedMessage?.let {
+                    _serverError.value = when (it.contains("[")) {
+                        true -> {
+                            it.subSequence(
+                                0,
+                                it.indexOf("[")
+                            ).toString()
+                        }
+
+                        false -> exception.localizedMessage
+                    }
+                }
             }
         }
     }
@@ -75,16 +87,23 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
 
     fun getCarReview(searchQuery: String) {
 
-        if (_searchTermCompletionText.value.isNotEmpty()) {
+        if (_searchTermCompletionText.value != null) {
             return
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            carDetailsRepository.getCarReview(searchQuery).onSuccess {
-                _searchTermCompletionText.value = it
+            carDetailsRepository.getCarReview(searchQuery)
+                .onSuccess {
+                _searchTermCompletionText.value = formatCarReviewResponse(it)
             }.onFailure {
                 _serverError.value = it.localizedMessage
             }
         }
+    }
+
+    fun resetData() {
+        _carDetails.value = null
+        _serverError.value = null
+        _searchTermCompletionText.value = null
     }
 }
