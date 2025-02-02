@@ -289,9 +289,21 @@ fun Recommendation(mainViewModel: MainViewModel, serverError: State<String?>) {
 
     val carReview = mainViewModel.searchTermCompletionText.collectAsState()
 
+    val columnHorizontalAlignment: Alignment.Horizontal = when (carReview.value) {
+        null -> Alignment.CenterHorizontally
+        else -> Alignment.Start
+    }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Text("המלצות בינה מלאכותית", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = columnHorizontalAlignment,
         verticalArrangement = Arrangement.Center
     ) {
         if (carReview.value == null && serverError.value == null) {
@@ -301,34 +313,27 @@ fun Recommendation(mainViewModel: MainViewModel, serverError: State<String?>) {
             val prosText: String = createBulletPoints(carReview.value!!.prosList)
             val consText: String = createBulletPoints(carReview.value!!.consList)
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text("המלצות בינה מלאכותית", fontSize = 25.sp, fontWeight = FontWeight.Bold)
-            }
-            Spacer(modifier = Modifier.height(100.dp))
             Text(
                 "Pros:",
-                fontSize = 20.sp,
+                fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(start = 5.dp)
             )
             Text(
                 text = prosText,
-                fontSize = 15.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(start = 10.dp)
             )
             Text(
                 "Cons:",
-                fontSize = 20.sp,
+                fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(start = 5.dp)
             )
             Text(
                 text = consText,
-                fontSize = 15.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(start = 10.dp)
             )
