@@ -13,6 +13,8 @@ import io.ktor.http.encodedPath
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+
+private const val ENDPOINT = "car-license-number-fetcher.onrender.com"
 class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
 
     private suspend fun HttpClient.getCarDetails(licensePlateNumber: String): Result<CarDetails> {
@@ -20,7 +22,7 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
             get {
                 url {
                     protocol = URLProtocol.HTTPS
-                    host = "car-license-number-fetcher.onrender.com"
+                    host = ENDPOINT
                     encodedPath = "/vehicle/${licensePlateNumber}"
                 }
             }
@@ -45,7 +47,7 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
             get {
                 url {
                     protocol = URLProtocol.HTTPS
-                    host = "car-license-number-fetcher.onrender.com"
+                    host = ENDPOINT
                     encodedPath = "/review/${searchQuery}"
                 }
             }
