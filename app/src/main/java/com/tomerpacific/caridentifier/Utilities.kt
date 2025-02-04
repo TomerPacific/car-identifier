@@ -8,7 +8,7 @@ fun getCarManufacturer(manufacturer: String): String {
         "סאאב" -> "Saab"
         "סאנגיונג" -> "Sangyong"
         "טויוטה" -> "Toyota"
-        "מאזדה" -> "Mazda"
+        "מזדה" -> "Mazda"
         "יונדאי" -> "Hyundai"
         "קיה" -> "Kia"
         "ניסאן" -> "Nissan"
