@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -294,34 +296,37 @@ fun Recommendation(mainViewModel: MainViewModel, serverError: State<String?>) {
         else -> Alignment.Start
     }
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Text("המלצות בינה מלאכותית", fontSize = 25.sp, fontWeight = FontWeight.Bold)
-    }
-    Spacer(modifier = Modifier.size(20.dp))
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Image(
-            modifier = Modifier
-                .size(200.dp)
-                .border(
-                    BorderStroke(1.dp, Color.Black),
-                    CircleShape
-                )
-                .clip(CircleShape),
-            painter = painterResource(R.drawable.car_advice),
-            contentDescription = "mechanic in garage",
-        )
-    }
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = columnHorizontalAlignment,
         verticalArrangement = Arrangement.Center
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text("המלצות בינה מלאכותית", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+        }
+        Spacer(modifier = Modifier.size(20.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Image(
+                modifier = Modifier
+                    .size(200.dp)
+                    .border(
+                        BorderStroke(1.dp, Color.Black),
+                        CircleShape
+                    )
+                    .clip(CircleShape),
+                painter = painterResource(R.drawable.car_advice),
+                contentDescription = "mechanic in garage",
+            )
+        }
+
         if (carReview.value == null && serverError.value == null) {
             Spinner()
         } else if (carReview.value != null) {
