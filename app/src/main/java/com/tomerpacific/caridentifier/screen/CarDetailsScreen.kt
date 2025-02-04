@@ -339,7 +339,7 @@ fun Recommendation(mainViewModel: MainViewModel, serverError: State<String?>) {
                 "Pros:",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 5.dp)
+                modifier = Modifier.padding(start = 5.dp).align(Alignment.Start)
             )
             Text(
                 text = prosText,
@@ -351,7 +351,7 @@ fun Recommendation(mainViewModel: MainViewModel, serverError: State<String?>) {
                 "Cons:",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 5.dp)
+                modifier = Modifier.padding(start = 5.dp).align(Alignment.Start)
             )
             Text(
                 text = consText,
