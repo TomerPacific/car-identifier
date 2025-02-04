@@ -45,7 +45,7 @@ fun getCarManufacturer(manufacturer: String): String {
 }
 
 fun formatCarReviewResponse(carReview: String): CarReview {
-    val carReviewSplitIntoLines = carReview.split("\\n")
+    val carReviewSplitIntoLines = carReview.removePrefix("\"").removeSuffix("\"").split("\\n")
     val prosList = mutableListOf<String>()
     val consList = mutableListOf<String>()
     var isInProsList = false
