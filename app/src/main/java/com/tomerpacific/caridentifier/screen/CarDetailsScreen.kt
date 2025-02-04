@@ -291,49 +291,50 @@ fun Recommendation(mainViewModel: MainViewModel, serverError: State<String?>) {
 
     val carReview = mainViewModel.searchTermCompletionText.collectAsState()
 
-    val columnHorizontalAlignment: Alignment.Horizontal = when (carReview.value) {
-        null -> Alignment.CenterHorizontally
-        else -> Alignment.Start
+    val columnVerticalArrangement: Arrangement.Vertical = when (carReview.value) {
+        null -> Arrangement.Center
+        else -> Arrangement.Top
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
-        horizontalAlignment = columnHorizontalAlignment,
-        verticalArrangement = Arrangement.Center
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = columnVerticalArrangement
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text("המלצות בינה מלאכותית", fontSize = 25.sp, fontWeight = FontWeight.Bold)
-        }
-        Spacer(modifier = Modifier.size(20.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Image(
-                modifier = Modifier
-                    .size(200.dp)
-                    .border(
-                        BorderStroke(1.dp, Color.Black),
-                        CircleShape
-                    )
-                    .clip(CircleShape),
-                painter = painterResource(R.drawable.car_advice),
-                contentDescription = "mechanic in garage",
-            )
-        }
-
         if (carReview.value == null && serverError.value == null) {
-            Spinner()
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Spinner()
+            }
         } else if (carReview.value != null) {
 
             val prosText: String = createBulletPoints(carReview.value!!.prosList)
             val consText: String = createBulletPoints(carReview.value!!.consList)
 
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text("המלצות בינה מלאכותית", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+            }
+            Spacer(modifier = Modifier.size(20.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    modifier = Modifier
+                        .size(200.dp)
+                        .border(
+                            BorderStroke(1.dp, Color.Black),
+                            CircleShape
+                        )
+                        .clip(CircleShape),
+                    painter = painterResource(R.drawable.car_advice),
+                    contentDescription = "mechanic in garage",
+                )
+            }
             Text(
                 "Pros:",
                 fontSize = 25.sp,
@@ -359,6 +360,7 @@ fun Recommendation(mainViewModel: MainViewModel, serverError: State<String?>) {
                 modifier = Modifier.padding(start = 10.dp)
             )
         } else if (serverError.value != null) {
+            Spacer(modifier = Modifier.size(20.dp))
             Text(
                 text = "יש בעיה עם הבאת התוכן המבוקש.",
                 fontSize = 20.sp,
