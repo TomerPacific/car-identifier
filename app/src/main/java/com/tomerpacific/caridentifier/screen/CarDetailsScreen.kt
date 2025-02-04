@@ -300,7 +300,23 @@ fun Recommendation(mainViewModel: MainViewModel, serverError: State<String?>) {
     ) {
         Text("המלצות בינה מלאכותית", fontSize = 25.sp, fontWeight = FontWeight.Bold)
     }
-
+    Spacer(modifier = Modifier.size(20.dp))
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Image(
+            modifier = Modifier
+                .size(200.dp)
+                .border(
+                    BorderStroke(1.dp, Color.Black),
+                    CircleShape
+                )
+                .clip(CircleShape),
+            painter = painterResource(R.drawable.car_advice),
+            contentDescription = "mechanic in garage",
+        )
+    }
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = columnHorizontalAlignment,
