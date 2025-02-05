@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.model.MainViewModel
-import com.tomerpacific.caridentifier.screen.Spinner
 
 @Composable
 fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {

@@ -32,7 +32,6 @@ import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.MainViewModel
-import com.tomerpacific.caridentifier.screen.Spinner
 
 @Composable
 fun Details(mainViewModel: MainViewModel, serverError: State<String?>) {
