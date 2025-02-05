@@ -51,6 +51,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.composable.Details
+import com.tomerpacific.caridentifier.composable.Recommendation
 import com.tomerpacific.caridentifier.composable.Reviews
 import com.tomerpacific.caridentifier.model.MainViewModel
 
@@ -110,108 +111,4 @@ fun Spinner() {
         color = MaterialTheme.colorScheme.secondary,
         trackColor = MaterialTheme.colorScheme.surfaceVariant,
     )
-}
-
-@Composable
-fun Recommendation(mainViewModel: MainViewModel, serverError: State<String?>) {
-
-    val carReview = mainViewModel.searchTermCompletionText.collectAsState()
-
-    val columnVerticalArrangement: Arrangement.Vertical = when (carReview.value) {
-        null -> Arrangement.Center
-        else -> Arrangement.Top
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = columnVerticalArrangement
-    ) {
-        if (carReview.value == null && serverError.value == null) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                Spinner()
-            }
-        } else if (carReview.value != null) {
-
-            val prosText: String = createBulletPoints(carReview.value!!.prosList)
-            val consText: String = createBulletPoints(carReview.value!!.consList)
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text("המלצות בינה מלאכותית", fontSize = 25.sp, fontWeight = FontWeight.Bold)
-            }
-            Spacer(modifier = Modifier.size(20.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Image(
-                    modifier = Modifier
-                        .size(200.dp)
-                        .border(
-                            BorderStroke(1.dp, Color.Black),
-                            CircleShape
-                        )
-                        .clip(CircleShape),
-                    painter = painterResource(R.drawable.car_advice),
-                    contentDescription = "mechanic in garage",
-                )
-            }
-            Text(
-                "Pros:",
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 5.dp).align(Alignment.Start)
-            )
-            Text(
-                text = prosText,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 10.dp)
-            )
-            Text(
-                "Cons:",
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 5.dp).align(Alignment.Start)
-            )
-            Text(
-                text = consText,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 10.dp)
-            )
-        } else if (serverError.value != null) {
-            Spacer(modifier = Modifier.size(20.dp))
-            Text(
-                text = "יש בעיה עם הבאת התוכן המבוקש.",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                style = TextStyle(textDirection = TextDirection.Rtl)
-            )
-            Text(
-                text = serverError.value!!,
-                textAlign = TextAlign.Center,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-    }
-}
-
-fun createBulletPoints(list: List<String>): String {
-    val paragraphStyle = ParagraphStyle(textIndent = TextIndent(restLine = 12.sp))
-    return buildAnnotatedString {
-        list.forEach {
-            withStyle(style = paragraphStyle) {
-                append(it)
-                append("\n")
-            }
-        }
-    }.text
 }
