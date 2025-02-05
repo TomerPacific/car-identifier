@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -80,21 +81,31 @@ fun Details(mainViewModel: MainViewModel, serverError: State<String?>) {
 @Composable
 fun CarInformation(details: CarDetails) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Text("פרטי הרכב", fontSize = 25.sp, fontWeight = FontWeight.Bold)
-    }
-    Spacer(modifier = Modifier.height(20.dp))
-    Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
         horizontalArrangement = Arrangement.Center
     ) {
         Text(
             concatenateCarMakeAndModel(details),
-            fontSize = 20.sp)
+            fontSize = 25.sp, fontWeight = FontWeight.Bold)
     }
-    Spacer(modifier = Modifier.height(100.dp))
+    Spacer(modifier = Modifier.height(50.dp))
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Image(
+            modifier = Modifier
+                .size(250.dp)
+                .border(
+                    BorderStroke(1.dp, Color.Black),
+                    CircleShape
+                )
+                .clip(CircleShape),
+            painter = painterResource(R.drawable.car_display),
+            contentDescription = "mechanic in garage",
+        )
+    }
+    Spacer(modifier = Modifier.height(50.dp))
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
