@@ -51,6 +51,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.composable.Details
+import com.tomerpacific.caridentifier.composable.Reviews
 import com.tomerpacific.caridentifier.model.MainViewModel
 
 @Composable
@@ -109,45 +110,6 @@ fun Spinner() {
         color = MaterialTheme.colorScheme.secondary,
         trackColor = MaterialTheme.colorScheme.surfaceVariant,
     )
-}
-
-
-
-@Composable
-fun Reviews(searchTerm: String, serverError: State<String?>) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        if (serverError.value != null) {
-            Text(
-                text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                style = TextStyle(textDirection = TextDirection.Rtl)
-            )
-            Text(
-                text = serverError.value!!,
-                textAlign = TextAlign.Center,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-        } else {
-            AndroidView(factory = {
-                WebView(it).apply {
-                    webViewClient = WebViewClient()
-                    settings.javaScriptEnabled = true
-                    settings.loadWithOverviewMode = true
-                    settings.useWideViewPort = true
-                    settings.setSupportZoom(true)
-                }
-            }, update = {
-                it.loadUrl("https://www.youtube.com/results?search_query=$searchTerm Review")
-            })
-        }
-    }
 }
 
 @Composable
