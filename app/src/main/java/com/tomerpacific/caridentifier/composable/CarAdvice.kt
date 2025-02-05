@@ -38,7 +38,7 @@ import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.screen.Spinner
 
 @Composable
-fun Recommendation(mainViewModel: MainViewModel, serverError: State<String?>) {
+fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {
 
     val carReview = mainViewModel.searchTermCompletionText.collectAsState()
 
