@@ -110,11 +110,16 @@ fun VerifyPhotoDialog(imageUri: Uri,
 
 private fun getLicensePlateNumberFromImageText(text: Text): String? {
     for (block in text.textBlocks) {
-        val blockText = block.text
-        if (blockText.contains("-")) {
+        var blockText = block.text
+        if (isLicensePlate(blockText)) {
+            blockText = blockText.replace(":", "-")
             return blockText
         }
     }
 
     return null
+}
+
+private fun isLicensePlate(text: String): Boolean {
+    return (text.length in 9..10 && text.contains("-"))
 }
