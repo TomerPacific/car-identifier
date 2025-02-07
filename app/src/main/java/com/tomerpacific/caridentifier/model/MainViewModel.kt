@@ -1,6 +1,9 @@
 package com.tomerpacific.caridentifier.model
 
+import android.content.Context
 import android.content.SharedPreferences
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
@@ -45,18 +48,23 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
     val searchTermCompletionText: StateFlow<CarReview?>
         get() = _searchTermCompletionText
 
+    private val _webView = MutableStateFlow<WebView?>(null)
+    val webView: StateFlow<WebView?>
+        get() = _webView
+
     init {
         _didRequestCameraPermission.value =
             _sharedPreferences.getBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, false)
     }
 
 
-    fun getCarDetails(licensePlateNumber: String) {
+    fun getCarDetails( context: Context, licensePlateNumber: String) {
         val licensePlateNumberWithoutDashes = licensePlateNumber.replace("-", "")
         viewModelScope.launch(Dispatchers.IO) {
             carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess {
                 _carDetails.value = it
                 searchTerm = concatenateCarMakeAndModel(it)
+                preloadWebView(context)
             }.onFailure { exception ->
                 exception.localizedMessage?.let {
                     _serverError.value = when (it.contains("[")) {
@@ -105,5 +113,25 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
         _carDetails.value = null
         _serverError.value = null
         _searchTermCompletionText.value = null
+    }
+
+    private fun preloadWebView(context: Context) {
+
+
+        when (webView.value) {
+            null -> {
+                viewModelScope.launch(Dispatchers.Main) {
+                    _webView.value = WebView(context).apply {
+                        webViewClient = WebViewClient()
+                        settings.javaScriptEnabled = true
+                        settings.loadWithOverviewMode = true
+                        settings.useWideViewPort = true
+                        settings.setSupportZoom(true)
+                        loadUrl("https://www.youtube.com/results?search_query=$searchTerm Review")
+                    }
+                }
+            }
+        }
+
     }
 }
