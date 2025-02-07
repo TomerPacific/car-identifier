@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
@@ -64,6 +65,8 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
     var isLicensePlateLengthLimitReached by remember {
         mutableStateOf(false)
     }
+
+    val context = LocalContext.current
 
     AlertDialog(
         onDismissRequest = {
@@ -162,7 +165,7 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
             TextButton(
                 onClick = {
                     if (isLicensePlateValid(licensePlateNumberState.text, validLicensePlatePattern)) {
-                        mainViewModel.getCarDetails(licensePlateNumberState.text)
+                        mainViewModel.getCarDetails(context, licensePlateNumberState.text)
                         navController.navigate(Screen.CarDetailsScreen.route)
                     }
                 },

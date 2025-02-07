@@ -76,7 +76,7 @@ fun VerifyPhotoDialog(imageUri: Uri,
                         .addOnSuccessListener { visionText ->
                             val licensePlateNumber  = getLicensePlateNumberFromImageText(visionText)
                             licensePlateNumber?.let {
-                                mainViewModel.getCarDetails(it)
+                                mainViewModel.getCarDetails(context, it)
                                 navController.navigate(Screen.CarDetailsScreen.route)
                             } ?: navController.popBackStack()
                         }
