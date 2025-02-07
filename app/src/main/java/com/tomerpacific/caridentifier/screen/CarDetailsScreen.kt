@@ -49,7 +49,7 @@ fun CarDetailsScreen(mainViewModel: MainViewModel, navController: NavController)
                             1 -> Icon(painterResource(id = R.drawable.ic_reviews), contentDescription = "reviews")
                             2 -> Icon(painterResource(
                                 id = R.drawable.ic_chatgpt),
-                                contentDescription = "chatgpt",
+                                contentDescription = "ai",
                                 modifier = Modifier.size(40.dp))
                         }
                     }
@@ -58,15 +58,15 @@ fun CarDetailsScreen(mainViewModel: MainViewModel, navController: NavController)
         }
         when (tabIndex) {
             0 -> Details(mainViewModel, serverError)
-            1 -> Reviews(searchTerm, serverError)
+            1 -> Reviews(mainViewModel, serverError)
             2 -> {
-                if (serverError.value == null) {
-                    mainViewModel.getCarReview(searchTerm)
-                }
-                Advice(mainViewModel, serverError)
+                    if (serverError.value == null) {
+                        mainViewModel.getCarReview(searchTerm)
+                     }
+                    Advice(mainViewModel, serverError)
+                 }
             }
         }
-    }
     BackHandler {
         navController.navigateUp()
         mainViewModel.resetData()
