@@ -41,6 +41,8 @@ fun CameraPreview(navController: NavController) {
         LifecycleCameraController(context).apply {
             bindToLifecycle(lifecycleOwner)
         }
+    }.apply {
+        isTapToFocusEnabled = true
     }
 
     Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize()) {
