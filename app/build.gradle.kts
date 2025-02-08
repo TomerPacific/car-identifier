@@ -73,6 +73,7 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:1.4.1")
     implementation("io.coil-kt:coil-compose:2.2.2")
     implementation("com.google.mlkit:text-recognition:16.0.1")
+    implementation("com.airbnb.android:lottie-compose:6.6.2")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
