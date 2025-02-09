@@ -24,13 +24,16 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.CameraFileUtils.takePicture
 import com.tomerpacific.caridentifier.R
+import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
 @Composable
-fun CameraPreview(navController: NavController) {
+fun CameraPreview(navController: NavController, mainViewModel: MainViewModel) {
+
+    mainViewModel.resetData()
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
