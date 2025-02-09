@@ -142,7 +142,7 @@ fun CarInformation(details: CarDetails) {
     ) {
         Icon(
             painterResource(id = R.drawable.ic_shield), "Safety Icon",
-            tint = Color(0, 255, 0),
+            tint = Color(50, 168, 82),
             modifier = Modifier.fillMaxSize()
         )
     }
