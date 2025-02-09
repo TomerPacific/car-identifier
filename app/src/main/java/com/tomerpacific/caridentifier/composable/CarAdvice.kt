@@ -55,7 +55,7 @@ fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {
     ) {
         if (carReview.value == null && serverError.value == null) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                AdviceLoaderAnimation()
+                LoaderAnimation(R.raw.truck_loading_animation)
             }
         } else if (carReview.value != null) {
 

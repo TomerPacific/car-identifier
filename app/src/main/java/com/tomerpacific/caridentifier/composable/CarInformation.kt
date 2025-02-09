@@ -48,7 +48,7 @@ fun Details(mainViewModel: MainViewModel, serverError: State<String?>) {
         verticalArrangement = columnVerticalArrangement
     ) {
         if (carDetails.value == null && serverError.value == null) {
-            MainLoaderAnimation()
+            LoaderAnimation(R.raw.license_plate_scan_animation)
         } else if (carDetails.value != null) {
             CarInformation(carDetails.value!!)
         } else if (serverError.value != null) {
