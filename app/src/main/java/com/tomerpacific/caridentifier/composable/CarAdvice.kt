@@ -55,7 +55,7 @@ fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {
     ) {
         if (carReview.value == null && serverError.value == null) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                Spinner()
+                AdviceLoaderAnimation()
             }
         } else if (carReview.value != null) {
 
@@ -89,7 +89,9 @@ fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {
                 "Pros:",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 5.dp).align(Alignment.Start)
+                modifier = Modifier
+                    .padding(start = 5.dp)
+                    .align(Alignment.Start)
             )
             Text(
                 text = prosText,
@@ -101,7 +103,9 @@ fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {
                 "Cons:",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 5.dp).align(Alignment.Start)
+                modifier = Modifier
+                    .padding(start = 5.dp)
+                    .align(Alignment.Start)
             )
             Text(
                 text = consText,
