@@ -48,7 +48,7 @@ fun Details(mainViewModel: MainViewModel, serverError: State<String?>) {
         verticalArrangement = columnVerticalArrangement
     ) {
         if (carDetails.value == null && serverError.value == null) {
-            Spinner()
+            LoaderAnimation(R.raw.license_plate_scan_animation)
         } else if (carDetails.value != null) {
             CarInformation(carDetails.value!!)
         } else if (serverError.value != null) {
@@ -81,7 +81,9 @@ fun Details(mainViewModel: MainViewModel, serverError: State<String?>) {
 @Composable
 fun CarInformation(details: CarDetails) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp),
         horizontalArrangement = Arrangement.Center
     ) {
         Text(
