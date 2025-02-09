@@ -9,8 +9,15 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.tomerpacific.caridentifier.R
 
 @Composable
-fun LoaderAnimation() {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.car_animation_1))
+fun MainLoaderAnimation() {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.license_plate_scan_animation))
+    LottieAnimation(composition,
+        iterations =  LottieConstants.IterateForever)
+}
+
+@Composable
+fun AdviceLoaderAnimation() {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.truck_loading_animation))
     LottieAnimation(composition,
         iterations =  LottieConstants.IterateForever)
 }
