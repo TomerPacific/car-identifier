@@ -46,6 +46,8 @@ import com.tomerpacific.caridentifier.model.Screen
 @Composable
 fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainViewModel) {
 
+    mainViewModel.resetData()
+
     val focusRequester = remember {
         FocusRequester()
     }
