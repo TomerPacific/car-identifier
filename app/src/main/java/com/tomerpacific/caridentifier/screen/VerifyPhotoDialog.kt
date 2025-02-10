@@ -1,9 +1,7 @@
 package com.tomerpacific.caridentifier.screen
 
 import android.net.Uri
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -57,11 +55,6 @@ fun VerifyPhotoDialog(imageUri: Uri,
                         .build(),
                     contentDescription = "icon",
                     contentScale = ContentScale.Inside,
-                    modifier = Modifier
-                        .size(300.dp)
-                        .border(
-                            BorderStroke(3.dp, Color.Black)
-                        )
                 )
                 Spacer(modifier = Modifier.size(20.dp))
                 Text(text = "Proceed with this image?", fontSize = 20.sp)
