@@ -68,7 +68,7 @@ fun CarDetailsScreen(mainViewModel: MainViewModel, navController: NavController)
             }
         }
     BackHandler {
-        navController.navigateUp()
+        navController.popBackStack()
     }
 
 }
