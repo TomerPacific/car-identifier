@@ -1,7 +1,6 @@
 package com.tomerpacific.caridentifier.screen
 
 import android.net.Uri
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,9 +10,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,7 +61,7 @@ fun VerifyPhotoDialog(imageUri: Uri,
             }
         },
         confirmButton = {
-            TextButton(onClick = {
+            Button(onClick = {
                 val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
                 try {
                     val image = InputImage.fromFilePath(context, imageUri)
@@ -79,19 +79,16 @@ fun VerifyPhotoDialog(imageUri: Uri,
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
-            }, modifier = Modifier.background(Color.Green)) {
-                Text(text = "Yes")
-                Icon(
-                    imageVector = Icons.Default.Done,
+            }, colors = ButtonDefaults.buttonColors(containerColor = Color(50, 168, 82))) {
+                Icon(imageVector = Icons.Default.Done,
                     contentDescription = "Yes"
                 )
             }
         },
         dismissButton = {
-            TextButton(onClick = {
+            Button(onClick = {
                 navController.popBackStack()
-            }, modifier = Modifier.background(Color.Red)) {
-                Text(text = "No")
+            }, colors = ButtonDefaults.buttonColors(containerColor = Color(212, 37, 11))) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "No"
