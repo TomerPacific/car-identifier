@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -59,7 +60,7 @@ fun VerifyPhotoDialog(imageUri: Uri,
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Proceed with this image?", fontSize = 20.sp)
+                Text(text = "Proceed with this image?", fontSize = 25.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.size(20.dp))
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
