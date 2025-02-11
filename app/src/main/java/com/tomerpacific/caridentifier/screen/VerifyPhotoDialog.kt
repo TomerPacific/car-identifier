@@ -35,6 +35,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.tomerpacific.caridentifier.isLicensePlateNumberValid
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import java.io.IOException
@@ -121,15 +122,11 @@ fun VerifyPhotoDialog(imageUri: Uri,
 private fun getLicensePlateNumberFromImageText(text: Text): String? {
     for (block in text.textBlocks) {
         var blockText = block.text
-        if (isLicensePlate(blockText)) {
+        if (isLicensePlateNumberValid(blockText)) {
             blockText = blockText.replace(":", "-")
             return blockText
         }
     }
 
     return null
-}
-
-private fun isLicensePlate(text: String): Boolean {
-    return (text.length in 9..10 && text.contains("-"))
 }

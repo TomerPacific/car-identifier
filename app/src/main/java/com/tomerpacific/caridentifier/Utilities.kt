@@ -3,6 +3,10 @@ package com.tomerpacific.caridentifier
 import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.CarReview
 
+
+private const val PROS = "Pros"
+private const val CONS = "Cons"
+
 fun getCarManufacturer(manufacturer: String): String {
     return when (manufacturer) {
         "סאאב" -> "Saab"
@@ -54,10 +58,10 @@ fun formatCarReviewResponse(carReview: String): CarReview {
             return@forEach
         }
 
-        if (line.contains("Pros", true)) {
+        if (line.contains(PROS, true)) {
             isInProsList = true
             return@forEach
-        } else if (line.contains("Cons", true)) {
+        } else if (line.contains(CONS, true)) {
             isInProsList = false
             return@forEach
         }
@@ -77,4 +81,15 @@ fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
     } ${
         carDetails.trimLevel.lowercase().replaceFirstChar { it.titlecase() }
     } ${carDetails.yearOfProduction}"
+}
+
+fun isLicensePlateNumberValid(licensePlateNumber: String, pattern: Regex? = null): Boolean {
+    return when (pattern) {
+        null -> {
+            licensePlateNumber.length in 9..10 && licensePlateNumber.contains("-")
+        }
+        else -> {
+            licensePlateNumber.length in 9..10 && pattern.matches(licensePlateNumber)
+        }
+    }
 }
