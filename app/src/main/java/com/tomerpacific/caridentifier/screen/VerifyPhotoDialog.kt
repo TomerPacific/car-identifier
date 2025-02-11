@@ -60,7 +60,7 @@ fun VerifyPhotoDialog(imageUri: Uri,
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Proceed with this image?", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+                Text(text = "Proceed with this image?", fontSize = 22.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.size(20.dp))
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
