@@ -81,7 +81,7 @@ fun MainScreen(navController: NavController,
                 }
                 Row(modifier = Modifier
                     .fillMaxWidth()
-                    .height(intrinsicSize = IntrinsicSize.Max),
+                    .height(intrinsicSize = IntrinsicSize.Max).padding(end = 6.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.End) {
                     Text(
