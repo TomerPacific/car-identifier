@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -21,14 +22,15 @@ import com.tomerpacific.caridentifier.screen.VerifyPhotoDialog
 import com.tomerpacific.caridentifier.screen.LicensePlateNumberDialog
 import com.tomerpacific.caridentifier.screen.MainScreen
 
-
 const val IMAGE_URI_KEY = "imageUri"
-class MainActivity : ComponentActivity() {
 
+class MainActivity : ComponentActivity() {
 
     private lateinit var mainViewModel: MainViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         val sharedPreferences = getPreferences(MODE_PRIVATE)
 
