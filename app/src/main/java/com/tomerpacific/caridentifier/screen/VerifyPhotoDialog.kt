@@ -35,11 +35,14 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.tomerpacific.caridentifier.ERROR_KEY
 import com.tomerpacific.caridentifier.isLicensePlateNumberValid
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import java.io.IOException
 
+
+const val NO_LICENSE_PLATE_ERROR = "License plate number not found. Please take a photo which contains a license plate number."
 
 @Composable
 fun VerifyPhotoDialog(imageUri: Uri,
@@ -97,7 +100,8 @@ fun VerifyPhotoDialog(imageUri: Uri,
                                         getLicensePlateNumberFromImageText(visionText)
                                     when (licensePlateNumber) {
                                         null -> {
-                                            navController.previousBackStackEntry?.savedStateHandle?.set("error", "License plate number not found. Please take a photo which contains a license plate number.")
+                                            navController.previousBackStackEntry?.savedStateHandle?.set(
+                                                ERROR_KEY, NO_LICENSE_PLATE_ERROR)
                                             navController.popBackStack()
                                             return@addOnSuccessListener
                                         }
@@ -109,7 +113,8 @@ fun VerifyPhotoDialog(imageUri: Uri,
                                     }
                                 }
                                 .addOnFailureListener { _ ->
-                                    navController.previousBackStackEntry?.savedStateHandle?.set("error", "License plate number not found. Please take a photo which contains a license plate number.")
+                                    navController.previousBackStackEntry?.savedStateHandle?.set(ERROR_KEY,
+                                        NO_LICENSE_PLATE_ERROR)
                                     navController.popBackStack()
                                 }
                         } catch (e: IOException) {

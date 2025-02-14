@@ -28,6 +28,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.CameraFileUtils.takePicture
+import com.tomerpacific.caridentifier.ERROR_KEY
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
@@ -40,7 +41,8 @@ fun CameraPreview(navController: NavController, mainViewModel: MainViewModel) {
 
     mainViewModel.resetData()
 
-    val error = navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<String>("error", "")?.collectAsState()
+    val error = navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<String>(
+        ERROR_KEY, "")?.collectAsState()
 
     error?.value?.let {errorMsg ->
         if (errorMsg.isNotEmpty()) {

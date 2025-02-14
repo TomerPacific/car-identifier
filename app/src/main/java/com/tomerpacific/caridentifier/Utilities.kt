@@ -4,6 +4,7 @@ import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.CarReview
 
 
+const val ERROR_KEY = "error"
 private const val PROS = "Pros"
 private const val CONS = "Cons"
 
