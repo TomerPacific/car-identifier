@@ -1,6 +1,7 @@
 package com.tomerpacific.caridentifier.screen
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -101,10 +102,10 @@ fun VerifyPhotoDialog(imageUri: Uri,
                                     } ?: navController.popBackStack()
                                 }
                                 .addOnFailureListener { e ->
-                                    e.printStackTrace()
+                                    navController.popBackStack()
                                 }
                         } catch (e: IOException) {
-                            e.printStackTrace()
+                            navController.popBackStack()
                         }
                     }, colors = ButtonDefaults.buttonColors(containerColor = Color(50, 168, 82)),
                         modifier = Modifier.padding(end = 6.dp)) {
