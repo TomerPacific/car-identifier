@@ -3,6 +3,7 @@ package com.tomerpacific.caridentifier.composable
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -37,6 +39,14 @@ import java.util.concurrent.Executors
 fun CameraPreview(navController: NavController, mainViewModel: MainViewModel) {
 
     mainViewModel.resetData()
+
+    val error = navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<String>("error", "")?.collectAsState()
+
+    error?.value?.let {errorMsg ->
+        if (errorMsg.isNotEmpty()) {
+            Toast.makeText(LocalContext.current, errorMsg, Toast.LENGTH_LONG).show()
+        }
+    }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current

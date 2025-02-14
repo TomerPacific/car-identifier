@@ -1,7 +1,6 @@
 package com.tomerpacific.caridentifier.screen
 
 import android.net.Uri
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -96,12 +95,21 @@ fun VerifyPhotoDialog(imageUri: Uri,
                                 .addOnSuccessListener { visionText ->
                                     val licensePlateNumber =
                                         getLicensePlateNumberFromImageText(visionText)
-                                    licensePlateNumber?.let {
-                                        mainViewModel.getCarDetails(context, it)
-                                        navController.navigate(Screen.CarDetailsScreen.route)
-                                    } ?: navController.popBackStack()
+                                    when (licensePlateNumber) {
+                                        null -> {
+                                            navController.previousBackStackEntry?.savedStateHandle?.set("error", "License plate number not found. Please take a photo which contains a license plate number.")
+                                            navController.popBackStack()
+                                            return@addOnSuccessListener
+                                        }
+                                        else -> {
+                                            mainViewModel.getCarDetails(context, licensePlateNumber)
+                                            navController.navigate(Screen.CarDetailsScreen.route)
+                                            return@addOnSuccessListener
+                                        }
+                                    }
                                 }
-                                .addOnFailureListener { e ->
+                                .addOnFailureListener { _ ->
+                                    navController.previousBackStackEntry?.savedStateHandle?.set("error", "License plate number not found. Please take a photo which contains a license plate number.")
                                     navController.popBackStack()
                                 }
                         } catch (e: IOException) {
