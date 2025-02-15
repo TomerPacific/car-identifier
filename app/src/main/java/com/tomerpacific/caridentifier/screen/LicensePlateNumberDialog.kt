@@ -69,6 +69,10 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
         mutableStateOf(false)
     }
 
+    var didClickConfirmBtn by remember {
+        mutableStateOf(false)
+    }
+
     val context = LocalContext.current
 
     AlertDialog(
@@ -91,7 +95,7 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                     ),
                     value = licensePlateNumberState,
                     onValueChange = {
-
+                        didClickConfirmBtn = false
                         if (wasCharacterDeleted(it.text, licensePlateNumberState.text)) {
                             isLicensePlateLengthLimitReached = false
                             licensePlateNumberState = if (it.text.length == 9) {
@@ -135,7 +139,14 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                     supportingText = {
                         if (isLicensePlateLengthLimitReached) {
                             Text(
-                                "מספר לוחית רישוי יכול להכיל עד 10 תווים",
+                                "מספר לוחית רישוי יכול להכיל עד 8 ספרות",
+                                modifier = Modifier.fillMaxWidth(),
+                                color = Color.Red
+                            )
+                        }
+                        if (didClickConfirmBtn) {
+                            Text(
+                                "מספר לוחית רישוי צריך להכיל בין 7 ל-8 ספרות",
                                 modifier = Modifier.fillMaxWidth(),
                                 color = Color.Red
                             )
@@ -181,6 +192,7 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
         confirmButton = {
             TextButton(
                 onClick = {
+                    didClickConfirmBtn = true
                     if (isLicensePlateNumberValid(
                             licensePlateNumberState.text,
                             validLicensePlatePattern
