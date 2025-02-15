@@ -10,8 +10,10 @@ import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import com.tomerpacific.caridentifier.formatCarReviewResponse
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 const val DID_REQUEST_CAMERA_PERMISSION_KEY = "didRequestCameraPermission"
@@ -51,6 +53,15 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
     private val _webView = MutableStateFlow<WebView?>(null)
     val webView: StateFlow<WebView?>
         get() = _webView
+
+    private val _snackbarEvent = MutableSharedFlow<String>()
+    val snackbarEvent = _snackbarEvent.asSharedFlow()
+
+    fun triggerSnackBarEvent(message: String) {
+        viewModelScope.launch {
+            _snackbarEvent.emit(message)
+        }
+    }
 
     init {
         _didRequestCameraPermission.value =
