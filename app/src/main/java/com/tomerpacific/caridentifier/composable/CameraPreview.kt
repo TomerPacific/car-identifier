@@ -3,18 +3,17 @@ package com.tomerpacific.caridentifier.composable
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import android.widget.Toast
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -44,12 +43,6 @@ fun CameraPreview(navController: NavController, mainViewModel: MainViewModel) {
     val error = navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<String>(
         ERROR_KEY, "")?.collectAsState()
 
-    error?.value?.let {errorMsg ->
-        if (errorMsg.isNotEmpty()) {
-            Toast.makeText(LocalContext.current, errorMsg, Toast.LENGTH_LONG).show()
-        }
-    }
-
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     val executor = remember { Executors.newSingleThreadExecutor() }
@@ -63,33 +56,53 @@ fun CameraPreview(navController: NavController, mainViewModel: MainViewModel) {
         isTapToFocusEnabled = true
     }
 
-    Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier
-        .fillMaxSize()
-        .padding(WindowInsets.navigationBars.asPaddingValues())
-    ) {
-        AndroidView(modifier = Modifier.fillMaxSize(), factory = { ctx: Context -> PreviewView(ctx).apply {
-            scaleType = PreviewView.ScaleType.FILL_START
-            implementationMode = PreviewView.ImplementationMode.COMPATIBLE
-            controller = cameraController
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }
+    ) { contentPadding ->
+
+        error?.value?.let {errorMsg ->
+            if (errorMsg.isNotEmpty()) {
+                scope.launch {
+                    snackbarHostState.showSnackbar(errorMsg)
+                }
             }
-        },
+        }
+
+        Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier
+            .fillMaxSize()
+            .padding(contentPadding)
+        ) {
+            AndroidView(modifier = Modifier.fillMaxSize(),
+                factory = {
+                        ctx: Context -> PreviewView(ctx).apply {
+                            scaleType = PreviewView.ScaleType.FILL_START
+                            implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+                            controller = cameraController
+                     }
+            },
             onRelease = {
                 cameraController.unbind()
             }
         )
-        Button(onClick = {
-            takePicture(cameraController, context, executor, { uri ->
-                coroutineScope.launch(Dispatchers.Main){
-                    navController.navigate(Screen.VerifyPhoto.route +"/${Uri.encode(uri.toString())}")
-                }
-            }, { imageCaptureException ->
-                Log.e("CameraPreview", "Error capturing image", imageCaptureException)
-                navController.popBackStack()
-            })
+            Button(onClick = {
+                takePicture(cameraController, context, executor, { uri ->
+                    coroutineScope.launch(Dispatchers.Main){
+                        navController.navigate(Screen.VerifyPhoto.route +"/${Uri.encode(uri.toString())}")
+                    }
+                }, { imageCaptureException ->
+                    Log.e("CameraPreview", "Error capturing image", imageCaptureException)
+                    navController.popBackStack()
+                })
             }, modifier = Modifier.padding(bottom = 15.dp)) {
-            Icon(painterResource(R.drawable.ic_camera),
-                contentDescription = "Capture Image",
-                modifier = Modifier.size(50.dp))
+                Icon(painterResource(R.drawable.ic_camera),
+                    contentDescription = "Capture Image",
+                    modifier = Modifier.size(50.dp))
+            }
         }
     }
 }
