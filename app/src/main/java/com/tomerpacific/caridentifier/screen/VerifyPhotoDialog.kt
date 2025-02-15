@@ -35,7 +35,6 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import com.tomerpacific.caridentifier.ERROR_KEY
 import com.tomerpacific.caridentifier.isLicensePlateNumberValid
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
@@ -100,8 +99,7 @@ fun VerifyPhotoDialog(imageUri: Uri,
                                         getLicensePlateNumberFromImageText(visionText)
                                     when (licensePlateNumber) {
                                         null -> {
-                                            navController.previousBackStackEntry?.savedStateHandle?.set(
-                                                ERROR_KEY, NO_LICENSE_PLATE_ERROR)
+                                            mainViewModel.triggerSnackBarEvent(NO_LICENSE_PLATE_ERROR)
                                             navController.popBackStack()
                                             return@addOnSuccessListener
                                         }
@@ -113,11 +111,11 @@ fun VerifyPhotoDialog(imageUri: Uri,
                                     }
                                 }
                                 .addOnFailureListener { _ ->
-                                    navController.previousBackStackEntry?.savedStateHandle?.set(ERROR_KEY,
-                                        NO_LICENSE_PLATE_ERROR)
+                                    mainViewModel.triggerSnackBarEvent(NO_LICENSE_PLATE_ERROR)
                                     navController.popBackStack()
                                 }
                         } catch (e: IOException) {
+                            mainViewModel.triggerSnackBarEvent(e.message ?: "Error processing image")
                             navController.popBackStack()
                         }
                     }, colors = ButtonDefaults.buttonColors(containerColor = Color(50, 168, 82)),
