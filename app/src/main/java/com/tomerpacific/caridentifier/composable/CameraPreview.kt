@@ -15,7 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -27,7 +27,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.CameraFileUtils.takePicture
-import com.tomerpacific.caridentifier.ERROR_KEY
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
@@ -39,9 +38,6 @@ import java.util.concurrent.Executors
 fun CameraPreview(navController: NavController, mainViewModel: MainViewModel) {
 
     mainViewModel.resetData()
-
-    val error = navController.currentBackStackEntry?.savedStateHandle?.getStateFlow<String>(
-        ERROR_KEY, "")?.collectAsState()
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -64,14 +60,14 @@ fun CameraPreview(navController: NavController, mainViewModel: MainViewModel) {
             SnackbarHost(hostState = snackbarHostState)
         }
     ) { contentPadding ->
-
-        error?.value?.let {errorMsg ->
-            if (errorMsg.isNotEmpty()) {
+        
+        LaunchedEffect(key1 = mainViewModel.snackbarEvent, block = {
+            mainViewModel.snackbarEvent.collect { message ->
                 scope.launch {
-                    snackbarHostState.showSnackbar(errorMsg)
+                    snackbarHostState.showSnackbar(message)
                 }
             }
-        }
+        })
 
         Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier
             .fillMaxSize()
