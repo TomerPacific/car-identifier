@@ -50,7 +50,7 @@ fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.Start,
         verticalArrangement = columnVerticalArrangement
     ) {
         if (carReview.value == null && serverError.value == null) {
