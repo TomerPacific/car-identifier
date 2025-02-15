@@ -128,7 +128,7 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                         )
                     },
                     placeholder = {
-                        Text("הקלד מספר לוחית רישוי")
+                        Text("?מספר לוחית רישוי", maxLines = 1)
                     },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     isError = isLicensePlateLengthLimitReached,
