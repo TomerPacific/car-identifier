@@ -6,7 +6,7 @@ class UtilitiesUnitTest {
 
     private val carManufacturerNissan = "ניסאן"
     private val carManufacturerUnknown = "משהו"
-    private val validLicensePlateNumber = "1765576"
+    private val validLicensePlateNumber = "17-655-76"
 
     @Test
     fun getCarManufacturer_correct() {
@@ -27,6 +27,6 @@ class UtilitiesUnitTest {
 
     @Test
     fun isLicensePlateValid_incorrect() {
-        assert(isLicensePlateNumberValid(""))
+        assert(!isLicensePlateNumberValid(""))
     }
 }
