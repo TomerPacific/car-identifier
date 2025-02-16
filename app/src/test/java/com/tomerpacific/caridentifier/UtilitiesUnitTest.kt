@@ -4,10 +4,19 @@ import org.junit.Test
 
 class UtilitiesUnitTest {
 
-    private val carManufacturer = "ניסאן"
+    private val carManufacturerNissan = "ניסאן"
+    private val carManufacturerUnknown = "משהו"
+
+
     @Test
     fun getCarManufacturer_correct() {
-        val translatedCarManufacturer = getCarManufacturer(carManufacturer)
+        val translatedCarManufacturer = getCarManufacturer(carManufacturerNissan)
         assert(translatedCarManufacturer == "Nissan")
+    }
+
+    @Test
+    fun getCarManufacturer_unknown() {
+        val translatedCarManufacturer = getCarManufacturer(carManufacturerUnknown)
+        assert(translatedCarManufacturer == "Unknown Manufacturer")
     }
 }
