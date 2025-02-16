@@ -12,7 +12,7 @@ android {
         applicationId = "com.tomerpacific.caridentifier"
         minSdk = 24
         targetSdk = 34
-        versionCode = 4
+        versionCode = 5
         versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
