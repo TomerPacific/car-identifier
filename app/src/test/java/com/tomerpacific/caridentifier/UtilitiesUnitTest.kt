@@ -29,4 +29,9 @@ class UtilitiesUnitTest {
     fun `should return false if license plate is not valid`() {
         assert(!isLicensePlateNumberValid(""))
     }
+
+    @Test
+    fun `should return true if license plate is valid amd matches pattern`() {
+        assert(isLicensePlateNumberValid(validLicensePlateNumber, Regex("^[0-9]{2,3}-[0-9]{2,3}-[0-9]{2,3}")))
+    }
 }
