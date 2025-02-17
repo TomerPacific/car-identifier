@@ -9,7 +9,7 @@ class UtilitiesUnitTest {
     private val validLicensePlateNumber = "17-655-76"
 
     @Test
-    fun `should return true if translated car manufacturer name is Nissan`() {
+    fun `should return true when translated car manufacturer name is Nissan`() {
         val translatedCarManufacturer = getCarManufacturer(carManufacturerNissan)
         assert(translatedCarManufacturer == "Nissan")
     }
