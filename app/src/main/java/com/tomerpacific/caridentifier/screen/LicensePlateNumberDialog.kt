@@ -39,10 +39,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.tomerpacific.caridentifier.EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES
 import com.tomerpacific.caridentifier.R
+import com.tomerpacific.caridentifier.SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES
 import com.tomerpacific.caridentifier.isLicensePlateNumberValid
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
+
+
+private val TEXT_FIELD_BACKGROUND_COLOR = Color(253, 209, 63, 255)
+private const val FIRST_DASH_INDEX = 2
+private const val SECOND_DASH_INDEX = 6
 
 @Composable
 fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainViewModel) {
@@ -88,8 +95,8 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                     textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
                     singleLine = true,
                     colors = TextFieldDefaults.colors().copy(
-                        unfocusedContainerColor = Color(253, 209, 63, 255),
-                        focusedContainerColor = Color(253, 209, 63, 255),
+                        unfocusedContainerColor = TEXT_FIELD_BACKGROUND_COLOR,
+                        focusedContainerColor = TEXT_FIELD_BACKGROUND_COLOR,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent
                     ),
@@ -98,13 +105,13 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                         didClickConfirmBtn = false
                         if (wasCharacterDeleted(it.text, licensePlateNumberState.text)) {
                             isLicensePlateLengthLimitReached = false
-                            licensePlateNumberState = if (it.text.length == 9) {
-                                val formattedText = "${it.text.substring(0, 2)}-${
+                            licensePlateNumberState = if (it.text.length == SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
+                                val formattedText = "${it.text.substring(0, FIRST_DASH_INDEX)}-${
                                     it.text.substring(
-                                        2,
+                                        FIRST_DASH_INDEX,
                                         3
                                     )
-                                }${it.text.substring(4, 6)}-${it.text.substring(7, 9)}"
+                                }${it.text.substring(4, SECOND_DASH_INDEX)}-${it.text.substring(7, SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES)}"
                                 TextFieldValue(
                                     text = formattedText,
                                     selection = TextRange(formattedText.length)
@@ -116,7 +123,7 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                         }
 
 
-                        if (it.text.length > 10) {
+                        if (it.text.length > EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
                             isLicensePlateLengthLimitReached = true
                             return@TextField
                         }
@@ -225,9 +232,11 @@ private fun wasCharacterDeleted(currentText: String, previousText: String): Bool
 
 private fun formatLicensePlateWithDashes(input: String): String {
     return when (input.length) {
-        2 -> "${input.substring(0,2)}-"
-        6 -> "${input.substring(0,2)}-${input.substring(3,6)}-"
-        in 10..11 -> "${input.substring(0,2)}${input.substring(3,4)}-${input.substring(4, 6)}-${input.substring(7, input.length)}"
+        FIRST_DASH_INDEX -> "${input.substring(0, FIRST_DASH_INDEX)}-"
+        SECOND_DASH_INDEX -> "${input.substring(0, FIRST_DASH_INDEX)}-${input.substring(3,
+            SECOND_DASH_INDEX)}-"
+        in EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES + 1 ->
+            "${input.substring(0, FIRST_DASH_INDEX)}${input.substring(3,4)}-${input.substring(4, SECOND_DASH_INDEX)}-${input.substring(7, input.length)}"
         else -> input
     }
 }
