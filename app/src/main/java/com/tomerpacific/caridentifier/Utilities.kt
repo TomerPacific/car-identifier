@@ -7,7 +7,7 @@ import com.tomerpacific.caridentifier.model.CarReview
 private const val PROS = "Pros"
 private const val CONS = "Cons"
 private const val SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES = 9
-private const val EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES = 9
+private const val EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES = 10
 
 
 fun getCarManufacturer(manufacturer: String): String {
