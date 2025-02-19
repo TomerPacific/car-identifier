@@ -6,6 +6,9 @@ import com.tomerpacific.caridentifier.model.CarReview
 
 private const val PROS = "Pros"
 private const val CONS = "Cons"
+private const val SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES = 9
+private const val EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES = 9
+
 
 fun getCarManufacturer(manufacturer: String): String {
     return when (manufacturer) {
@@ -86,10 +89,10 @@ fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
 fun isLicensePlateNumberValid(licensePlateNumber: String, pattern: Regex? = null): Boolean {
     return when (pattern) {
         null -> {
-            licensePlateNumber.length in 9..10 && licensePlateNumber.contains("-")
+            licensePlateNumber.length in SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES && licensePlateNumber.contains("-")
         }
         else -> {
-            licensePlateNumber.length in 9..10 && pattern.matches(licensePlateNumber)
+            licensePlateNumber.length in SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES && pattern.matches(licensePlateNumber)
         }
     }
 }
