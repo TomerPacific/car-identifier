@@ -44,6 +44,8 @@ import com.tomerpacific.caridentifier.isLicensePlateNumberValid
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 
+
+private val TEXT_FIELD_BACKGROUND_COLOR = Color(253, 209, 63, 255)
 @Composable
 fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainViewModel) {
 
@@ -88,8 +90,8 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                     textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
                     singleLine = true,
                     colors = TextFieldDefaults.colors().copy(
-                        unfocusedContainerColor = Color(253, 209, 63, 255),
-                        focusedContainerColor = Color(253, 209, 63, 255),
+                        unfocusedContainerColor = TEXT_FIELD_BACKGROUND_COLOR,
+                        focusedContainerColor = TEXT_FIELD_BACKGROUND_COLOR,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent
                     ),
