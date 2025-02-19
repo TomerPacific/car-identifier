@@ -46,6 +46,8 @@ import com.tomerpacific.caridentifier.model.Screen
 
 
 private val TEXT_FIELD_BACKGROUND_COLOR = Color(253, 209, 63, 255)
+private const val FIRST_DASH_INDEX = 2
+private const val SECOND_DASH_INDEX = 6
 @Composable
 fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainViewModel) {
 
@@ -101,12 +103,12 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                         if (wasCharacterDeleted(it.text, licensePlateNumberState.text)) {
                             isLicensePlateLengthLimitReached = false
                             licensePlateNumberState = if (it.text.length == 9) {
-                                val formattedText = "${it.text.substring(0, 2)}-${
+                                val formattedText = "${it.text.substring(0, FIRST_DASH_INDEX)}-${
                                     it.text.substring(
-                                        2,
+                                        FIRST_DASH_INDEX,
                                         3
                                     )
-                                }${it.text.substring(4, 6)}-${it.text.substring(7, 9)}"
+                                }${it.text.substring(4, SECOND_DASH_INDEX)}-${it.text.substring(7, 9)}"
                                 TextFieldValue(
                                     text = formattedText,
                                     selection = TextRange(formattedText.length)
@@ -227,9 +229,10 @@ private fun wasCharacterDeleted(currentText: String, previousText: String): Bool
 
 private fun formatLicensePlateWithDashes(input: String): String {
     return when (input.length) {
-        2 -> "${input.substring(0,2)}-"
-        6 -> "${input.substring(0,2)}-${input.substring(3,6)}-"
-        in 10..11 -> "${input.substring(0,2)}${input.substring(3,4)}-${input.substring(4, 6)}-${input.substring(7, input.length)}"
+        FIRST_DASH_INDEX -> "${input.substring(0, FIRST_DASH_INDEX)}-"
+        SECOND_DASH_INDEX -> "${input.substring(0, FIRST_DASH_INDEX)}-${input.substring(3,
+            SECOND_DASH_INDEX)}-"
+        in 10..11 -> "${input.substring(0, FIRST_DASH_INDEX)}${input.substring(3,4)}-${input.substring(4, SECOND_DASH_INDEX)}-${input.substring(7, input.length)}"
         else -> input
     }
 }
