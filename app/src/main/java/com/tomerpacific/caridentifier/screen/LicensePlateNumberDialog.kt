@@ -48,6 +48,8 @@ import com.tomerpacific.caridentifier.model.Screen
 private val TEXT_FIELD_BACKGROUND_COLOR = Color(253, 209, 63, 255)
 private const val FIRST_DASH_INDEX = 2
 private const val SECOND_DASH_INDEX = 6
+private const val SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES = 10
+private const val EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES = 11
 @Composable
 fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainViewModel) {
 
@@ -102,13 +104,13 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                         didClickConfirmBtn = false
                         if (wasCharacterDeleted(it.text, licensePlateNumberState.text)) {
                             isLicensePlateLengthLimitReached = false
-                            licensePlateNumberState = if (it.text.length == 9) {
+                            licensePlateNumberState = if (it.text.length == (SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES - 1)) {
                                 val formattedText = "${it.text.substring(0, FIRST_DASH_INDEX)}-${
                                     it.text.substring(
                                         FIRST_DASH_INDEX,
                                         3
                                     )
-                                }${it.text.substring(4, SECOND_DASH_INDEX)}-${it.text.substring(7, 9)}"
+                                }${it.text.substring(4, SECOND_DASH_INDEX)}-${it.text.substring(7, (SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES - 1))}"
                                 TextFieldValue(
                                     text = formattedText,
                                     selection = TextRange(formattedText.length)
@@ -120,7 +122,7 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                         }
 
 
-                        if (it.text.length > 10) {
+                        if (it.text.length > SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
                             isLicensePlateLengthLimitReached = true
                             return@TextField
                         }
@@ -232,7 +234,8 @@ private fun formatLicensePlateWithDashes(input: String): String {
         FIRST_DASH_INDEX -> "${input.substring(0, FIRST_DASH_INDEX)}-"
         SECOND_DASH_INDEX -> "${input.substring(0, FIRST_DASH_INDEX)}-${input.substring(3,
             SECOND_DASH_INDEX)}-"
-        in 10..11 -> "${input.substring(0, FIRST_DASH_INDEX)}${input.substring(3,4)}-${input.substring(4, SECOND_DASH_INDEX)}-${input.substring(7, input.length)}"
+        in SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES ->
+            "${input.substring(0, FIRST_DASH_INDEX)}${input.substring(3,4)}-${input.substring(4, SECOND_DASH_INDEX)}-${input.substring(7, input.length)}"
         else -> input
     }
 }
