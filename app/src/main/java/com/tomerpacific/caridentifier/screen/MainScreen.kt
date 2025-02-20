@@ -15,12 +15,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -41,53 +44,55 @@ fun MainScreen(navController: NavController,
     val shouldDisableButton = didRequestPermission.value && !shouldShowRationale.value
 
     CarIdentifierTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            Column(modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top) {
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 30.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center) {
-                    Text("בחר/י באפשרות לחפש פרטים בנוגע לרכב",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 25.sp,
-                        textAlign = TextAlign.Center)
-                }
-                Spacer(modifier = Modifier.size(150.dp))
-                Box(modifier = Modifier.fillMaxWidth().height(300.dp).weight(1f)) {
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        CarLicensePlateSearchOptionButton(
-                            buttonText = "חפש/י לפי תמונה",
-                            drawableId = R.drawable.license_plate,
-                            drawableContentDescription = "License Plate",
-                            navController,
-                            shouldDisableButton
-                        )
-                        CarLicensePlateSearchOptionButton(
-                            buttonText = "חפש/י לפי מספר",
-                            drawableId = R.drawable.keyboard,
-                            drawableContentDescription = "Smartphone Keyboard",
-                            navController
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                Column(modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Top) {
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 30.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center) {
+                        Text("בחר/י באפשרות לחפש פרטים בנוגע לרכב",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 25.sp,
+                            textAlign = TextAlign.Center)
+                    }
+                    Spacer(modifier = Modifier.size(150.dp))
+                    Box(modifier = Modifier.fillMaxWidth().height(300.dp).weight(1f)) {
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            CarLicensePlateSearchOptionButton(
+                                buttonText = "חפש/י לפי תמונה",
+                                drawableId = R.drawable.license_plate,
+                                drawableContentDescription = "License Plate",
+                                navController,
+                                shouldDisableButton
+                            )
+                            CarLicensePlateSearchOptionButton(
+                                buttonText = "חפש/י לפי מספר",
+                                drawableId = R.drawable.keyboard,
+                                drawableContentDescription = "Smartphone Keyboard",
+                                navController
+                            )
+                        }
+                    }
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(intrinsicSize = IntrinsicSize.Max).padding(end = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.End) {
+                        Text(
+                            text = stringResource(R.string.app_version, BuildConfig.VERSION_NAME),
+                            fontSize = 16.sp
                         )
                     }
-                }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(intrinsicSize = IntrinsicSize.Max).padding(end = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.End) {
-                    Text(
-                        text = stringResource(R.string.app_version, BuildConfig.VERSION_NAME),
-                        fontSize = 16.sp
-                    )
                 }
             }
         }
