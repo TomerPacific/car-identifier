@@ -10,13 +10,16 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.R
@@ -35,40 +38,39 @@ fun CarDetailsScreen(mainViewModel: MainViewModel, navController: NavController)
 
     val serverError = mainViewModel.serverError.collectAsState()
 
-    val searchTerm: String = mainViewModel.searchTerm
-
-    Column(modifier = Modifier.fillMaxWidth()) {
-        TabRow(selectedTabIndex = tabIndex) {
-            tabs.forEachIndexed { index, title ->
-                Tab(text = { Text(title) },
-                    selected = tabIndex == index,
-                    onClick = { tabIndex = index },
-                    icon = {
-                        when (index) {
-                            0 -> Icon(painterResource(id = R.drawable.ic_fact_check), contentDescription = "list")
-                            1 -> Icon(painterResource(id = R.drawable.ic_reviews), contentDescription = "reviews")
-                            2 -> Icon(painterResource(
-                                id = R.drawable.ic_chatgpt),
-                                contentDescription = "ai",
-                                modifier = Modifier.size(40.dp))
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            TabRow(selectedTabIndex = tabIndex) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(text = { Text(title) },
+                        selected = tabIndex == index,
+                        onClick = { tabIndex = index },
+                        icon = {
+                            when (index) {
+                                0 -> Icon(painterResource(id = R.drawable.ic_fact_check), contentDescription = "list")
+                                1 -> Icon(painterResource(id = R.drawable.ic_reviews), contentDescription = "reviews")
+                                2 -> Icon(painterResource(
+                                    id = R.drawable.ic_chatgpt),
+                                    contentDescription = "ai",
+                                    modifier = Modifier.size(40.dp))
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
-        }
-        when (tabIndex) {
-            0 -> Details(mainViewModel, serverError)
-            1 -> Reviews(mainViewModel, serverError)
-            2 -> {
+            when (tabIndex) {
+                0 -> Details(mainViewModel, serverError)
+                1 -> Reviews(mainViewModel, serverError)
+                2 -> {
                     if (serverError.value == null) {
-                        mainViewModel.getCarReview(searchTerm)
-                     }
+                        mainViewModel.getCarReview()
+                    }
                     Advice(mainViewModel, serverError)
-                 }
+                }
             }
         }
-    BackHandler {
-        navController.popBackStack()
+        BackHandler {
+            navController.popBackStack()
+        }
     }
-
 }
