@@ -111,14 +111,14 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
         _shouldShowRationale.value = shouldShow
     }
 
-    fun getCarReview(searchQuery: String) {
+    fun getCarReview() {
 
         if (_searchTermCompletionText.value != null) {
             return
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            carDetailsRepository.getCarReview(searchQuery)
+            carDetailsRepository.getCarReview(searchTerm)
                 .onSuccess {
                 _searchTermCompletionText.value = formatCarReviewResponse(it)
             }.onFailure {
