@@ -6,6 +6,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tomerpacific.caridentifier.LanguageTranslator
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import com.tomerpacific.caridentifier.formatCarReviewResponse
@@ -47,6 +48,8 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
 
     private val _searchTermCompletionText = MutableStateFlow<CarReview?>(null)
 
+    private val languageTranslator = LanguageTranslator()
+
     val searchTermCompletionText: StateFlow<CarReview?>
         get() = _searchTermCompletionText
 
@@ -74,8 +77,12 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess {
                 _carDetails.value = it
-                searchTerm = concatenateCarMakeAndModel(it)
-                preloadWebView(context)
+                languageTranslator.translate(concatenateCarMakeAndModel(it)).onSuccess { translatedText ->
+                    searchTerm = translatedText
+                    preloadWebView(context)
+                }.onFailure {
+
+                }
             }.onFailure { exception ->
                 exception.localizedMessage?.let {
                     _serverError.value = when (it.contains("[")) {
@@ -124,12 +131,13 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
         _carDetails.value = null
         _serverError.value = null
         _searchTermCompletionText.value = null
+        _webView.value = null
     }
 
     private fun preloadWebView(context: Context) {
 
 
-        when (webView.value) {
+        when (_webView.value) {
             null -> {
                 viewModelScope.launch(Dispatchers.Main) {
                     _webView.value = WebView(context).apply {
