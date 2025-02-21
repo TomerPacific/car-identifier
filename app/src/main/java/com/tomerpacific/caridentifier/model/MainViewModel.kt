@@ -146,7 +146,7 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
                         settings.loadWithOverviewMode = true
                         settings.useWideViewPort = true
                         settings.setSupportZoom(true)
-                        loadUrl("https://www.youtube.com/results?search_query=$searchTerm Review")
+                        loadUrl("https://www.youtube.com/results?search_query=ביקורת $searchTerm")
                     }
                 }
             }
