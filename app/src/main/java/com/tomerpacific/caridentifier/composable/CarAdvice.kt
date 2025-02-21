@@ -86,7 +86,7 @@ fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {
                 )
             }
             Text(
-                "Pros:",
+                "יתרונות:",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
@@ -100,7 +100,7 @@ fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {
                 modifier = Modifier.padding(start = 10.dp)
             )
             Text(
-                "Cons:",
+                "חסרונות:",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
