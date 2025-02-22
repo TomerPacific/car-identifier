@@ -31,11 +31,9 @@ fun CarDetailsScreen(mainViewModel: MainViewModel, navController: NavController)
 
     var tabIndex by remember { mutableStateOf(0) }
 
-    val tabs = listOf("Details", "Reviews", "Advice")
+    val tabs = listOf("פרטים", "ביקורות", "המלצות")
 
     val serverError = mainViewModel.serverError.collectAsState()
-
-    val searchTerm: String = mainViewModel.searchTerm
 
     Column(modifier = Modifier.fillMaxWidth()) {
         TabRow(selectedTabIndex = tabIndex) {
@@ -60,15 +58,14 @@ fun CarDetailsScreen(mainViewModel: MainViewModel, navController: NavController)
             0 -> Details(mainViewModel, serverError)
             1 -> Reviews(mainViewModel, serverError)
             2 -> {
-                    if (serverError.value == null) {
-                        mainViewModel.getCarReview(searchTerm)
-                     }
-                    Advice(mainViewModel, serverError)
-                 }
+                if (serverError.value == null) {
+                    mainViewModel.getCarReview()
+                }
+                Advice(mainViewModel, serverError)
             }
         }
+    }
     BackHandler {
         navController.popBackStack()
     }
-
 }

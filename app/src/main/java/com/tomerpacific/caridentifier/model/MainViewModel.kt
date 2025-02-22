@@ -6,6 +6,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tomerpacific.caridentifier.LanguageTranslator
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import com.tomerpacific.caridentifier.formatCarReviewResponse
@@ -47,6 +48,8 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
 
     private val _searchTermCompletionText = MutableStateFlow<CarReview?>(null)
 
+    private val languageTranslator = LanguageTranslator()
+
     val searchTermCompletionText: StateFlow<CarReview?>
         get() = _searchTermCompletionText
 
@@ -72,10 +75,14 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
     fun getCarDetails( context: Context, licensePlateNumber: String) {
         val licensePlateNumberWithoutDashes = licensePlateNumber.replace("-", "")
         viewModelScope.launch(Dispatchers.IO) {
-            carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess {
-                _carDetails.value = it
-                searchTerm = concatenateCarMakeAndModel(it)
-                preloadWebView(context)
+            carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess { carDetails ->
+                _carDetails.value = carDetails
+                languageTranslator.translate(concatenateCarMakeAndModel(carDetails)).onSuccess { translatedText ->
+                    searchTerm = translatedText
+                    preloadWebView(context)
+                }.onFailure {
+                    _serverError.value = it.localizedMessage
+                }
             }.onFailure { exception ->
                 exception.localizedMessage?.let {
                     _serverError.value = when (it.contains("[")) {
@@ -104,14 +111,14 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
         _shouldShowRationale.value = shouldShow
     }
 
-    fun getCarReview(searchQuery: String) {
+    fun getCarReview() {
 
         if (_searchTermCompletionText.value != null) {
             return
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-            carDetailsRepository.getCarReview(searchQuery)
+            carDetailsRepository.getCarReview(searchTerm)
                 .onSuccess {
                 _searchTermCompletionText.value = formatCarReviewResponse(it)
             }.onFailure {
@@ -124,12 +131,14 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
         _carDetails.value = null
         _serverError.value = null
         _searchTermCompletionText.value = null
+        searchTerm = ""
+        _webView.value = null
     }
 
     private fun preloadWebView(context: Context) {
 
 
-        when (webView.value) {
+        when (_webView.value) {
             null -> {
                 viewModelScope.launch(Dispatchers.Main) {
                     _webView.value = WebView(context).apply {
@@ -138,7 +147,7 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
                         settings.loadWithOverviewMode = true
                         settings.useWideViewPort = true
                         settings.setSupportZoom(true)
-                        loadUrl("https://www.youtube.com/results?search_query=$searchTerm Review")
+                        loadUrl("https://www.youtube.com/results?search_query=ביקורת $searchTerm")
                     }
                 }
             }

@@ -19,6 +19,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,12 +31,14 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -87,113 +90,115 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
             navController.popBackStack()
         },
         text = {
-            Column {
-                Text("הכנס מספר לוחית רישוי בן 7 או 8 ספרות", fontWeight = FontWeight.Bold)
-                Spacer(Modifier.height(10.dp))
-                TextField(
-                    modifier = Modifier.focusRequester(focusRequester),
-                    textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
-                    singleLine = true,
-                    colors = TextFieldDefaults.colors().copy(
-                        unfocusedContainerColor = TEXT_FIELD_BACKGROUND_COLOR,
-                        focusedContainerColor = TEXT_FIELD_BACKGROUND_COLOR,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    value = licensePlateNumberState,
-                    onValueChange = {
-                        didClickConfirmBtn = false
-                        if (wasCharacterDeleted(it.text, licensePlateNumberState.text)) {
-                            isLicensePlateLengthLimitReached = false
-                            licensePlateNumberState = if (it.text.length == SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
-                                val formattedText = "${it.text.substring(0, FIRST_DASH_INDEX)}-${
-                                    it.text.substring(
-                                        FIRST_DASH_INDEX,
-                                        3
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                Column {
+                    Text("הכנס מספר לוחית רישוי בן 7 או 8 ספרות", fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.height(10.dp))
+                    TextField(
+                        modifier = Modifier.focusRequester(focusRequester),
+                        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+                        singleLine = true,
+                        colors = TextFieldDefaults.colors().copy(
+                            unfocusedContainerColor = TEXT_FIELD_BACKGROUND_COLOR,
+                            focusedContainerColor = TEXT_FIELD_BACKGROUND_COLOR,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent
+                        ),
+                        value = licensePlateNumberState,
+                        onValueChange = {
+                            didClickConfirmBtn = false
+                            if (wasCharacterDeleted(it.text, licensePlateNumberState.text)) {
+                                isLicensePlateLengthLimitReached = false
+                                licensePlateNumberState = if (it.text.length == SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
+                                    val formattedText = "${it.text.substring(0, FIRST_DASH_INDEX)}-${
+                                        it.text.substring(
+                                            FIRST_DASH_INDEX,
+                                            3
+                                        )
+                                    }${it.text.substring(4, SECOND_DASH_INDEX)}-${it.text.substring(7, SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES)}"
+                                    TextFieldValue(
+                                        text = formattedText,
+                                        selection = TextRange(formattedText.length)
                                     )
-                                }${it.text.substring(4, SECOND_DASH_INDEX)}-${it.text.substring(7, SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES)}"
-                                TextFieldValue(
-                                    text = formattedText,
-                                    selection = TextRange(formattedText.length)
-                                )
-                            } else {
-                                it
+                                } else {
+                                    it
+                                }
+                                return@TextField
                             }
-                            return@TextField
-                        }
 
 
-                        if (it.text.length > EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
-                            isLicensePlateLengthLimitReached = true
-                            return@TextField
-                        }
+                            if (it.text.length > EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
+                                isLicensePlateLengthLimitReached = true
+                                return@TextField
+                            }
 
-                        if (it.text.isEmpty() || licensePlateInputPattern.matches(it.text)) {
-                            licensePlateNumberState = it
-                        }
-                        val formattedText = formatLicensePlateWithDashes(it.text)
+                            if (it.text.isEmpty() || licensePlateInputPattern.matches(it.text)) {
+                                licensePlateNumberState = it
+                            }
+                            val formattedText = formatLicensePlateWithDashes(it.text)
 
-                        licensePlateNumberState = TextFieldValue(
-                            text = formattedText,
-                            selection = TextRange(formattedText.length)
-                        )
-                    },
-                    placeholder = {
-                        Text("?מספר לוחית רישוי", maxLines = 1)
-                    },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    isError = isLicensePlateLengthLimitReached,
-                    supportingText = {
-                        if (isLicensePlateLengthLimitReached) {
-                            Text(
-                                "מספר לוחית רישוי יכול להכיל עד 8 ספרות",
-                                modifier = Modifier.fillMaxWidth(),
-                                color = Color.Red
+                            licensePlateNumberState = TextFieldValue(
+                                text = formattedText,
+                                selection = TextRange(formattedText.length)
                             )
+                        },
+                        placeholder = {
+                            Text("?מספר לוחית רישוי", maxLines = 1)
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        isError = isLicensePlateLengthLimitReached,
+                        supportingText = {
+                            if (isLicensePlateLengthLimitReached) {
+                                Text(
+                                    "מספר לוחית רישוי יכול להכיל עד 8 ספרות",
+                                    modifier = Modifier.fillMaxWidth(),
+                                    color = Color.Red
+                                )
+                            }
+                            if (didClickConfirmBtn) {
+                                Text(
+                                    "מספר לוחית רישוי צריך להכיל בין 7 ל-8 ספרות",
+                                    modifier = Modifier.fillMaxWidth(),
+                                    color = Color.Red
+                                )
+                            }
+                        },
+                        trailingIcon = {
+                            if (isLicensePlateLengthLimitReached) {
+                                Icon(Icons.Filled.Info, "error", tint = Color.Red)
+                            }
+                        },
+                        leadingIcon = {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.offset(x = (-9).dp).background(Color.Blue)
+                            ) {
+                                Image(
+                                    painterResource(id = R.drawable.israel_flag),
+                                    "flag",
+                                    modifier = Modifier.width(20.dp).height(20.dp)
+                                )
+                                Text(
+                                    "IL",
+                                    textAlign = TextAlign.Center,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White,
+                                    fontSize = 12.sp
+                                )
+                                Text(
+                                    "ישראל",
+                                    textAlign = TextAlign.Center,
+                                    color = Color.White,
+                                    fontSize = 10.sp
+                                )
+                            }
                         }
-                        if (didClickConfirmBtn) {
-                            Text(
-                                "מספר לוחית רישוי צריך להכיל בין 7 ל-8 ספרות",
-                                modifier = Modifier.fillMaxWidth(),
-                                color = Color.Red
-                            )
-                        }
-                    },
-                    trailingIcon = {
-                        if (isLicensePlateLengthLimitReached) {
-                            Icon(Icons.Filled.Info, "error", tint = Color.Red)
-                        }
-                    },
-                    leadingIcon = {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.offset(x = (-9).dp).background(Color.Blue)
-                        ) {
-                            Image(
-                                painterResource(id = R.drawable.israel_flag),
-                                "flag",
-                                modifier = Modifier.width(20.dp).height(20.dp)
-                            )
-                            Text(
-                                "IL",
-                                textAlign = TextAlign.Center,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White,
-                                fontSize = 12.sp
-                            )
-                            Text(
-                                "ישראל",
-                                textAlign = TextAlign.Center,
-                                color = Color.White,
-                                fontSize = 10.sp
-                            )
-                        }
-                    }
-                )
-            }
+                    )
+                }
 
-            LaunchedEffect(Unit) {
-                focusRequester.requestFocus()
+                LaunchedEffect(Unit) {
+                    focusRequester.requestFocus()
+                }
             }
         },
         confirmButton = {
@@ -211,7 +216,7 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                 },
                 enabled = licensePlateNumberState.text.isNotEmpty()
             ) {
-                Text("Confirm")
+                Text("אישור")
             }
         },
         dismissButton = {
@@ -220,7 +225,7 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                     navController.popBackStack()
                 }
             ) {
-                Text("Cancel")
+                Text("ביטול")
             }
         }
     )
