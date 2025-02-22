@@ -116,7 +116,7 @@ fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {
         } else if (serverError.value != null) {
             Spacer(modifier = Modifier.size(20.dp))
             Text(
-                text = "יש בעיה עם הבאת התוכן המבוקש.",
+                text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
