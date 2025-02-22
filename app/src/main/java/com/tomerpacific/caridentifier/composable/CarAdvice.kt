@@ -33,6 +33,8 @@ import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tomerpacific.caridentifier.CONS
+import com.tomerpacific.caridentifier.PROS
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.model.MainViewModel
 
@@ -86,7 +88,7 @@ fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {
                 )
             }
             Text(
-                "יתרונות:",
+                "$PROS:",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
@@ -100,7 +102,7 @@ fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {
                 modifier = Modifier.padding(start = 10.dp)
             )
             Text(
-                "חסרונות:",
+                "$CONS:",
                 fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
