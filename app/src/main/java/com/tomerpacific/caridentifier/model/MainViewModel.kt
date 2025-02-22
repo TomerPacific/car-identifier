@@ -75,13 +75,13 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
     fun getCarDetails( context: Context, licensePlateNumber: String) {
         val licensePlateNumberWithoutDashes = licensePlateNumber.replace("-", "")
         viewModelScope.launch(Dispatchers.IO) {
-            carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess {
-                _carDetails.value = it
-                languageTranslator.translate(concatenateCarMakeAndModel(it)).onSuccess { translatedText ->
+            carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess { carDetails ->
+                _carDetails.value = carDetails
+                languageTranslator.translate(concatenateCarMakeAndModel(carDetails)).onSuccess { translatedText ->
                     searchTerm = translatedText
                     preloadWebView(context)
                 }.onFailure {
-
+                    _serverError.value = it.localizedMessage
                 }
             }.onFailure { exception ->
                 exception.localizedMessage?.let {
@@ -131,6 +131,7 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
         _carDetails.value = null
         _serverError.value = null
         _searchTermCompletionText.value = null
+        searchTerm = ""
         _webView.value = null
     }
 
