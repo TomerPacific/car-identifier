@@ -31,7 +31,7 @@ fun CarDetailsScreen(mainViewModel: MainViewModel, navController: NavController)
 
     var tabIndex by remember { mutableStateOf(0) }
 
-    val tabs = listOf("Details", "Reviews", "Advice")
+    val tabs = listOf("פרטים", "ביקורות", "המלצות")
 
     val serverError = mainViewModel.serverError.collectAsState()
 
