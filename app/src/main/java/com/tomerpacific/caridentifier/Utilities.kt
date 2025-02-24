@@ -54,7 +54,6 @@ fun getCarManufacturer(manufacturer: String): String {
         "ביואיק" -> "Buick"
         "קאדילק" -> "Cadillac"
         "קרייזלר" -> "Chrysler"
-        "ג'יפ" -> "Jeep"
         "דודג'" -> "Dodge"
         "האמר" -> "Hummer"
         "אלפא רומיאו" -> "Alfa Romeo"
