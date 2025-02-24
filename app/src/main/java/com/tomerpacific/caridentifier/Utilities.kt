@@ -68,6 +68,13 @@ fun getCarManufacturer(manufacturer: String): String {
         "זיקר" -> "Zeekr"
         "סרס" -> "Seres"
         "וואי" -> "Wey"
+        "אבארט" -> "Abarth"
+        "אורה" -> "Ora"
+        "איוויס" -> "Aiways"
+        "איסוזו" -> "Isuzu"
+        "ג'ילי" -> "Geely"
+        "לינק אנד קו" -> "Lynk & Co"
+        "לינקולן" -> "Lincoln"
         else -> "Unknown Manufacturer"
     }
 }
