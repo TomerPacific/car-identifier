@@ -41,7 +41,7 @@ import com.tomerpacific.caridentifier.model.Screen
 import java.io.IOException
 
 
-const val NO_LICENSE_PLATE_ERROR = "License plate number not found. Please take a photo which contains a license plate number."
+const val NO_LICENSE_PLATE_ERROR = "לא נמצאה לוחית רישוי. אנא צלמו תמונה עם לוחית רישוי."
 
 @Composable
 fun VerifyPhotoDialog(imageUri: Uri,
