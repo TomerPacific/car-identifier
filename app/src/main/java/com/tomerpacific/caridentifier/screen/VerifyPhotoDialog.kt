@@ -41,7 +41,7 @@ import com.tomerpacific.caridentifier.model.Screen
 import java.io.IOException
 
 
-const val NO_LICENSE_PLATE_ERROR = "License plate number not found. Please take a photo which contains a license plate number."
+const val NO_LICENSE_PLATE_ERROR = "לא נמצאה לוחית רישוי. אנא צלמו תמונה עם לוחית רישוי."
 
 @Composable
 fun VerifyPhotoDialog(imageUri: Uri,
@@ -63,7 +63,7 @@ fun VerifyPhotoDialog(imageUri: Uri,
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Proceed with this image?", fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                Text(text = "להמשיך עם התמונה הזאת?", fontSize = 22.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.size(20.dp))
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
