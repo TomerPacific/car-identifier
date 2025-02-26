@@ -7,6 +7,7 @@ import android.webkit.WebViewClient
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tomerpacific.caridentifier.LanguageTranslator
+import com.tomerpacific.caridentifier.NetworkConnectivityManager
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import com.tomerpacific.caridentifier.formatCarReviewResponse
@@ -23,6 +24,8 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
     private val carDetailsRepository = CarDetailsRepository()
 
     private val _sharedPreferences = sharedPreferences
+
+    private val networkConnectivityManager = NetworkConnectivityManager()
 
     private val _carDetails = MutableStateFlow<CarDetails?>(null)
 
@@ -73,6 +76,12 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
 
 
     fun getCarDetails( context: Context, licensePlateNumber: String) {
+
+        if (!networkConnectivityManager.isConnectedToNetwork(context)) {
+            _serverError.value = "No internet connection"
+            return
+        }
+
         val licensePlateNumberWithoutDashes = licensePlateNumber.replace("-", "")
         viewModelScope.launch(Dispatchers.IO) {
             carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess { carDetails ->
@@ -137,7 +146,6 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
 
     private fun preloadWebView(context: Context) {
 
-
         when (_webView.value) {
             null -> {
                 viewModelScope.launch(Dispatchers.Main) {
@@ -152,6 +160,5 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
                 }
             }
         }
-
     }
 }
