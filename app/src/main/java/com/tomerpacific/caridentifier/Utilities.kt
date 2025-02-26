@@ -124,9 +124,6 @@ fun getCarManufacturer(manufacturer: String): String {
         "ריהיי" -> "Reyee"
         "רולס רויס" -> "Rolls-Royce"
         "שברולט" -> "Chevrolet"
-
-
-        "BYD" -> "BYD"
         else -> "Unknown Manufacturer"
     }
 }
