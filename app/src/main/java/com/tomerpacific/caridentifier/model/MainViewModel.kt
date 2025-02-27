@@ -120,7 +120,12 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
         _shouldShowRationale.value = shouldShow
     }
 
-    fun getCarReview() {
+    fun getCarReview(context: Context) {
+
+        if (!networkConnectivityManager.isConnectedToNetwork(context)) {
+            _serverError.value = "No internet connection"
+            return
+        }
 
         if (_searchTermCompletionText.value != null) {
             return
