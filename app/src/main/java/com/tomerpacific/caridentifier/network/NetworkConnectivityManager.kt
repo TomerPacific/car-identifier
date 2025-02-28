@@ -1,4 +1,4 @@
-package com.tomerpacific.caridentifier
+package com.tomerpacific.caridentifier.network
 
 import android.content.Context
 import android.net.ConnectivityManager
