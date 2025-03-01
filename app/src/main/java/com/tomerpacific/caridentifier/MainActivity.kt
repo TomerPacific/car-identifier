@@ -15,6 +15,7 @@ import androidx.navigation.navArgument
 import com.tomerpacific.caridentifier.composable.CameraPreview
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
+import com.tomerpacific.caridentifier.network.AndroidConnectivityObserver
 import com.tomerpacific.caridentifier.screen.CarDetailsScreen
 import com.tomerpacific.caridentifier.screen.HandleCameraPermission
 import com.tomerpacific.caridentifier.screen.VerifyPhotoDialog
@@ -31,7 +32,7 @@ class MainActivity : ComponentActivity() {
 
         val sharedPreferences = getPreferences(MODE_PRIVATE)
 
-        mainViewModel = MainViewModel(sharedPreferences)
+        mainViewModel = MainViewModel(sharedPreferences, AndroidConnectivityObserver(applicationContext))
 
         setContent {
             val navController = rememberNavController()

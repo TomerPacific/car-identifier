@@ -7,25 +7,31 @@ import android.webkit.WebViewClient
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tomerpacific.caridentifier.LanguageTranslator
-import com.tomerpacific.caridentifier.NetworkConnectivityManager
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import com.tomerpacific.caridentifier.formatCarReviewResponse
+import com.tomerpacific.caridentifier.network.ConnectivityObserver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 const val DID_REQUEST_CAMERA_PERMISSION_KEY = "didRequestCameraPermission"
-class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
+class MainViewModel(sharedPreferences: SharedPreferences, connectivityObserver: ConnectivityObserver): ViewModel() {
 
     private val carDetailsRepository = CarDetailsRepository()
 
     private val _sharedPreferences = sharedPreferences
 
-    private val networkConnectivityManager = NetworkConnectivityManager()
+    private val isConnectedToNetwork = connectivityObserver.isConnected.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000L),
+        false
+    )
 
     private val _carDetails = MutableStateFlow<CarDetails?>(null)
 
@@ -77,7 +83,7 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
 
     fun getCarDetails( context: Context, licensePlateNumber: String) {
 
-        if (!networkConnectivityManager.isConnectedToNetwork(context)) {
+        if (isConnectedToNetwork.value.not()) {
             _serverError.value = "No internet connection"
             return
         }
@@ -120,9 +126,9 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
         _shouldShowRationale.value = shouldShow
     }
 
-    fun getCarReview(context: Context) {
+    fun getCarReview() {
 
-        if (!networkConnectivityManager.isConnectedToNetwork(context)) {
+        if (isConnectedToNetwork.value.not()) {
             _serverError.value = "No internet connection"
             return
         }

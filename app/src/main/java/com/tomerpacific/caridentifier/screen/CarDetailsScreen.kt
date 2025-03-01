@@ -16,7 +16,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -33,8 +32,6 @@ fun CarDetailsScreen(mainViewModel: MainViewModel, navController: NavController)
     var tabIndex by remember { mutableStateOf(0) }
 
     val tabs = listOf("פרטים", "ביקורות", "המלצות")
-
-    val context = LocalContext.current
 
     val serverError = mainViewModel.serverError.collectAsState()
 
@@ -62,7 +59,7 @@ fun CarDetailsScreen(mainViewModel: MainViewModel, navController: NavController)
             1 -> Reviews(mainViewModel, serverError)
             2 -> {
                 if (serverError.value == null) {
-                    mainViewModel.getCarReview(context)
+                    mainViewModel.getCarReview()
                 }
                 Advice(mainViewModel, serverError)
             }
