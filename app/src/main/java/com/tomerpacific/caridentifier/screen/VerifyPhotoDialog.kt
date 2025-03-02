@@ -104,7 +104,9 @@ fun VerifyPhotoDialog(imageUri: Uri,
                                             return@addOnSuccessListener
                                         }
                                         else -> {
-                                            mainViewModel.getCarDetails(context, licensePlateNumber)
+                                            mainViewModel.getCarDetails(
+                                                context,
+                                                licensePlateNumber)
                                             navController.navigate(Screen.CarDetailsScreen.route)
                                             return@addOnSuccessListener
                                         }

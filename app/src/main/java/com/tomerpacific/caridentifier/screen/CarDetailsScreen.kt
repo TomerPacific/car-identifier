@@ -58,9 +58,7 @@ fun CarDetailsScreen(mainViewModel: MainViewModel, navController: NavController)
             0 -> Details(mainViewModel, serverError)
             1 -> Reviews(mainViewModel, serverError)
             2 -> {
-                if (serverError.value == null) {
-                    mainViewModel.getCarReview()
-                }
+                mainViewModel.getCarReview()
                 Advice(mainViewModel, serverError)
             }
         }
