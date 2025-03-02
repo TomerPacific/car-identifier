@@ -14,24 +14,21 @@ import com.tomerpacific.caridentifier.network.ConnectivityObserver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 const val DID_REQUEST_CAMERA_PERMISSION_KEY = "didRequestCameraPermission"
-class MainViewModel(sharedPreferences: SharedPreferences, connectivityObserver: ConnectivityObserver): ViewModel() {
+class MainViewModel(sharedPreferences: SharedPreferences,
+                    connectivityObserver: ConnectivityObserver): ViewModel() {
 
     private val carDetailsRepository = CarDetailsRepository()
 
     private val _sharedPreferences = sharedPreferences
 
-    private val isConnectedToNetwork = connectivityObserver.isConnected.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(5000L),
-        false
-    )
+    private val _connectivityObserver = connectivityObserver
+
+    private val isConnectedToNetwork = _connectivityObserver.isConnected
 
     private val _carDetails = MutableStateFlow<CarDetails?>(null)
 
@@ -53,7 +50,7 @@ class MainViewModel(sharedPreferences: SharedPreferences, connectivityObserver: 
     val shouldShowRationale: StateFlow<Boolean>
         get() = _shouldShowRationale
 
-    var searchTerm: String = ""
+    private var searchTerm: String = ""
 
     private val _searchTermCompletionText = MutableStateFlow<CarReview?>(null)
 
@@ -83,7 +80,7 @@ class MainViewModel(sharedPreferences: SharedPreferences, connectivityObserver: 
 
     fun getCarDetails( context: Context, licensePlateNumber: String) {
 
-        if (isConnectedToNetwork.value.not()) {
+        if (!isConnectedToNetwork.value) {
             _serverError.value = "No internet connection"
             return
         }
@@ -128,7 +125,7 @@ class MainViewModel(sharedPreferences: SharedPreferences, connectivityObserver: 
 
     fun getCarReview() {
 
-        if (isConnectedToNetwork.value.not()) {
+        if (!isConnectedToNetwork.value || searchTerm.isEmpty()) {
             _serverError.value = "No internet connection"
             return
         }
@@ -171,5 +168,11 @@ class MainViewModel(sharedPreferences: SharedPreferences, connectivityObserver: 
                 }
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        _webView.value?.destroy()
+        _connectivityObserver.unregisterNetworkCallback()
     }
 }
