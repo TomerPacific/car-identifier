@@ -66,6 +66,8 @@ class MainViewModel(sharedPreferences: SharedPreferences,
     private val _snackbarEvent = MutableSharedFlow<String>()
     val snackbarEvent = _snackbarEvent.asSharedFlow()
 
+    private var _licensePlateNumber: String = ""
+
     fun triggerSnackBarEvent(message: String) {
         viewModelScope.launch {
             _snackbarEvent.emit(message)
@@ -80,9 +82,13 @@ class MainViewModel(sharedPreferences: SharedPreferences,
 
     fun getCarDetails( context: Context, licensePlateNumber: String) {
 
+        _licensePlateNumber = licensePlateNumber
+
         if (!isConnectedToNetwork.value) {
             _serverError.value = "No internet connection"
             return
+        } else {
+            _serverError.value = null
         }
 
         val licensePlateNumberWithoutDashes = licensePlateNumber.replace("-", "")
@@ -125,7 +131,7 @@ class MainViewModel(sharedPreferences: SharedPreferences,
 
     fun getCarReview() {
 
-        if (!isConnectedToNetwork.value || searchTerm.isEmpty()) {
+        if (!isConnectedToNetwork.value) {
             _serverError.value = "No internet connection"
             return
         }
@@ -168,6 +174,10 @@ class MainViewModel(sharedPreferences: SharedPreferences,
                 }
             }
         }
+    }
+
+    fun retryGetCarDetails(context: Context) {
+        getCarDetails(context, _licensePlateNumber)
     }
 
     override fun onCleared() {
