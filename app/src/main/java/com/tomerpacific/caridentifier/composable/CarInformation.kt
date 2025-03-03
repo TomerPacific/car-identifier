@@ -37,6 +37,7 @@ import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.MainViewModel
+import com.tomerpacific.caridentifier.network.NO_INTERNET_CONNECTION_ERROR
 
 @Composable
 fun Details(mainViewModel: MainViewModel, serverError: State<String?>) {
@@ -82,7 +83,7 @@ fun Details(mainViewModel: MainViewModel, serverError: State<String?>) {
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
-            if (serverError.value == "No internet connection") {
+            if (serverError.value == NO_INTERNET_CONNECTION_ERROR) {
                 IconButton(onClick = {
                     mainViewModel.retryGetCarDetails(context)
                 }) {

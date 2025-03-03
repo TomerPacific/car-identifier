@@ -11,6 +11,7 @@ import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import com.tomerpacific.caridentifier.formatCarReviewResponse
 import com.tomerpacific.caridentifier.network.ConnectivityObserver
+import com.tomerpacific.caridentifier.network.NO_INTERNET_CONNECTION_ERROR
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -85,7 +86,7 @@ class MainViewModel(sharedPreferences: SharedPreferences,
         _licensePlateNumber = licensePlateNumber
 
         if (!isConnectedToNetwork.value) {
-            _serverError.value = "No internet connection"
+            _serverError.value = NO_INTERNET_CONNECTION_ERROR
             return
         } else {
             _serverError.value = null
@@ -132,7 +133,7 @@ class MainViewModel(sharedPreferences: SharedPreferences,
     fun getCarReview() {
 
         if (!isConnectedToNetwork.value) {
-            _serverError.value = "No internet connection"
+            _serverError.value = NO_INTERNET_CONNECTION_ERROR
             return
         }
 
