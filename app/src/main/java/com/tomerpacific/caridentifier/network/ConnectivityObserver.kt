@@ -8,9 +8,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.getSystemService
 
+const val NO_INTERNET_CONNECTION_ERROR = "No internet connection"
 class ConnectivityObserver(
     context: Context
 ) {
+
+
 
     private val connectivityManager = context.getSystemService<ConnectivityManager>()
 
