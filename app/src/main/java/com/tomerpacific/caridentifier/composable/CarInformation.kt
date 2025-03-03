@@ -85,7 +85,7 @@ fun Details(mainViewModel: MainViewModel, serverError: State<String?>) {
             )
             if (serverError.value == NO_INTERNET_CONNECTION_ERROR) {
                 IconButton(onClick = {
-                    mainViewModel.retryGetCarDetails(context)
+                    mainViewModel.getCarDetails(context)
                 }) {
                     Icon(imageVector = Icons.Default.Refresh, contentDescription = "Retry")
                 }
