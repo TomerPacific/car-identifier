@@ -14,6 +14,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -37,6 +41,7 @@ import com.tomerpacific.caridentifier.CONS
 import com.tomerpacific.caridentifier.PROS
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.model.MainViewModel
+import com.tomerpacific.caridentifier.network.NO_INTERNET_CONNECTION_ERROR
 
 @Composable
 fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {
@@ -130,6 +135,13 @@ fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
+            if (serverError.value == NO_INTERNET_CONNECTION_ERROR) {
+                IconButton(onClick = {
+                    mainViewModel.getCarReview()
+                }) {
+                    Icon(imageVector = Icons.Default.Refresh, contentDescription = "Retry")
+                }
+            }
         }
     }
 }
