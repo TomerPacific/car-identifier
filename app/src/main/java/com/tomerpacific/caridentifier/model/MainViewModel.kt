@@ -29,8 +29,6 @@ class MainViewModel(sharedPreferences: SharedPreferences,
 
     private val _connectivityObserver = connectivityObserver
 
-    private val isConnectedToNetwork = _connectivityObserver.isConnected
-
     private val _carDetails = MutableStateFlow<CarDetails?>(null)
 
     val carDetails: StateFlow<CarDetails?>
@@ -88,7 +86,7 @@ class MainViewModel(sharedPreferences: SharedPreferences,
             _licensePlateNumber = it
         }
 
-        if (!isConnectedToNetwork.value) {
+        if (!_connectivityObserver.isConnectedToNetwork()) {
             _serverError.value = NO_INTERNET_CONNECTION_ERROR
             return
         } else {
@@ -135,7 +133,7 @@ class MainViewModel(sharedPreferences: SharedPreferences,
 
     fun getCarReview() {
 
-        if (!isConnectedToNetwork.value) {
+        if (!_connectivityObserver.isConnectedToNetwork()) {
             _serverError.value = NO_INTERNET_CONNECTION_ERROR
             return
         }
