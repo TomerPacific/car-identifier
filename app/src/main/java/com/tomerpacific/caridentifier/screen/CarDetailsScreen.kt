@@ -50,7 +50,8 @@ fun CarDetailsScreen(mainViewModel: MainViewModel, navController: NavController)
                                 contentDescription = "ai",
                                 modifier = Modifier.size(40.dp))
                         }
-                    }
+                    },
+                    enabled = serverError.value == null
                 )
             }
         }
