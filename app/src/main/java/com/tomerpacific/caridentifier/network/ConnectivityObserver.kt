@@ -17,7 +17,7 @@ class ConnectivityObserver(
 
     private val connectivityManager = context.getSystemService<ConnectivityManager>()
 
-    val isConnected : MutableState<Boolean> = mutableStateOf(false)
+    private val isConnected : MutableState<Boolean> = mutableStateOf(false)
 
     private val callback = object: ConnectivityManager.NetworkCallback() {
 
@@ -45,6 +45,10 @@ class ConnectivityObserver(
 
     init {
         connectivityManager?.registerDefaultNetworkCallback(callback)
+    }
+
+    fun isConnectedToNetwork(): Boolean {
+        return isConnected.value
     }
 
     fun unregisterNetworkCallback() {
