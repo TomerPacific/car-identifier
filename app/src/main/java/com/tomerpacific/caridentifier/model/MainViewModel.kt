@@ -101,7 +101,7 @@ class MainViewModel(sharedPreferences: SharedPreferences,
                 _carDetails.value = carDetails
                 languageTranslator.translate(concatenateCarMakeAndModel(carDetails)).onSuccess { translatedText ->
                     searchTerm = translatedText
-                    preloadWebView(context)
+                    setupWebView(context)
                 }.onFailure {
                     _serverError.value = it.localizedMessage
                 }
@@ -162,7 +162,7 @@ class MainViewModel(sharedPreferences: SharedPreferences,
         _webView.value = null
     }
 
-    private fun preloadWebView(context: Context) {
+    private fun setupWebView(context: Context) {
 
         when (_webView.value) {
             null -> {
