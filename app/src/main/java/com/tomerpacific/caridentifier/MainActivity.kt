@@ -31,8 +31,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val sharedPreferences = getPreferences(MODE_PRIVATE)
+        val connectivityObserver = ConnectivityObserver(applicationContext)
 
-        mainViewModel = MainViewModel(sharedPreferences, ConnectivityObserver(applicationContext))
+        mainViewModel = MainViewModel(sharedPreferences, connectivityObserver)
 
         setContent {
             val navController = rememberNavController()
