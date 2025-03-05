@@ -13,7 +13,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -22,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -33,9 +37,13 @@ import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.MainViewModel
+import com.tomerpacific.caridentifier.network.NO_INTERNET_CONNECTION_ERROR
 
 @Composable
 fun Details(mainViewModel: MainViewModel, serverError: State<String?>) {
+
+    val context = LocalContext.current
+
     val carDetails = mainViewModel.carDetails.collectAsState()
 
     val columnVerticalArrangement: Arrangement.Vertical = when (carDetails.value) {
@@ -75,6 +83,13 @@ fun Details(mainViewModel: MainViewModel, serverError: State<String?>) {
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
+            if (serverError.value == NO_INTERNET_CONNECTION_ERROR) {
+                IconButton(onClick = {
+                    mainViewModel.getCarDetails(context)
+                }) {
+                    Icon(imageVector = Icons.Default.Refresh, contentDescription = "Retry")
+                }
+            }
         }
     }
 }

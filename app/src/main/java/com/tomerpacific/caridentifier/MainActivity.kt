@@ -15,6 +15,7 @@ import androidx.navigation.navArgument
 import com.tomerpacific.caridentifier.composable.CameraPreview
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
+import com.tomerpacific.caridentifier.network.ConnectivityObserver
 import com.tomerpacific.caridentifier.screen.CarDetailsScreen
 import com.tomerpacific.caridentifier.screen.HandleCameraPermission
 import com.tomerpacific.caridentifier.screen.VerifyPhotoDialog
@@ -30,8 +31,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val sharedPreferences = getPreferences(MODE_PRIVATE)
+        val connectivityObserver = ConnectivityObserver(applicationContext)
 
-        mainViewModel = MainViewModel(sharedPreferences)
+        mainViewModel = MainViewModel(sharedPreferences, connectivityObserver)
 
         setContent {
             val navController = rememberNavController()
@@ -40,6 +42,7 @@ class MainActivity : ComponentActivity() {
     }
     @Composable
     private fun CreateNavigationGraph(navController: NavHostController) {
+
         NavHost(navController, startDestination = Screen.MainScreen.route) {
             composable(route = Screen.MainScreen.route) {
                 MainScreen(navController, mainViewModel)

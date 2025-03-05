@@ -10,6 +10,8 @@ import com.tomerpacific.caridentifier.LanguageTranslator
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import com.tomerpacific.caridentifier.formatCarReviewResponse
+import com.tomerpacific.caridentifier.network.ConnectivityObserver
+import com.tomerpacific.caridentifier.network.NO_INTERNET_CONNECTION_ERROR
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,11 +20,14 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 const val DID_REQUEST_CAMERA_PERMISSION_KEY = "didRequestCameraPermission"
-class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
+class MainViewModel(sharedPreferences: SharedPreferences,
+                    connectivityObserver: ConnectivityObserver): ViewModel() {
 
     private val carDetailsRepository = CarDetailsRepository()
 
     private val _sharedPreferences = sharedPreferences
+
+    private val _connectivityObserver = connectivityObserver
 
     private val _carDetails = MutableStateFlow<CarDetails?>(null)
 
@@ -44,7 +49,7 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
     val shouldShowRationale: StateFlow<Boolean>
         get() = _shouldShowRationale
 
-    var searchTerm: String = ""
+    private var searchTerm: String = ""
 
     private val _searchTermCompletionText = MutableStateFlow<CarReview?>(null)
 
@@ -60,6 +65,8 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
     private val _snackbarEvent = MutableSharedFlow<String>()
     val snackbarEvent = _snackbarEvent.asSharedFlow()
 
+    private var _licensePlateNumber: String = ""
+
     fun triggerSnackBarEvent(message: String) {
         viewModelScope.launch {
             _snackbarEvent.emit(message)
@@ -72,14 +79,27 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
     }
 
 
-    fun getCarDetails( context: Context, licensePlateNumber: String) {
-        val licensePlateNumberWithoutDashes = licensePlateNumber.replace("-", "")
+    fun getCarDetails( context: Context,
+                       licensePlateNumber: String? = null) {
+
+        licensePlateNumber?.let {
+            _licensePlateNumber = it
+        }
+
+        if (!_connectivityObserver.isConnectedToNetwork()) {
+            _serverError.value = NO_INTERNET_CONNECTION_ERROR
+            return
+        } else {
+            _serverError.value = null
+        }
+
+        val licensePlateNumberWithoutDashes = _licensePlateNumber.replace("-", "")
         viewModelScope.launch(Dispatchers.IO) {
             carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess { carDetails ->
                 _carDetails.value = carDetails
                 languageTranslator.translate(concatenateCarMakeAndModel(carDetails)).onSuccess { translatedText ->
                     searchTerm = translatedText
-                    preloadWebView(context)
+                    setupWebView(context)
                 }.onFailure {
                     _serverError.value = it.localizedMessage
                 }
@@ -113,6 +133,11 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
 
     fun getCarReview() {
 
+        if (!_connectivityObserver.isConnectedToNetwork()) {
+            _serverError.value = NO_INTERNET_CONNECTION_ERROR
+            return
+        }
+
         if (_searchTermCompletionText.value != null) {
             return
         }
@@ -135,8 +160,7 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
         _webView.value = null
     }
 
-    private fun preloadWebView(context: Context) {
-
+    private fun setupWebView(context: Context) {
 
         when (_webView.value) {
             null -> {
@@ -152,6 +176,11 @@ class MainViewModel(sharedPreferences: SharedPreferences): ViewModel() {
                 }
             }
         }
+    }
 
+    override fun onCleared() {
+        super.onCleared()
+        _webView.value?.destroy()
+        _connectivityObserver.unregisterNetworkCallback()
     }
 }
