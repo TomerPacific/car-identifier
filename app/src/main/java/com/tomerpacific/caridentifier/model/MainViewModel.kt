@@ -10,8 +10,8 @@ import com.tomerpacific.caridentifier.LanguageTranslator
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import com.tomerpacific.caridentifier.formatCarReviewResponse
-import com.tomerpacific.caridentifier.network.ConnectivityObserver
-import com.tomerpacific.caridentifier.network.NO_INTERNET_CONNECTION_ERROR
+import com.tomerpacific.caridentifier.data.network.ConnectivityObserver
+import com.tomerpacific.caridentifier.data.network.NO_INTERNET_CONNECTION_ERROR
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +21,8 @@ import kotlinx.coroutines.launch
 
 const val DID_REQUEST_CAMERA_PERMISSION_KEY = "didRequestCameraPermission"
 class MainViewModel(sharedPreferences: SharedPreferences,
-                    connectivityObserver: ConnectivityObserver): ViewModel() {
+                    connectivityObserver: ConnectivityObserver
+): ViewModel() {
 
     private val carDetailsRepository = CarDetailsRepository()
 
