@@ -92,6 +92,9 @@ fun CameraPreview(navController: NavController, mainViewModel: MainViewModel) {
                     }
                 }, { imageCaptureException ->
                     Log.e("CameraPreview", "Error capturing image", imageCaptureException)
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar("Error capturing image ${imageCaptureException.message}")
+                    }
                     navController.popBackStack()
                 })
             }, modifier = Modifier.padding(bottom = 15.dp)) {
