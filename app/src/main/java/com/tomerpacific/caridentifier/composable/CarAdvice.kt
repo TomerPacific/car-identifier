@@ -87,34 +87,9 @@ fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {
                     contentDescription = "mechanic in garage",
                 )
             }
-            Text(
-                "$PROS:",
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(start = 5.dp)
-                    .align(Alignment.Start)
-            )
-            Text(
-                text = prosText,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 10.dp)
-            )
-            Text(
-                "$CONS:",
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(start = 5.dp)
-                    .align(Alignment.Start)
-            )
-            Text(
-                text = consText,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 10.dp)
-            )
+
+            AdviceList(title = PROS, adviceList = prosText, Modifier.align(Alignment.Start))
+            AdviceList(title = CONS, adviceList = consText, Modifier.align(Alignment.Start))
         } else if (serverError.value != null) {
             Spacer(modifier = Modifier.size(20.dp))
             Text(
@@ -132,6 +107,26 @@ fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {
             )
         }
     }
+}
+
+@Composable
+private fun AdviceList(title: String,
+                       adviceList: String,
+                       modifier: Modifier = Modifier) {
+    Text(
+        "$title:",
+        fontSize = 25.sp,
+        fontWeight = FontWeight.Bold,
+        modifier = modifier
+            .padding(start = 5.dp)
+    )
+    Text(
+        text = adviceList,
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        textAlign = TextAlign.Start,
+        modifier = Modifier.padding(start = 10.dp)
+    )
 }
 
 fun createBulletPoints(list: List<String>): String {
