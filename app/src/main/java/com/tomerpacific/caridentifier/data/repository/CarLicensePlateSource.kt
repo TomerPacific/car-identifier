@@ -8,6 +8,7 @@ import io.ktor.client.call.body
 import io.ktor.client.request.*
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.URLBuilder
 import io.ktor.http.URLProtocol
 import io.ktor.http.encodedPath
 import kotlinx.coroutines.Dispatchers
@@ -20,11 +21,7 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
     private suspend fun HttpClient.getCarDetails(licensePlateNumber: String): Result<CarDetails> {
         val httpResponse: HttpResponse = try {
             get {
-                url {
-                    protocol = URLProtocol.HTTPS
-                    host = ENDPOINT
-                    encodedPath = "/vehicle/${licensePlateNumber}"
-                }
+                buildUrl("/vehicle/${licensePlateNumber}")
             }
         } catch (e: Exception) {
             return Result.failure(e)
@@ -45,11 +42,7 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
     private suspend fun HttpClient.getCarReview(searchQuery: String): Result<String> {
         val httpResponse: HttpResponse = try {
             get {
-                url {
-                    protocol = URLProtocol.HTTPS
-                    host = ENDPOINT
-                    encodedPath = "/review/${searchQuery}"
-                }
+                buildUrl("/review/${searchQuery}")
             }
         } catch (e: Exception) {
             return Result.failure(e)
@@ -73,5 +66,13 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
 
     suspend fun getCarReview(searchQuery: String): Result<String> = withContext(Dispatchers.IO) {
         client.getCarReview(searchQuery)
+    }
+
+    private fun buildUrl(url: String): String {
+        return URLBuilder().apply {
+            protocol = URLProtocol.HTTPS
+            host = ENDPOINT
+            encodedPath = url
+        }.buildString()
     }
 }
