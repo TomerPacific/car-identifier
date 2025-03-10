@@ -33,7 +33,7 @@ fun CarDetailsScreen(mainViewModel: MainViewModel, navController: NavController)
 
     val tabs = listOf("פרטים", "ביקורות", "המלצות")
 
-    val serverError = mainViewModel.serverError.collectAsState()
+    val serverError by mainViewModel.serverError.collectAsState()
 
     Column(modifier = Modifier.fillMaxWidth()) {
         TabRow(selectedTabIndex = tabIndex) {
@@ -51,7 +51,7 @@ fun CarDetailsScreen(mainViewModel: MainViewModel, navController: NavController)
                                 modifier = Modifier.size(40.dp))
                         }
                     },
-                    enabled = serverError.value == null
+                    enabled = serverError == null
                 )
             }
         }
