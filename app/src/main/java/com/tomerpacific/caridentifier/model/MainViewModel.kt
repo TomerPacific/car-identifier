@@ -20,15 +20,11 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 const val DID_REQUEST_CAMERA_PERMISSION_KEY = "didRequestCameraPermission"
-class MainViewModel(sharedPreferences: SharedPreferences,
-                    connectivityObserver: ConnectivityObserver
+class MainViewModel(private val sharedPreferences: SharedPreferences,
+                    private val connectivityObserver: ConnectivityObserver,
+                    private val carDetailsRepository: CarDetailsRepository = CarDetailsRepository(),
+                    private val languageTranslator: LanguageTranslator = LanguageTranslator()
 ): ViewModel() {
-
-    private val carDetailsRepository = CarDetailsRepository()
-
-    private val _sharedPreferences = sharedPreferences
-
-    private val _connectivityObserver = connectivityObserver
 
     private val _carDetails = MutableStateFlow<CarDetails?>(null)
 
@@ -54,8 +50,6 @@ class MainViewModel(sharedPreferences: SharedPreferences,
 
     private val _searchTermCompletionText = MutableStateFlow<CarReview?>(null)
 
-    private val languageTranslator = LanguageTranslator()
-
     val searchTermCompletionText: StateFlow<CarReview?>
         get() = _searchTermCompletionText
 
@@ -76,7 +70,7 @@ class MainViewModel(sharedPreferences: SharedPreferences,
 
     init {
         _didRequestCameraPermission.value =
-            _sharedPreferences.getBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, false)
+            sharedPreferences.getBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, false)
     }
 
 
@@ -87,7 +81,7 @@ class MainViewModel(sharedPreferences: SharedPreferences,
             _licensePlateNumber = it
         }
 
-        if (!_connectivityObserver.isConnectedToNetwork()) {
+        if (!connectivityObserver.isConnectedToNetwork()) {
             _serverError.value = NO_INTERNET_CONNECTION_ERROR
             return
         } else {
@@ -124,7 +118,7 @@ class MainViewModel(sharedPreferences: SharedPreferences,
     fun setDidRequestCameraPermission(didRequest: Boolean) {
         if (!_didRequestCameraPermission.value) {
             _didRequestCameraPermission.value = didRequest
-            _sharedPreferences.edit().putBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, didRequest).apply()
+            sharedPreferences.edit().putBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, didRequest).apply()
         }
     }
 
@@ -134,7 +128,7 @@ class MainViewModel(sharedPreferences: SharedPreferences,
 
     fun getCarReview() {
 
-        if (!_connectivityObserver.isConnectedToNetwork()) {
+        if (!connectivityObserver.isConnectedToNetwork()) {
             _serverError.value = NO_INTERNET_CONNECTION_ERROR
             return
         }
@@ -182,6 +176,6 @@ class MainViewModel(sharedPreferences: SharedPreferences,
     override fun onCleared() {
         super.onCleared()
         _webView.value?.destroy()
-        _connectivityObserver.unregisterNetworkCallback()
+        connectivityObserver.unregisterNetworkCallback()
     }
 }
