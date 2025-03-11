@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.R
@@ -31,7 +32,10 @@ fun CarDetailsScreen(mainViewModel: MainViewModel, navController: NavController)
 
     var tabIndex by remember { mutableStateOf(0) }
 
-    val tabs = listOf("פרטים", "ביקורות", "המלצות")
+    val tabs = listOf(
+        stringResource(R.string.tab_name_details),
+        stringResource(R.string.tab_name_reviews),
+        stringResource(R.string.tab_name_recommendations))
 
     val serverError by mainViewModel.serverError.collectAsState()
 
