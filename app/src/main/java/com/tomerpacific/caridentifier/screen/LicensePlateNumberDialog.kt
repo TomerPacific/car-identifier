@@ -107,14 +107,15 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                         value = licensePlateNumberState,
                         onValueChange = { textFieldValue ->
                             didClickConfirmBtn = false
-                            if (wasCharacterDeleted(textFieldValue.text, licensePlateNumberState.text)) {
-                                isLicensePlateLengthLimitReached = false
-                                licensePlateNumberState = handleCharacterDeletion(textFieldValue)
+
+                            if (doesLicensePlateNumberExceedLimit(textFieldValue)) {
+                                isLicensePlateLengthLimitReached = true
                                 return@TextField
                             }
 
-                            if (textFieldValue.text.length > EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
-                                isLicensePlateLengthLimitReached = true
+                            if (wasCharacterDeleted(textFieldValue.text, licensePlateNumberState.text)) {
+                                isLicensePlateLengthLimitReached = false
+                                licensePlateNumberState = handleCharacterDeletion(textFieldValue)
                                 return@TextField
                             }
 
@@ -215,6 +216,10 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
             }
         }
     )
+}
+
+private fun doesLicensePlateNumberExceedLimit(textFieldValue: TextFieldValue): Boolean {
+    return textFieldValue.text.length > EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES
 }
 
 private fun handleCharacterDeletion(textFieldValue: TextFieldValue): TextFieldValue {
