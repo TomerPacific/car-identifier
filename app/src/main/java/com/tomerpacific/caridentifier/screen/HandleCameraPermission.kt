@@ -32,35 +32,39 @@ fun HandleCameraPermission(navController: NavController,
 
     val cameraPermissionRequestLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            cameraPermissionStatus = when(isGranted) {
+            cameraPermissionStatus = when (isGranted) {
                 true -> PackageManager.PERMISSION_GRANTED
                 false -> PackageManager.PERMISSION_DENIED
             }
-
-            when(isGranted) {
-                true -> {
-                    navController.navigate(Screen.CameraPreview.route)
-                }
-                false -> {
-                    val activity = context.getActivityOrNull()
-                    activity?.let {
-                        val shouldShowRationale = shouldShowRequestPermissionRationale(it, android.Manifest.permission.CAMERA)
-                        mainViewModel.setShouldShowRationale(shouldShowRationale)
-                        if (shouldShowRationale) {
-                            Toast.makeText(context, "Camera permission is needed to scan license plate", Toast.LENGTH_LONG).show()
-                        }
-                    }
-                    mainViewModel.setDidRequestCameraPermission(true)
-                    navController.popBackStack()
-                }
-
-            }
+        handleCameraPermissionResult(context, navController, mainViewModel, isGranted)
     }
 
     LaunchedEffect(cameraPermissionStatus) {
         cameraPermissionRequestLauncher.launch(android.Manifest.permission.CAMERA)
     }
+}
 
+private fun handleCameraPermissionResult(context: Context,
+                                         navController: NavController,
+                                         mainViewModel: MainViewModel,
+                                         isGranted: Boolean) {
+    when(isGranted) {
+        true -> {
+            navController.navigate(Screen.CameraPreview.route)
+        }
+        false -> {
+            val activity = context.getActivityOrNull()
+            activity?.let {
+                val shouldShowRationale = shouldShowRequestPermissionRationale(it, android.Manifest.permission.CAMERA)
+                mainViewModel.setShouldShowRationale(shouldShowRationale)
+                if (shouldShowRationale) {
+                    Toast.makeText(context, "Camera permission is needed to scan license plate", Toast.LENGTH_LONG).show()
+                }
+            }
+            mainViewModel.setDidRequestCameraPermission(true)
+            navController.popBackStack()
+        }
+    }
 }
 
 fun Context.getActivityOrNull(): Activity? {
