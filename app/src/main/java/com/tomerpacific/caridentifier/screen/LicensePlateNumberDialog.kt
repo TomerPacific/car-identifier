@@ -109,23 +109,9 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                             didClickConfirmBtn = false
                             if (wasCharacterDeleted(textFieldValue.text, licensePlateNumberState.text)) {
                                 isLicensePlateLengthLimitReached = false
-                                licensePlateNumberState = if (textFieldValue.text.length == SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
-                                    val formattedText = "${textFieldValue.text.substring(0, FIRST_DASH_INDEX)}-${
-                                        textFieldValue.text.substring(
-                                            FIRST_DASH_INDEX,
-                                            3
-                                        )
-                                    }${textFieldValue.text.substring(4, SECOND_DASH_INDEX)}-${textFieldValue.text.substring(7, SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES)}"
-                                    TextFieldValue(
-                                        text = formattedText,
-                                        selection = TextRange(formattedText.length)
-                                    )
-                                } else {
-                                    textFieldValue
-                                }
+                                licensePlateNumberState = handleCharacterDeletion(textFieldValue)
                                 return@TextField
                             }
-
 
                             if (textFieldValue.text.length > EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
                                 isLicensePlateLengthLimitReached = true
@@ -231,8 +217,21 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
     )
 }
 
-private fun handleLicensePlateInput() {
-
+private fun handleCharacterDeletion(textFieldValue: TextFieldValue): TextFieldValue {
+    return if (textFieldValue.text.length == SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
+        val formattedText = "${textFieldValue.text.substring(0, FIRST_DASH_INDEX)}-${
+            textFieldValue.text.substring(
+                FIRST_DASH_INDEX,
+                3
+            )
+        }${textFieldValue.text.substring(4, SECOND_DASH_INDEX)}-${textFieldValue.text.substring(7, SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES)}"
+        TextFieldValue(
+            text = formattedText,
+            selection = TextRange(formattedText.length)
+        )
+    } else {
+        textFieldValue
+    }
 }
 
 private fun wasCharacterDeleted(currentText: String, previousText: String): Boolean {
