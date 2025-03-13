@@ -22,7 +22,7 @@ object CameraFileUtils {
         val photoFile = createPhotoFile(context)
 
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
-        
+
         cameraController.takePicture(
             outputOptions,
             executor,
