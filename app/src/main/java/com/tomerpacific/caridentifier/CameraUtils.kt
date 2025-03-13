@@ -22,8 +22,7 @@ object CameraFileUtils {
         val photoFile = createPhotoFile(context)
 
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
-
-
+        
         cameraController.takePicture(
             outputOptions,
             executor,
@@ -42,12 +41,12 @@ object CameraFileUtils {
     private fun createPhotoFile(context: Context): File {
         val outputDirectory = getOutputDirectory(context)
 
-        return File(outputDirectory, photoFileName()).apply {
+        return File(outputDirectory, generatePhotoFileName()).apply {
             parentFile?.mkdirs()
         }
     }
 
-    private fun photoFileName() =
+    private fun generatePhotoFileName() =
         SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS", Locale.US)
             .format(System.currentTimeMillis()) + ".jpg"
 
