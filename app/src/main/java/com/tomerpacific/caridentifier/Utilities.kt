@@ -129,26 +129,16 @@ fun getCarManufacturer(manufacturer: String): String {
 }
 
 fun formatCarReviewResponse(carReview: String): CarReview {
-    val carReviewSplitIntoLines = carReview.removePrefix("\"").removeSuffix("\"").split("\\n")
+    val carReviewLines = carReview.removePrefix("\"").removeSuffix("\"").split("\\n")
     val prosList = mutableListOf<String>()
     val consList = mutableListOf<String>()
-    var isInProsList = false
-    carReviewSplitIntoLines.forEach { line ->
-        if (line.isEmpty()) {
-            return@forEach
-        }
+    var isInProsSection = false
 
-        if (line.contains(PROS, true)) {
-            isInProsList = true
-            return@forEach
-        } else if (line.contains(CONS, true)) {
-            isInProsList = false
-            return@forEach
-        }
-
-        when (isInProsList) {
-            true -> prosList.add(line)
-            false -> consList.add(line)
+    carReviewLines.forEach { line ->
+        when {
+            line.contains(PROS, true) -> isInProsSection = true
+            line.contains(CONS, true) -> isInProsSection = false
+            line.isNotBlank() -> if (isInProsSection) prosList.add(line) else consList.add(line)
         }
     }
 
@@ -165,11 +155,9 @@ fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
 
 fun isLicensePlateNumberValid(licensePlateNumber: String, pattern: Regex? = null): Boolean {
     return when (pattern) {
-        null -> {
+        null ->
             licensePlateNumber.length in SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES && licensePlateNumber.contains("-")
-        }
-        else -> {
+        else ->
             licensePlateNumber.length in SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES && pattern.matches(licensePlateNumber)
-        }
     }
 }
