@@ -44,6 +44,9 @@ import java.io.IOException
 
 const val NO_LICENSE_PLATE_ERROR = "לא נמצאה לוחית רישוי. אנא צלמו תמונה עם לוחית רישוי."
 
+val textRecognizer =
+    TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+
 @Composable
 fun VerifyPhotoDialog(imageUri: Uri,
                       navController: NavController,
@@ -107,11 +110,10 @@ private fun processImage(context: Context,
                          imageUri: Uri,
                          mainViewModel: MainViewModel,
                          navController: NavController) {
-    val recognizer =
-        TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+
     try {
         val image = InputImage.fromFilePath(context, imageUri)
-        recognizer.process(image)
+        textRecognizer.process(image)
             .addOnSuccessListener { visionText ->
                 val licensePlateNumber =
                     getLicensePlateNumberFromImageText(visionText)
@@ -142,10 +144,9 @@ private fun processImage(context: Context,
 
 private fun getLicensePlateNumberFromImageText(text: Text): String? {
     for (block in text.textBlocks) {
-        var blockText = block.text
+        val blockText = block.text
         if (isLicensePlateNumberValid(blockText)) {
-            blockText = blockText.replace(":", "-")
-            return blockText
+            return blockText.replace(":", "-")
         }
     }
 
