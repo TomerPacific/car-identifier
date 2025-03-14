@@ -52,49 +52,70 @@ fun MainScreen(navController: NavController,
                 Column(modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top) {
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 30.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center) {
-                        Text("בחר/י באפשרות לחפש פרטים בנוגע לרכב",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 25.sp,
-                            textAlign = TextAlign.Center)
-                    }
+
+                    LicensePlateInputOptionsHeader()
                     Spacer(modifier = Modifier.size(150.dp))
-                    Box(modifier = Modifier.fillMaxWidth().height(300.dp).weight(1f)) {
-                        Row(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            CarLicensePlateSearchOptionButton(
-                                buttonText = "חפש/י לפי תמונה",
-                                drawableId = R.drawable.license_plate,
-                                drawableContentDescription = "License Plate",
-                                navController,
-                                shouldDisableButton
-                            )
-                            CarLicensePlateSearchOptionButton(
-                                buttonText = "חפש/י לפי מספר",
-                                drawableId = R.drawable.keyboard,
-                                drawableContentDescription = "Smartphone Keyboard",
-                                navController
-                            )
-                        }
-                    }
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(intrinsicSize = IntrinsicSize.Max).padding(end = 6.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.End) {
-                        Text(
-                            text = stringResource(R.string.app_version, BuildConfig.VERSION_NAME),
-                            fontSize = 16.sp
-                        )
-                    }
+                    LicensePlateInputOptions(navController, shouldDisableButton, Modifier.weight(1f))
+                    AppVersion()
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun LicensePlateInputOptionsHeader() {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .padding(top = 30.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center) {
+        Text("בחר/י באפשרות לחפש פרטים בנוגע לרכב",
+            fontWeight = FontWeight.Bold,
+            fontSize = 25.sp,
+            textAlign = TextAlign.Center)
+    }
+}
+
+@Composable
+private fun LicensePlateInputOptions(navController: NavController,
+                                     shouldDisableButton:Boolean,
+                                     modifier: Modifier = Modifier) {
+    Box(modifier = modifier
+        .fillMaxWidth()
+        .height(300.dp)) {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            CarLicensePlateSearchOptionButton(
+                buttonText = "חפש/י לפי תמונה",
+                drawableId = R.drawable.license_plate,
+                drawableContentDescription = "License Plate",
+                navController,
+                shouldDisableButton
+            )
+            CarLicensePlateSearchOptionButton(
+                buttonText = "חפש/י לפי מספר",
+                drawableId = R.drawable.keyboard,
+                drawableContentDescription = "Smartphone Keyboard",
+                navController
+            )
+        }
+    }
+}
+
+@Composable
+private fun AppVersion() {
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .height(intrinsicSize = IntrinsicSize.Max)
+        .padding(end = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.End) {
+        Text(
+            text = stringResource(R.string.app_version, BuildConfig.VERSION_NAME),
+            fontSize = 16.sp
+        )
     }
 }

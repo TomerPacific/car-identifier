@@ -8,147 +8,137 @@ const val CONS = "חסרונות"
 const val SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES = 9
 const val EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES = 10
 
+val CAR_MANUFACTURER_NAME_TRANSLATION_TO_ENGLISH = mapOf(
+    "אאודי" to "Audi",
+    "אבארט" to "Abarth",
+    "אווטאר" to "Avatar",
+    "אוטוביאנקי" to "Autobianchi",
+    "איוויס" to "Aiways",
+    "אי.וי.איזי" to "A.V.EZ",
+    "אופל" to "Opel",
+    "אורה" to "Ora",
+    "איווקו" to "Iveco",
+    "אניאוס" to "Ineos",
+    "איסוזו" to "Isuzu",
+    "אינפיניטי" to "Infiniti",
+    "אלפא רומיאו" to "Alfa Romeo",
+    "אם.ג'י" to "MG",
+    "אסטון מרטין" to "Aston Martin",
+    "אל.אי.וי.סי" to "L.E.V.C",
+    "אל.טי.איי" to "L.T.I",
+    "אלפין" to "Alpine",
+    "אם דאבל יו אם" to "M.W.M",
+    "אקורה" to "Acura",
+    "אקס אי וי" to "XEV",
+    "אקספנג" to "XPeng",
+    "ב.מ.וו" to "BMW",
+    "בי.אי.דבאליו" to "B.I.W",
+    "ביואיק" to "Buick",
+    "בנטלי" to "Bentley",
+    "ג'אקו" to "Jaecoo",
+    "ג'י.איי.סי" to "GAC",
+    "ג'י.אם.סי" to "GMC",
+    "ג'ילי" to "Geely",
+    "ג'נסיס" to "Genesis",
+    "גופיל" to "Goupil",
+    "ג'יפ" to "Jeep",
+    "גיאיוואן" to "Gyon",
+    "גרייט וול" to "Great Wall",
+    "ג'יי.איי.סי" to "JAC",
+    "דאבל יו אם מוטורס" to "W.M. Motors",
+    "דאצ'יה" to "Dacia",
+    "דודג'" to "Dodge",
+    "דונגפנג" to "Dongfeng",
+    "די.אס" to "DS",
+    "דייהו" to "Daewood",
+    "דייהטסו" to "Daihatsu",
+    "דיפאל" to "Deepal",
+    "האמר" to "Hummer",
+    "הונגצ'י" to "Hongqi",
+    "הונדה" to "Honda",
+    "וויה" to "Voyah",
+    "ווי" to "Wey",
+    "וולוו" to "Volvo",
+    "זיקר" to "Zeekr",
+    "טאטא" to "Tata",
+    "טויוטה" to "Toyota",
+    "טסלה" to "Tesla",
+    "יגואר" to "Jaguar",
+    "יונדאי" to "Hyundai",
+    "יודו" to "Yudo",
+    "לאדה" to "Lada",
+    "לוטוס" to "Lotus",
+    "לינק אנד קו" to "Lynk & Co",
+    "למבורגיני" to "Lamborghini",
+    "לנד רובר" to "Land Rover",
+    "לקסוס" to "Lexus",
+    "לינקולן" to "Lincoln",
+    "ליפמוטור" to "Leafmotor",
+    "לנצ'יה" to "Lancia",
+    "מזדה" to "Mazda",
+    "מאן" to "Man",
+    "מורגן" to "Morgan",
+    "מזראטי" to "Maserati",
+    "מיני" to "Mini",
+    "מיצובישי" to "Mitsubishi",
+    "מקלארן" to "McLaren",
+    "מקסוס" to "Maxus",
+    "מרצדס" to "Mercedes",
+    "נטע" to "Neta",
+    "ניאו" to "Nio",
+    "ניסאן" to "Nissan",
+    "ננג'ינג" to "Nanjing",
+    "סאאב" to "Saab",
+    "סאנגיונג" to "Sangyong",
+    "סאנשיין" to "Sunshine",
+    "סובארו" to "Subaru",
+    "סוזוקי" to "Suzuki",
+    "סיטרואן" to "Citroën",
+    "סיאט" to "Seat",
+    "סקודה" to "Skoda",
+    "סרס" to "Seres",
+    "סמארט" to "Smart",
+    "סנטרו" to "Santro",
+    "סקיוול" to "Skywell",
+    "פוטון" to "Foton",
+    "פיאט" to "Fiat",
+    "פיג'ו" to "Peugeot",
+    "פולסטאר" to "Polestar",
+    "פולקסווגן" to "Volkswagen",
+    "פורד" to "Ford",
+    "פורשה" to "Porsche",
+    "פרארי" to "Ferrari",
+    "פורתינג" to "Forthing",
+    "פיאג'ו" to "Piaggio",
+    "צ'רי" to "Chery",
+    "קאדילק" to "Cadillac",
+    "קארמה" to "Karma",
+    "קיה" to "Kia",
+    "קופרה" to "Cupra",
+    "קרייזלר" to "Chrysler",
+    "ראם" to "Ram",
+    "רובר" to "Rover",
+    "רנו" to "Renault",
+    "ריהיי" to "Reyee",
+    "רולס רויס" to "Rolls-Royce",
+    "שברולט" to "Chevrolet"
+)
 
 fun getCarManufacturer(manufacturer: String): String {
-    return when (manufacturer) {
-        "אאודי" -> "Audi"
-        "אבארט" -> "Abarth"
-        "אווטאר" -> "Avatar"
-        "אוטוביאנקי" -> "Autobianchi"
-        "איוויס" -> "Aiways"
-        "אי.וי.איזי" -> "A.V.EZ"
-        "אופל" -> "Opel"
-        "אורה" -> "Ora"
-        "איווקו" -> "Iveco"
-        "אניאוס" -> "Ineos"
-        "איסוזו" -> "Isuzu"
-        "אינפיניטי" -> "Infiniti"
-        "אלפא רומיאו" -> "Alfa Romeo"
-        "אם.ג'י" -> "MG"
-        "אסטון מרטין" -> "Aston Martin"
-        "אל.אי.וי.סי" -> "L.E.V.C"
-        "אל.טי.איי" -> "L.T.I"
-        "אלפין" -> "Alpine"
-        "אם דאבל יו אם" -> "M.W.M"
-        "אקורה" -> "Acura"
-        "אקס אי וי" -> "XEV"
-        "אקספנג" -> "XPeng"
-        "ב.מ.וו" -> "BMW"
-        "בי.אי.דבאליו" -> "B.I.W"
-        "ביואיק" -> "Buick"
-        "בנטלי" -> "Bentley"
-        "ג'אקו" -> "Jaecoo"
-        "ג'י.איי.סי" -> "GAC"
-        "ג'י.אם.סי" -> "GMC"
-        "ג'ילי" -> "Geely"
-        "ג'נסיס" -> "Genesis"
-        "גופיל" -> "Goupil"
-        "ג'יפ" -> "Jeep"
-        "גיאיוואן" -> "Gyon"
-        "גרייט וול" -> "Great Wall"
-        "ג'יי.איי.סי" -> "JAC"
-        "דאבל יו אם מוטורס" -> "W.M. Motors"
-        "דאצ'יה" -> "Dacia"
-        "דודג'" -> "Dodge"
-        "דונגפנג" -> "Dongfeng"
-        "די.אס" -> "DS"
-        "דייהו" -> "Daewood"
-        "דייהטסו" -> "Daihatsu"
-        "דיפאל" -> "Deepal"
-        "האמר" -> "Hummer"
-        "הונגצ'י" -> "Hongqi"
-        "הונדה" -> "Honda"
-        "וויה" -> "Voyah"
-        "ווי" -> "Wey"
-        "וולוו" -> "Volvo"
-        "זיקר" -> "Zeekr"
-        "טאטא" -> "Tata"
-        "טויוטה" -> "Toyota"
-        "טסלה" -> "Tesla"
-        "יגואר" -> "Jaguar"
-        "יונדאי" -> "Hyundai"
-        "יודו" -> "Yudo"
-        "לאדה" -> "Lada"
-        "לוטוס" -> "Lotus"
-        "לינק אנד קו" -> "Lynk & Co"
-        "למבורגיני" -> "Lamborghini"
-        "לנד רובר" -> "Land Rover"
-        "לקסוס" -> "Lexus"
-        "לינקולן" -> "Lincoln"
-        "ליפמוטור" -> "Leafmotor"
-        "לנצ'יה" -> "Lancia"
-        "מזדה" -> "Mazda"
-        "מאן" -> "Man"
-        "מורגן" -> "Morgan"
-        "מזראטי" -> "Maserati"
-        "מיני" -> "Mini"
-        "מיצובישי" -> "Mitsubishi"
-        "מקלארן" -> "McLaren"
-        "מקסוס" -> "Maxus"
-        "מרצדס" -> "Mercedes"
-        "נטע" -> "Neta"
-        "ניאו" -> "Nio"
-        "ניסאן" -> "Nissan"
-        "ננג'ינג" -> "Nanjing"
-        "סאאב" -> "Saab"
-        "סאנגיונג" -> "Sangyong"
-        "סאנשיין" -> "Sunshine"
-        "סובארו" -> "Subaru"
-        "סוזוקי" -> "Suzuki"
-        "סיטרואן" -> "Citroën"
-        "סיאט" -> "Seat"
-        "סקודה" -> "Skoda"
-        "סרס" -> "Seres"
-        "סמארט" -> "Smart"
-        "סנטרו" -> "Santro"
-        "סקיוול" -> "Skywell"
-        "פוטון" -> "Foton"
-        "פיאט" -> "Fiat"
-        "פיג'ו" -> "Peugeot"
-        "פולסטאר" -> "Polestar"
-        "פולקסווגן" -> "Volkswagen"
-        "פורד" -> "Ford"
-        "פורשה" -> "Porsche"
-        "פרארי" -> "Ferrari"
-        "פורתינג" -> "Forthing"
-        "פיאג'ו" -> "Piaggio"
-        "צ'רי" -> "Chery"
-        "קאדילק" -> "Cadillac"
-        "קארמה" -> "Karma"
-        "קיה" -> "Kia"
-        "קופרה" -> "Cupra"
-        "קרייזלר" -> "Chrysler"
-        "ראם" -> "Ram"
-        "רובר" -> "Rover"
-        "רנו" -> "Renault"
-        "ריהיי" -> "Reyee"
-        "רולס רויס" -> "Rolls-Royce"
-        "שברולט" -> "Chevrolet"
-        else -> "Unknown Manufacturer"
-    }
+    return CAR_MANUFACTURER_NAME_TRANSLATION_TO_ENGLISH[manufacturer] ?: "Unknown Manufacturer"
 }
 
 fun formatCarReviewResponse(carReview: String): CarReview {
-    val carReviewSplitIntoLines = carReview.removePrefix("\"").removeSuffix("\"").split("\\n")
+    val carReviewLines = carReview.removePrefix("\"").removeSuffix("\"").split("\\n")
     val prosList = mutableListOf<String>()
     val consList = mutableListOf<String>()
-    var isInProsList = false
-    carReviewSplitIntoLines.forEach { line ->
-        if (line.isEmpty()) {
-            return@forEach
-        }
+    var isInProsSection = false
 
-        if (line.contains(PROS, true)) {
-            isInProsList = true
-            return@forEach
-        } else if (line.contains(CONS, true)) {
-            isInProsList = false
-            return@forEach
-        }
-
-        when (isInProsList) {
-            true -> prosList.add(line)
-            false -> consList.add(line)
+    carReviewLines.forEach { line ->
+        when {
+            line.contains(PROS, true) -> isInProsSection = true
+            line.contains(CONS, true) -> isInProsSection = false
+            line.isNotBlank() -> if (isInProsSection) prosList.add(line) else consList.add(line)
         }
     }
 
@@ -165,11 +155,9 @@ fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
 
 fun isLicensePlateNumberValid(licensePlateNumber: String, pattern: Regex? = null): Boolean {
     return when (pattern) {
-        null -> {
+        null ->
             licensePlateNumber.length in SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES && licensePlateNumber.contains("-")
-        }
-        else -> {
+        else ->
             licensePlateNumber.length in SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES && pattern.matches(licensePlateNumber)
-        }
     }
 }

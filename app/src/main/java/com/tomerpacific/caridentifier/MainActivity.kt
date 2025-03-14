@@ -15,7 +15,7 @@ import androidx.navigation.navArgument
 import com.tomerpacific.caridentifier.composable.CameraPreview
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
-import com.tomerpacific.caridentifier.network.ConnectivityObserver
+import com.tomerpacific.caridentifier.data.network.ConnectivityObserver
 import com.tomerpacific.caridentifier.screen.CarDetailsScreen
 import com.tomerpacific.caridentifier.screen.HandleCameraPermission
 import com.tomerpacific.caridentifier.screen.VerifyPhotoDialog

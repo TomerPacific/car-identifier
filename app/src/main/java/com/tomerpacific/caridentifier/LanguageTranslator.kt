@@ -10,31 +10,39 @@ import kotlinx.coroutines.tasks.await
 class LanguageTranslator {
 
     private val englishHebrewTranslator: Translator
-    private var didDownloadLanguageModel: Boolean = false
+
+    private var isLanguageModelDownloaded = false
 
     init {
-        val options = TranslatorOptions.Builder()
+        val translatorOptions = TranslatorOptions.Builder()
             .setSourceLanguage(TranslateLanguage.ENGLISH)
             .setTargetLanguage(TranslateLanguage.HEBREW)
             .build()
-        englishHebrewTranslator = Translation.getClient(options)
+        englishHebrewTranslator = Translation.getClient(translatorOptions)
 
-        val conditions = DownloadConditions.Builder()
+        val downloadConditions = DownloadConditions.Builder()
             .requireWifi()
             .build()
-        englishHebrewTranslator.downloadModelIfNeeded(conditions)
+        englishHebrewTranslator.downloadModelIfNeeded(downloadConditions)
             .addOnSuccessListener {
-                didDownloadLanguageModel = true
+                isLanguageModelDownloaded = true
+            }
+            .addOnFailureListener {
+                isLanguageModelDownloaded = false
             }
     }
 
     suspend fun translate(text: String): Result<String> {
 
-        if (!didDownloadLanguageModel) {
+        if (!isLanguageModelDownloaded) {
             return Result.failure(Exception("Failed to download language model"))
         }
 
-        val translatedText = englishHebrewTranslator.translate(text).await()
-        return Result.success(translatedText)
+        return try {
+            val translatedText = englishHebrewTranslator.translate(text).await()
+            Result.success(translatedText)
+        } catch (e: Exception) {
+            Result.failure(Exception("Translation failed: ${e.message}", e))
+        }
     }
 }

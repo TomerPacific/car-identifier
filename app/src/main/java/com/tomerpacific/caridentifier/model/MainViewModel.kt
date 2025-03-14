@@ -10,24 +10,22 @@ import com.tomerpacific.caridentifier.LanguageTranslator
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import com.tomerpacific.caridentifier.formatCarReviewResponse
-import com.tomerpacific.caridentifier.network.ConnectivityObserver
-import com.tomerpacific.caridentifier.network.NO_INTERNET_CONNECTION_ERROR
+import com.tomerpacific.caridentifier.data.network.ConnectivityObserver
+import com.tomerpacific.caridentifier.data.network.NO_INTERNET_CONNECTION_ERROR
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val DID_REQUEST_CAMERA_PERMISSION_KEY = "didRequestCameraPermission"
-class MainViewModel(sharedPreferences: SharedPreferences,
-                    connectivityObserver: ConnectivityObserver): ViewModel() {
-
-    private val carDetailsRepository = CarDetailsRepository()
-
-    private val _sharedPreferences = sharedPreferences
-
-    private val _connectivityObserver = connectivityObserver
+class MainViewModel(private val sharedPreferences: SharedPreferences,
+                    private val connectivityObserver: ConnectivityObserver,
+                    private val carDetailsRepository: CarDetailsRepository = CarDetailsRepository(),
+                    private val languageTranslator: LanguageTranslator = LanguageTranslator()
+): ViewModel() {
 
     private val _carDetails = MutableStateFlow<CarDetails?>(null)
 
@@ -53,8 +51,6 @@ class MainViewModel(sharedPreferences: SharedPreferences,
 
     private val _searchTermCompletionText = MutableStateFlow<CarReview?>(null)
 
-    private val languageTranslator = LanguageTranslator()
-
     val searchTermCompletionText: StateFlow<CarReview?>
         get() = _searchTermCompletionText
 
@@ -75,7 +71,7 @@ class MainViewModel(sharedPreferences: SharedPreferences,
 
     init {
         _didRequestCameraPermission.value =
-            _sharedPreferences.getBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, false)
+            sharedPreferences.getBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, false)
     }
 
 
@@ -86,34 +82,36 @@ class MainViewModel(sharedPreferences: SharedPreferences,
             _licensePlateNumber = it
         }
 
-        if (!_connectivityObserver.isConnectedToNetwork()) {
+        if (!connectivityObserver.isConnectedToNetwork()) {
             _serverError.value = NO_INTERNET_CONNECTION_ERROR
             return
-        } else {
-            _serverError.value = null
         }
 
-        val licensePlateNumberWithoutDashes = _licensePlateNumber.replace("-", "")
-        viewModelScope.launch(Dispatchers.IO) {
-            carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess { carDetails ->
-                _carDetails.value = carDetails
-                languageTranslator.translate(concatenateCarMakeAndModel(carDetails)).onSuccess { translatedText ->
-                    searchTerm = translatedText
-                    setupWebView(context)
-                }.onFailure {
-                    _serverError.value = it.localizedMessage
-                }
-            }.onFailure { exception ->
-                exception.localizedMessage?.let {
-                    _serverError.value = when (it.contains("[")) {
-                        true -> {
-                            it.subSequence(
-                                0,
-                                it.indexOf("[")
-                            ).toString()
-                        }
+        _serverError.value = null
 
-                        false -> exception.localizedMessage
+        val licensePlateNumberWithoutDashes = _licensePlateNumber.replace("-", "")
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess { carDetails ->
+                    _carDetails.value = carDetails
+                    languageTranslator.translate(concatenateCarMakeAndModel(carDetails)).onSuccess { translatedText ->
+                        searchTerm = translatedText
+                        setupWebView(context)
+                    }.onFailure {
+                        _serverError.value = it.localizedMessage
+                    }
+                }.onFailure { exception ->
+                    exception.localizedMessage?.let {
+                        _serverError.value = when (it.contains("[")) {
+                            true -> {
+                                it.subSequence(
+                                    0,
+                                    it.indexOf("[")
+                                ).toString()
+                            }
+
+                            false -> exception.localizedMessage
+                        }
                     }
                 }
             }
@@ -123,7 +121,7 @@ class MainViewModel(sharedPreferences: SharedPreferences,
     fun setDidRequestCameraPermission(didRequest: Boolean) {
         if (!_didRequestCameraPermission.value) {
             _didRequestCameraPermission.value = didRequest
-            _sharedPreferences.edit().putBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, didRequest).apply()
+            sharedPreferences.edit().putBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, didRequest).apply()
         }
     }
 
@@ -133,7 +131,7 @@ class MainViewModel(sharedPreferences: SharedPreferences,
 
     fun getCarReview() {
 
-        if (!_connectivityObserver.isConnectedToNetwork()) {
+        if (!connectivityObserver.isConnectedToNetwork()) {
             _serverError.value = NO_INTERNET_CONNECTION_ERROR
             return
         }
@@ -142,12 +140,14 @@ class MainViewModel(sharedPreferences: SharedPreferences,
             return
         }
 
-        viewModelScope.launch(Dispatchers.IO) {
-            carDetailsRepository.getCarReview(searchTerm)
-                .onSuccess {
-                _searchTermCompletionText.value = formatCarReviewResponse(it)
-            }.onFailure {
-                _serverError.value = it.localizedMessage
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                carDetailsRepository.getCarReview(searchTerm)
+                    .onSuccess {
+                        _searchTermCompletionText.value = formatCarReviewResponse(it)
+                    }.onFailure {
+                        _serverError.value = it.localizedMessage
+                    }
             }
         }
     }
@@ -162,17 +162,15 @@ class MainViewModel(sharedPreferences: SharedPreferences,
 
     private fun setupWebView(context: Context) {
 
-        when (_webView.value) {
-            null -> {
-                viewModelScope.launch(Dispatchers.Main) {
-                    _webView.value = WebView(context).apply {
-                        webViewClient = WebViewClient()
-                        settings.javaScriptEnabled = true
-                        settings.loadWithOverviewMode = true
-                        settings.useWideViewPort = true
-                        settings.setSupportZoom(true)
-                        loadUrl("https://www.youtube.com/results?search_query=ביקורת $searchTerm")
-                    }
+        if (_webView.value == null) {
+            viewModelScope.launch {
+                _webView.value = WebView(context).apply {
+                    webViewClient = WebViewClient()
+                    settings.javaScriptEnabled = true
+                    settings.loadWithOverviewMode = true
+                    settings.useWideViewPort = true
+                    settings.setSupportZoom(true)
+                    loadUrl("https://www.youtube.com/results?search_query=ביקורת $searchTerm")
                 }
             }
         }
@@ -181,6 +179,6 @@ class MainViewModel(sharedPreferences: SharedPreferences,
     override fun onCleared() {
         super.onCleared()
         _webView.value?.destroy()
-        _connectivityObserver.unregisterNetworkCallback()
+        connectivityObserver.unregisterNetworkCallback()
     }
 }

@@ -1,5 +1,6 @@
 package com.tomerpacific.caridentifier.screen
 
+import android.content.Context
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,6 +43,9 @@ import java.io.IOException
 
 
 const val NO_LICENSE_PLATE_ERROR = "לא נמצאה לוחית רישוי. אנא צלמו תמונה עם לוחית רישוי."
+
+val textRecognizer =
+    TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
 @Composable
 fun VerifyPhotoDialog(imageUri: Uri,
@@ -88,39 +92,8 @@ fun VerifyPhotoDialog(imageUri: Uri,
                         )
                     }
                     Button(
-                        onClick = {
-                        val recognizer =
-                            TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-                        try {
-                            val image = InputImage.fromFilePath(context, imageUri)
-                            recognizer.process(image)
-                                .addOnSuccessListener { visionText ->
-                                    val licensePlateNumber =
-                                        getLicensePlateNumberFromImageText(visionText)
-                                    when (licensePlateNumber) {
-                                        null -> {
-                                            mainViewModel.triggerSnackBarEvent(NO_LICENSE_PLATE_ERROR)
-                                            navController.popBackStack()
-                                            return@addOnSuccessListener
-                                        }
-                                        else -> {
-                                            mainViewModel.getCarDetails(
-                                                context,
-                                                licensePlateNumber)
-                                            navController.navigate(Screen.CarDetailsScreen.route)
-                                            return@addOnSuccessListener
-                                        }
-                                    }
-                                }
-                                .addOnFailureListener { _ ->
-                                    mainViewModel.triggerSnackBarEvent(NO_LICENSE_PLATE_ERROR)
-                                    navController.popBackStack()
-                                }
-                        } catch (e: IOException) {
-                            mainViewModel.triggerSnackBarEvent(e.message ?: "Error processing image")
-                            navController.popBackStack()
-                        }
-                    }, colors = ButtonDefaults.buttonColors(containerColor = Color(50, 168, 82)),
+                        onClick = { processImage(context, imageUri, mainViewModel, navController) },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(50, 168, 82)),
                         modifier = Modifier.padding(end = 6.dp)) {
                         Icon(
                             imageVector = Icons.Default.Done,
@@ -133,12 +106,47 @@ fun VerifyPhotoDialog(imageUri: Uri,
     }
 }
 
+private fun processImage(context: Context,
+                         imageUri: Uri,
+                         mainViewModel: MainViewModel,
+                         navController: NavController) {
+
+    try {
+        val image = InputImage.fromFilePath(context, imageUri)
+        textRecognizer.process(image)
+            .addOnSuccessListener { visionText ->
+                val licensePlateNumber =
+                    getLicensePlateNumberFromImageText(visionText)
+                when (licensePlateNumber) {
+                    null -> {
+                        mainViewModel.triggerSnackBarEvent(NO_LICENSE_PLATE_ERROR)
+                        navController.popBackStack()
+                        return@addOnSuccessListener
+                    }
+                    else -> {
+                        mainViewModel.getCarDetails(
+                            context,
+                            licensePlateNumber)
+                        navController.navigate(Screen.CarDetailsScreen.route)
+                        return@addOnSuccessListener
+                    }
+                }
+            }
+            .addOnFailureListener { _ ->
+                mainViewModel.triggerSnackBarEvent(NO_LICENSE_PLATE_ERROR)
+                navController.popBackStack()
+            }
+    } catch (e: IOException) {
+        mainViewModel.triggerSnackBarEvent(e.message ?: "Error processing image")
+        navController.popBackStack()
+    }
+}
+
 private fun getLicensePlateNumberFromImageText(text: Text): String? {
     for (block in text.textBlocks) {
-        var blockText = block.text
+        val blockText = block.text
         if (isLicensePlateNumberValid(blockText)) {
-            blockText = blockText.replace(":", "-")
-            return blockText
+            return blockText.replace(":", "-")
         }
     }
 

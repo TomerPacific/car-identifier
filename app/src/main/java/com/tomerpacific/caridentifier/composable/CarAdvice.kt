@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,7 +38,7 @@ import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.model.MainViewModel
 
 @Composable
-fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {
+fun Advice(mainViewModel: MainViewModel, serverError: String?) {
 
     val carReview = mainViewModel.searchTermCompletionText.collectAsState()
 
@@ -55,7 +54,7 @@ fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = columnVerticalArrangement
     ) {
-        if (carReview.value == null && serverError.value == null) {
+        if (carReview.value == null && serverError == null) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 LoaderAnimation(R.raw.truck_loading_animation)
             }
@@ -87,35 +86,10 @@ fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {
                     contentDescription = "mechanic in garage",
                 )
             }
-            Text(
-                "$PROS:",
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(start = 5.dp)
-                    .align(Alignment.Start)
-            )
-            Text(
-                text = prosText,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 10.dp)
-            )
-            Text(
-                "$CONS:",
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .padding(start = 5.dp)
-                    .align(Alignment.Start)
-            )
-            Text(
-                text = consText,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 10.dp)
-            )
-        } else if (serverError.value != null) {
+
+            AdviceList(title = PROS, adviceList = prosText, Modifier.align(Alignment.Start))
+            AdviceList(title = CONS, adviceList = consText, Modifier.align(Alignment.Start))
+        } else if (serverError != null) {
             Spacer(modifier = Modifier.size(20.dp))
             Text(
                 text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
@@ -125,13 +99,33 @@ fun Advice(mainViewModel: MainViewModel, serverError: State<String?>) {
                 style = TextStyle(textDirection = TextDirection.Rtl)
             )
             Text(
-                text = serverError.value!!,
+                text = serverError,
                 textAlign = TextAlign.Center,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
         }
     }
+}
+
+@Composable
+private fun AdviceList(title: String,
+                       adviceList: String,
+                       modifier: Modifier = Modifier) {
+    Text(
+        "$title:",
+        fontSize = 25.sp,
+        fontWeight = FontWeight.Bold,
+        modifier = modifier
+            .padding(start = 5.dp)
+    )
+    Text(
+        text = adviceList,
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        textAlign = TextAlign.Start,
+        modifier = Modifier.padding(start = 10.dp)
+    )
 }
 
 fun createBulletPoints(list: List<String>): String {

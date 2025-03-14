@@ -20,7 +20,7 @@ import com.tomerpacific.caridentifier.model.MainViewModel
 
 @Composable
 fun Reviews(mainViewModel: MainViewModel,
-            serverError: State<String?>) {
+            serverError: String?) {
 
     val webview: State<WebView?> = mainViewModel.webView.collectAsState()
 
@@ -29,7 +29,7 @@ fun Reviews(mainViewModel: MainViewModel,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        if (serverError.value != null) {
+        if (serverError != null) {
             Text(
                 text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
                 fontSize = 20.sp,
@@ -38,7 +38,7 @@ fun Reviews(mainViewModel: MainViewModel,
                 style = TextStyle(textDirection = TextDirection.Rtl)
             )
             Text(
-                text = serverError.value!!,
+                text = serverError,
                 textAlign = TextAlign.Center,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold

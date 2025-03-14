@@ -19,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,10 +36,10 @@ import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.MainViewModel
-import com.tomerpacific.caridentifier.network.NO_INTERNET_CONNECTION_ERROR
+import com.tomerpacific.caridentifier.data.network.NO_INTERNET_CONNECTION_ERROR
 
 @Composable
-fun Details(mainViewModel: MainViewModel, serverError: State<String?>) {
+fun Details(mainViewModel: MainViewModel, serverError: String?) {
 
     val context = LocalContext.current
 
@@ -55,11 +54,11 @@ fun Details(mainViewModel: MainViewModel, serverError: State<String?>) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = columnVerticalArrangement
     ) {
-        if (carDetails.value == null && serverError.value == null) {
+        if (carDetails.value == null && serverError == null) {
             LoaderAnimation(R.raw.license_plate_scan_animation)
         } else if (carDetails.value != null) {
             CarInformation(carDetails.value!!)
-        } else if (serverError.value != null) {
+        } else if (serverError != null) {
             Image(
                 modifier = Modifier
                     .size(200.dp)
@@ -78,12 +77,12 @@ fun Details(mainViewModel: MainViewModel, serverError: State<String?>) {
                 maxLines = 1,
                 style = TextStyle(textDirection = TextDirection.Rtl)
             )
-            Text(text = serverError.value!!,
+            Text(text = serverError,
                 textAlign = TextAlign.Center,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
-            if (serverError.value == NO_INTERNET_CONNECTION_ERROR) {
+            if (serverError == NO_INTERNET_CONNECTION_ERROR) {
                 IconButton(onClick = {
                     mainViewModel.getCarDetails(context)
                 }) {

@@ -105,37 +105,24 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                             unfocusedIndicatorColor = Color.Transparent
                         ),
                         value = licensePlateNumberState,
-                        onValueChange = {
+                        onValueChange = { textFieldValue ->
                             didClickConfirmBtn = false
-                            if (wasCharacterDeleted(it.text, licensePlateNumberState.text)) {
-                                isLicensePlateLengthLimitReached = false
-                                licensePlateNumberState = if (it.text.length == SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
-                                    val formattedText = "${it.text.substring(0, FIRST_DASH_INDEX)}-${
-                                        it.text.substring(
-                                            FIRST_DASH_INDEX,
-                                            3
-                                        )
-                                    }${it.text.substring(4, SECOND_DASH_INDEX)}-${it.text.substring(7, SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES)}"
-                                    TextFieldValue(
-                                        text = formattedText,
-                                        selection = TextRange(formattedText.length)
-                                    )
-                                } else {
-                                    it
-                                }
-                                return@TextField
-                            }
 
-
-                            if (it.text.length > EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
+                            if (doesLicensePlateNumberExceedLimit(textFieldValue)) {
                                 isLicensePlateLengthLimitReached = true
                                 return@TextField
                             }
 
-                            if (it.text.isEmpty() || licensePlateInputPattern.matches(it.text)) {
-                                licensePlateNumberState = it
+                            if (wasCharacterDeleted(textFieldValue.text, licensePlateNumberState.text)) {
+                                isLicensePlateLengthLimitReached = false
+                                licensePlateNumberState = handleCharacterDeletion(textFieldValue)
+                                return@TextField
                             }
-                            val formattedText = formatLicensePlateWithDashes(it.text)
+
+                            if (textFieldValue.text.isEmpty() || licensePlateInputPattern.matches(textFieldValue.text)) {
+                                licensePlateNumberState = textFieldValue
+                            }
+                            val formattedText = formatLicensePlateWithDashes(textFieldValue.text)
 
                             licensePlateNumberState = TextFieldValue(
                                 text = formattedText,
@@ -229,6 +216,27 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
             }
         }
     )
+}
+
+private fun doesLicensePlateNumberExceedLimit(textFieldValue: TextFieldValue): Boolean {
+    return textFieldValue.text.length > EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES
+}
+
+private fun handleCharacterDeletion(textFieldValue: TextFieldValue): TextFieldValue {
+    return if (textFieldValue.text.length == SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
+        val formattedText = "${textFieldValue.text.substring(0, FIRST_DASH_INDEX)}-${
+            textFieldValue.text.substring(
+                FIRST_DASH_INDEX,
+                3
+            )
+        }${textFieldValue.text.substring(4, SECOND_DASH_INDEX)}-${textFieldValue.text.substring(7, SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES)}"
+        TextFieldValue(
+            text = formattedText,
+            selection = TextRange(formattedText.length)
+        )
+    } else {
+        textFieldValue
+    }
 }
 
 private fun wasCharacterDeleted(currentText: String, previousText: String): Boolean {

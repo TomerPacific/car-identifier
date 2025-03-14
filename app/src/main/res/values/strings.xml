@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">CarIdentifier</string>
     <string name="app_version">v.%1$s</string>
+    <string name="tab_name_details">פרטים</string>
+    <string name="tab_name_reviews">ביקורות</string>
+    <string name="tab_name_recommendations">המלצות</string>
 </resources>
