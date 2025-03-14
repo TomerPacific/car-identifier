@@ -69,6 +69,12 @@ fun Advice(mainViewModel: MainViewModel, serverError: String?) {
             ) {
                 Text("המלצות בינה מלאכותית", fontSize = 25.sp, fontWeight = FontWeight.Bold)
             }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text("הבינה המלאכותית יכולה לטעות. אנא שימו לב", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            }
             Spacer(modifier = Modifier.size(20.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
