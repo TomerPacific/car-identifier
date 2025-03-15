@@ -150,9 +150,9 @@ fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
     val manufacturerName = getCarManufacturer(carDetails.manufacturerName)
     var commercialName = carDetails.commercialName
 
-    if (commercialName.contains(manufacturerName, ignoreCase = true)) {
-        val index = commercialName.indexOf(manufacturerName, ignoreCase = true)
-        commercialName = commercialName.substring(index + manufacturerName.length).trim()
+    if (doesManufacturerNameExistInCommercialName(manufacturerName, commercialName)) {
+        val indexOfManufacturerName = commercialName.indexOf(manufacturerName, ignoreCase = true)
+        commercialName = commercialName.substring(indexOfManufacturerName + manufacturerName.length).trim()
     }
 
     return "$manufacturerName ${commercialName.lowercase().replaceFirstChar { it.titlecase() }
@@ -168,4 +168,8 @@ fun isLicensePlateNumberValid(licensePlateNumber: String, pattern: Regex? = null
         else ->
             licensePlateNumber.length in SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES && pattern.matches(licensePlateNumber)
     }
+}
+
+private fun doesManufacturerNameExistInCommercialName(manufacturerName: String, commercialName: String): Boolean {
+    return commercialName.contains(manufacturerName, ignoreCase = true)
 }
