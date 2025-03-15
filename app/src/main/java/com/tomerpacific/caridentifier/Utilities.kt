@@ -146,8 +146,16 @@ fun formatCarReviewResponse(carReview: String): CarReview {
 }
 
 fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
-    return "${getCarManufacturer(carDetails.manufacturerName)} ${
-        carDetails.commercialName.lowercase().replaceFirstChar { it.titlecase() }
+
+    val manufacturerName = getCarManufacturer(carDetails.manufacturerName)
+    var commercialName = carDetails.commercialName
+
+    if (commercialName.contains(manufacturerName, ignoreCase = true)) {
+        val index = commercialName.indexOf(manufacturerName, ignoreCase = true)
+        commercialName = commercialName.substring(index + manufacturerName.length).trim()
+    }
+
+    return "$manufacturerName ${commercialName.lowercase().replaceFirstChar { it.titlecase() }
     } ${
         carDetails.trimLevel.lowercase().replaceFirstChar { it.titlecase() }
     } ${carDetails.yearOfProduction}"
