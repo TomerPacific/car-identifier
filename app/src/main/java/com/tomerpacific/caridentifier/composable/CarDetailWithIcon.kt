@@ -10,17 +10,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 
 @Composable
 fun CarDetailWithIcon(iconId: String,
-                      text: String,
+                      labelText: String,
+                      content: String,
                       icon: @Composable () -> Unit) {
 
     val annotatedString = buildAnnotatedString {
-        append(text)
         appendInlineContent(iconId, "[icon]")
+        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+            append(labelText)
+        }
+        append(content)
     }
 
     val inlineTextContent = mapOf(
@@ -42,7 +49,9 @@ fun CarDetailWithIcon(iconId: String,
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        Text(annotatedString, inlineContent = inlineTextContent, fontSize = 20.sp)
+        Text(annotatedString,
+            inlineContent = inlineTextContent,
+            fontSize = 20.sp)
     }
 
 
