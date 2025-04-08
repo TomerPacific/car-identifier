@@ -131,7 +131,8 @@ fun CarInformation(details: CarDetails) {
 
     CarDetailWithIcon(
         iconId = "keysIcon",
-        text = " בעלות נוכחית: ${details.ownership} "
+        labelText = " בעלות נוכחית: ",
+        content = details.ownership
     ) {
         Icon(
             painterResource(id = R.drawable.ic_key_icon),"Key Icon",
@@ -141,7 +142,8 @@ fun CarInformation(details: CarDetails) {
 
     CarDetailWithIcon(
         iconId = "fuelIcon",
-        text = " סוג דלק: ${details.fuelType} "
+        labelText = " סוג דלק: ",
+        content = details.fuelType
     ) {
         Icon(
             painterResource(id = R.drawable.ic_fuel_type), "Fuel Icon",
@@ -152,7 +154,8 @@ fun CarInformation(details: CarDetails) {
 
     CarDetailWithIcon(
         iconId = "safetyIcon",
-        text = " רמת אבזור בטיחות: ${details.safetyFeatureLevel} "
+        labelText = "רמת אבזור בטיחות: ",
+        content = "${details.safetyFeatureLevel}/8"
     ) {
         Icon(
             painterResource(id = R.drawable.ic_shield), "Safety Icon",
@@ -163,7 +166,8 @@ fun CarInformation(details: CarDetails) {
 
     CarDetailWithIcon(
         iconId = "pollutionIcon",
-        text = " רמת זיהום אוויר: ${details.pollutionLevel} "
+        labelText = " רמת זיהום אוויר: ",
+        content = "${details.pollutionLevel}/15"
     ) {
         Icon(
             painterResource(id = R.drawable.ic_car_alert), "Pollution Icon",
@@ -174,7 +178,8 @@ fun CarInformation(details: CarDetails) {
 
     CarDetailWithIcon(
         iconId = "paletteIcon",
-        text = " צבע: ${details.color} "
+        labelText = " צבע: ",
+        content = details.color
     ) {
         Icon(
             painterResource(id = R.drawable.ic_palette), "Palette Icon",
@@ -185,7 +190,8 @@ fun CarInformation(details: CarDetails) {
 
     CarDetailWithIcon(
         iconId = "roadIcon",
-        text = " עלה לכביש: ${details.firstOnRoadDate} "
+        labelText = " עלה לכביש: ",
+        content = details.firstOnRoadDate
     ) {
         Icon(
             painterResource(id = R.drawable.ic_road), "Road Icon",
