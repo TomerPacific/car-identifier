@@ -82,7 +82,8 @@ fun Details(mainViewModel: MainViewModel, serverError: String?) {
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
-            if (serverError == NO_INTERNET_CONNECTION_ERROR) {
+            if (serverError == NO_INTERNET_CONNECTION_ERROR ||
+                serverError.trim() == "Request timeout has expired") {
                 IconButton(onClick = {
                     mainViewModel.getCarDetails(context)
                 }) {
