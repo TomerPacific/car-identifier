@@ -154,7 +154,7 @@ fun CarInformation(details: CarDetails) {
 
     CarDetailWithIcon(
         iconId = "safetyIcon",
-        labelText = "רמת אבזור בטיחות: ",
+        labelText = " רמת אבזור בטיחות: ",
         content = "${details.safetyFeatureLevel}/8"
     ) {
         Icon(
