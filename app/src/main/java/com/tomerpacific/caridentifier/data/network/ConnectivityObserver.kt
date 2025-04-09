@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.getSystemService
 
 const val NO_INTERNET_CONNECTION_ERROR = "No internet connection"
+const val REQUEST_TIMEOUT_ERROR = "Request timeout has expired"
 class ConnectivityObserver(
     context: Context
 ) {
