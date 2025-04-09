@@ -107,10 +107,10 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                                 it.subSequence(
                                     0,
                                     it.indexOf("[")
-                                ).toString()
+                                ).toString().trim()
                             }
 
-                            false -> exception.localizedMessage
+                            false -> exception.localizedMessage?.trim()
                         }
                     }
                 }
