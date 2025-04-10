@@ -36,7 +36,6 @@ import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.MainViewModel
-import com.tomerpacific.caridentifier.data.network.NO_INTERNET_CONNECTION_ERROR
 
 @Composable
 fun Details(mainViewModel: MainViewModel, serverError: String?) {
@@ -54,39 +53,44 @@ fun Details(mainViewModel: MainViewModel, serverError: String?) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = columnVerticalArrangement
     ) {
-        if (carDetails.value == null && serverError == null) {
-            LoaderAnimation(R.raw.license_plate_scan_animation)
-        } else if (carDetails.value != null) {
-            CarInformation(carDetails.value!!)
-        } else if (serverError != null) {
-            Image(
-                modifier = Modifier
-                    .size(200.dp)
-                    .border(
-                        BorderStroke(1.dp, Color.Black),
-                        CircleShape
-                    )
-                    .clip(CircleShape),
-                painter = painterResource(R.drawable.broken_car),
-                contentDescription = "broken car",
-            )
-            Spacer(modifier = Modifier.size(100.dp))
-            Text(text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                style = TextStyle(textDirection = TextDirection.Rtl)
-            )
-            Text(text = serverError,
-                textAlign = TextAlign.Center,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-            if (serverError == NO_INTERNET_CONNECTION_ERROR) {
-                IconButton(onClick = {
-                    mainViewModel.getCarDetails(context)
-                }) {
-                    Icon(imageVector = Icons.Default.Refresh, contentDescription = "Retry")
+        when (serverError) {
+            null -> {
+                if (carDetails.value == null) {
+                    LoaderAnimation(R.raw.license_plate_scan_animation)
+                } else {
+                    CarInformation(carDetails.value!!)
+                }
+            }
+            else -> {
+                Image(
+                    modifier = Modifier
+                        .size(200.dp)
+                        .border(
+                            BorderStroke(1.dp, Color.Black),
+                            CircleShape
+                        )
+                        .clip(CircleShape),
+                    painter = painterResource(R.drawable.broken_car),
+                    contentDescription = "broken car",
+                )
+                Spacer(modifier = Modifier.size(100.dp))
+                Text(text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    style = TextStyle(textDirection = TextDirection.Rtl)
+                )
+                Text(text = serverError,
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                if (mainViewModel.shouldShowRetryRequestButton()) {
+                    IconButton(onClick = {
+                        mainViewModel.getCarDetails(context)
+                    }) {
+                        Icon(imageVector = Icons.Default.Refresh, contentDescription = "Retry")
+                    }
                 }
             }
         }
