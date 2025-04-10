@@ -12,6 +12,7 @@ import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import com.tomerpacific.caridentifier.formatCarReviewResponse
 import com.tomerpacific.caridentifier.data.network.ConnectivityObserver
 import com.tomerpacific.caridentifier.data.network.NO_INTERNET_CONNECTION_ERROR
+import com.tomerpacific.caridentifier.data.network.REQUEST_TIMEOUT_ERROR
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -174,6 +175,11 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                 }
             }
         }
+    }
+    
+    fun shouldShowRetryRequestButton(): Boolean {
+        return _serverError.value == NO_INTERNET_CONNECTION_ERROR ||
+                _serverError.value == REQUEST_TIMEOUT_ERROR
     }
 
     override fun onCleared() {
