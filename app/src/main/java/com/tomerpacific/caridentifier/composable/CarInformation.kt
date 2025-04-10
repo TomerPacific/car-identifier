@@ -36,8 +36,6 @@ import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.MainViewModel
-import com.tomerpacific.caridentifier.data.network.NO_INTERNET_CONNECTION_ERROR
-import com.tomerpacific.caridentifier.data.network.REQUEST_TIMEOUT_ERROR
 
 @Composable
 fun Details(mainViewModel: MainViewModel, serverError: String?) {
@@ -83,8 +81,7 @@ fun Details(mainViewModel: MainViewModel, serverError: String?) {
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
-            if (serverError == NO_INTERNET_CONNECTION_ERROR ||
-                serverError == REQUEST_TIMEOUT_ERROR) {
+            if (mainViewModel.shouldShowRetryRequestButton()) {
                 IconButton(onClick = {
                     mainViewModel.getCarDetails(context)
                 }) {
