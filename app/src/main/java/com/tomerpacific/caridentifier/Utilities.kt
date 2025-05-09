@@ -135,10 +135,14 @@ fun formatCarReviewResponse(carReview: String): CarReview {
     var isInProsSection = false
 
     carReviewLines.forEach { line ->
+        val formattedLine = when (line.contains("\\")) {
+            true -> line.replace("\\", "")
+            false -> line
+        }
         when {
-            line.contains(PROS, true) -> isInProsSection = true
-            line.contains(CONS, true) -> isInProsSection = false
-            line.isNotBlank() -> if (isInProsSection) prosList.add(line) else consList.add(line)
+            formattedLine.contains(PROS, true) -> isInProsSection = true
+            formattedLine.contains(CONS, true) -> isInProsSection = false
+            formattedLine.isNotBlank() -> if (isInProsSection) prosList.add(formattedLine) else consList.add(formattedLine)
         }
     }
 
