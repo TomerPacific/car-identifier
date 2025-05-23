@@ -70,7 +70,8 @@ private fun LicensePlateInputOptionsHeader() {
         .padding(top = 30.dp, start = 10.dp, end = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center) {
-        Text("בחר/י באפשרות לחפש פרטים בנוגע לרכב",
+        Text(
+            stringResource(R.string.main_screen_header),
             fontWeight = FontWeight.Bold,
             fontSize = 25.sp,
             textAlign = TextAlign.Center)

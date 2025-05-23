@@ -4,4 +4,5 @@
     <string name="tab_name_details">פרטים</string>
     <string name="tab_name_reviews">ביקורות</string>
     <string name="tab_name_recommendations">המלצות</string>
+    <string name="main_screen_header">בחר/י באפשרות לחפש פרטים בנוגע לרכב</string>
 </resources>
