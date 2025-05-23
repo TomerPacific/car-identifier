@@ -90,14 +90,14 @@ private fun LicensePlateInputOptions(navController: NavController,
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             CarLicensePlateSearchOptionButton(
-                buttonText = "חפש/י לפי תמונה",
+                buttonText = stringResource(R.string.main_screen_search_by_image),
                 drawableId = R.drawable.license_plate,
                 drawableContentDescription = "License Plate",
                 navController,
                 shouldDisableButton
             )
             CarLicensePlateSearchOptionButton(
-                buttonText = "חפש/י לפי מספר",
+                buttonText = stringResource(R.string.main_screen_search_by_license_plate),
                 drawableId = R.drawable.keyboard,
                 drawableContentDescription = "Smartphone Keyboard",
                 navController

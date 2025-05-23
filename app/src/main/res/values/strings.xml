@@ -5,4 +5,6 @@
     <string name="tab_name_reviews">ביקורות</string>
     <string name="tab_name_recommendations">המלצות</string>
     <string name="main_screen_header">בחר/י באפשרות לחפש פרטים בנוגע לרכב</string>
+    <string name="main_screen_search_by_image">חפש/י לפי תמונה</string>
+    <string name="main_screen_search_by_license_plate">חפש/י לפי מספר</string>
 </resources>

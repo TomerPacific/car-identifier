@@ -4,4 +4,7 @@
     <string name="tab_name_reviews">Reviews</string>
     <string name="tab_name_recommendations">Advice</string>
     <string name="main_screen_header">Choose an option to search for details about a car</string>
+    <string name="main_screen_search_by_image">Search By Image</string>
+    <string name="main_screen_search_by_license_plate">Search By License Plate</string>
+
 </resources>
