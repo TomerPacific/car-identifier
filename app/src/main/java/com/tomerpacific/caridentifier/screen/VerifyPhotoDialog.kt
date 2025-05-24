@@ -36,13 +36,12 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.isLicensePlateNumberValid
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import java.io.IOException
 
-
-const val NO_LICENSE_PLATE_ERROR = "לא נמצאה לוחית רישוי. אנא צלמו תמונה עם לוחית רישוי."
 
 val textRecognizer =
     TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
@@ -119,7 +118,7 @@ private fun processImage(context: Context,
                     getLicensePlateNumberFromImageText(visionText)
                 when (licensePlateNumber) {
                     null -> {
-                        mainViewModel.triggerSnackBarEvent(NO_LICENSE_PLATE_ERROR)
+                        mainViewModel.triggerSnackBarEvent(context.getString(R.string.no_license_plate_error))
                         navController.popBackStack()
                         return@addOnSuccessListener
                     }
@@ -133,7 +132,7 @@ private fun processImage(context: Context,
                 }
             }
             .addOnFailureListener { _ ->
-                mainViewModel.triggerSnackBarEvent(NO_LICENSE_PLATE_ERROR)
+                mainViewModel.triggerSnackBarEvent(context.getString(R.string.no_license_plate_error))
                 navController.popBackStack()
             }
     } catch (e: IOException) {
