@@ -10,6 +10,5 @@
     <string name="no_license_plate_error">לא נמצאה לוחית רישוי. אנא צלמו תמונה עם לוחית רישוי.</string>
     <string name="verify_photo_msg">להמשיך עם התמונה הזאת?"</string>
     <string name="error_processing_image">שגיאה בעיבוד תמונה</string>
-
-    "
+    <string name="car_advice_header">המלצות בינה מלאכותית</string>
 </resources>
