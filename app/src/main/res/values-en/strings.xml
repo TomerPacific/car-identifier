@@ -7,4 +7,5 @@
     <string name="main_screen_search_by_image">Search By Image</string>
     <string name="main_screen_search_by_license_plate">Search By License Plate</string>
     <string name="no_license_plate_error">There was no license plate found. Please take a photo with one.</string>
+    <string name="verify_photo_msg">Continue with this photo?</string>
 </resources>
