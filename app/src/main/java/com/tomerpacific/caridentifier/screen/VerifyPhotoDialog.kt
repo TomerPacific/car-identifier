@@ -137,7 +137,7 @@ private fun processImage(context: Context,
                 navController.popBackStack()
             }
     } catch (e: IOException) {
-        mainViewModel.triggerSnackBarEvent(e.message ?: "Error processing image")
+        mainViewModel.triggerSnackBarEvent(e.message ?: context.getString(R.string.error_processing_image))
         navController.popBackStack()
     }
 }
