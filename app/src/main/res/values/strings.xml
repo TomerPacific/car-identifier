@@ -11,4 +11,5 @@
     <string name="verify_photo_msg">להמשיך עם התמונה הזאת?"</string>
     <string name="error_processing_image">שגיאה בעיבוד תמונה</string>
     <string name="car_advice_header">המלצות בינה מלאכותית</string>
+    <string name="car_advice_disclaimer">הבינה המלאכותית יכולה לטעות, אנא שימו לב</string>
 </resources>
