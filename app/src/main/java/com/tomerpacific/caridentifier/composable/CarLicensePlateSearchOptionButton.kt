@@ -39,7 +39,7 @@ fun CarLicensePlateSearchOptionButton(buttonText: String,
         modifier =
                 Modifier.clickable {
                     if (shouldDisableButton) {
-                        Toast.makeText(context, "You need to allow camera permissions through the Settings screen", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, context.getString(R.string.camera_perimission_disclaimer), Toast.LENGTH_LONG).show()
                         return@clickable
                     }
                     val navigationRoute = when (drawableId) {
