@@ -136,7 +136,7 @@ fun CarInformation(details: CarDetails) {
 
     CarDetailWithIcon(
         iconId = "keysIcon",
-        labelText = " בעלות נוכחית: ",
+        labelText = stringResource(R.string.current_ownership),
         content = details.ownership
     ) {
         Icon(
@@ -147,7 +147,7 @@ fun CarInformation(details: CarDetails) {
 
     CarDetailWithIcon(
         iconId = "fuelIcon",
-        labelText = " סוג דלק: ",
+        labelText = stringResource(R.string.fuel_type),
         content = details.fuelType
     ) {
         Icon(
@@ -159,7 +159,7 @@ fun CarInformation(details: CarDetails) {
 
     CarDetailWithIcon(
         iconId = "safetyIcon",
-        labelText = " רמת אבזור בטיחות: ",
+        labelText = stringResource(R.string.safety_rating),
         content = "${details.safetyFeatureLevel}/8"
     ) {
         Icon(
@@ -171,7 +171,7 @@ fun CarInformation(details: CarDetails) {
 
     CarDetailWithIcon(
         iconId = "pollutionIcon",
-        labelText = " רמת זיהום אוויר: ",
+        labelText = stringResource(R.string.air_pollution_rating),
         content = "${details.pollutionLevel}/15"
     ) {
         Icon(
@@ -183,7 +183,7 @@ fun CarInformation(details: CarDetails) {
 
     CarDetailWithIcon(
         iconId = "paletteIcon",
-        labelText = " צבע: ",
+        labelText = stringResource(R.string.car_color),
         content = details.color
     ) {
         Icon(
@@ -195,7 +195,7 @@ fun CarInformation(details: CarDetails) {
 
     CarDetailWithIcon(
         iconId = "roadIcon",
-        labelText = " עלה לכביש: ",
+        labelText = stringResource(R.string.first_time_on_road),
         content = details.firstOnRoadDate
     ) {
         Icon(

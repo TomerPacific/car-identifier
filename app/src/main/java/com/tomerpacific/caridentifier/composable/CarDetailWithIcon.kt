@@ -30,6 +30,7 @@ fun CarDetailWithIcon(iconId: String,
             appendInlineContent(iconId, "[icon]")
             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                 append(labelText)
+                append(" ")
             }
             append(content)
         }
@@ -37,6 +38,7 @@ fun CarDetailWithIcon(iconId: String,
             buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                     append(labelText)
+                    append(" ")
                 }
                 append(content)
                 appendInlineContent(iconId, "[icon]")

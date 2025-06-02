@@ -14,5 +14,11 @@
     <string name="car_advice_disclaimer">AI can make mistakes. Please pay attention</string>
     <string name="car_details_not_obtained_error_msg">The car details cannot be obtained. Please try again.</string>
     <string name="last_test_date_for_car">Last test date:</string>
+    <string name="current_ownership">Current ownership:</string>
+    <string name="fuel_type">Fuel type:</string>
+    <string name="safety_rating">Safety rating:</string>
+    <string name="air_pollution_rating">Air pollution rating:</string>
+    <string name="car_color">Color:</string>
+    <string name="first_time_on_road">First time on the road:</string>
 
 </resources>
