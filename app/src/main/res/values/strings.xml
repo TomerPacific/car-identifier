@@ -19,5 +19,5 @@
     <string name="air_pollution_rating">רמת זיהום אוויר:</string>
     <string name="car_color">צבע:</string>
     <string name="first_time_on_road">עלה לכביש:</string>
-    <string name="camera_perimission_disclaimer">יש צורך לתת הרשאות למצלמה דרך מסך ההגדרות</string>
+    <string name="camera_permission_disclaimer">יש צורך לתת הרשאות למצלמה דרך מסך ההגדרות</string>
 </resources>

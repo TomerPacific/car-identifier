@@ -20,5 +20,5 @@
     <string name="air_pollution_rating">Air pollution rating:</string>
     <string name="car_color">Color:</string>
     <string name="first_time_on_road">First time on the road:</string>
-    <string name="camera_perimission_disclaimer">You need to allow camera permissions through the Settings screen</string>
+    <string name="camera_permission_disclaimer">You need to allow camera permissions through the Settings screen</string>
 </resources>
