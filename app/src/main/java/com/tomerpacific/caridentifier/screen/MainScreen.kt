@@ -115,7 +115,7 @@ private fun AppVersion() {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End) {
         Text(
-            text = stringResource(R.string.app_version, BuildConfig.VERSION_NAME),
+            text = "v.${BuildConfig.VERSION_NAME}",
             fontSize = 16.sp
         )
     }
