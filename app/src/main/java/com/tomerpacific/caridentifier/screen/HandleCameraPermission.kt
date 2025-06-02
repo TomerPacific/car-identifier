@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 
@@ -58,7 +59,7 @@ private fun handleCameraPermissionResult(context: Context,
                 val shouldShowRationale = shouldShowRequestPermissionRationale(it, android.Manifest.permission.CAMERA)
                 mainViewModel.setShouldShowRationale(shouldShowRationale)
                 if (shouldShowRationale) {
-                    Toast.makeText(context, "Camera permission is needed to scan license plate", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, context.getString(R.string.camera_permission_clarification), Toast.LENGTH_LONG).show()
                 }
             }
             mainViewModel.setDidRequestCameraPermission(true)
