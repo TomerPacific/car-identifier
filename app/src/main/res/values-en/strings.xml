@@ -13,5 +13,6 @@
     <string name="car_advice_header">AI Recommendations</string>
     <string name="car_advice_disclaimer">AI can make mistakes. Please pay attention</string>
     <string name="car_details_not_obtained_error_msg">The car details cannot be obtained. Please try again.</string>
+    <string name="last_test_date_for_car">Last test date:</string>
 
 </resources>

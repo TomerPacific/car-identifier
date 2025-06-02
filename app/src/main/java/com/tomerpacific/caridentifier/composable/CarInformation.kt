@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -74,7 +75,7 @@ fun Details(mainViewModel: MainViewModel, serverError: String?) {
                     contentDescription = "broken car",
                 )
                 Spacer(modifier = Modifier.size(100.dp))
-                Text(text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
+                Text(text = stringResource(R.string.car_details_not_obtained_error_msg),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
@@ -130,7 +131,7 @@ fun CarInformation(details: CarDetails) {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
     ) {
-        Text(" טסט אחרון בוצע בתאריך: ${details.lastTestDate}", fontSize = 20.sp)
+        Text(stringResource(R.string.last_test_date_for_car) + " " + details.lastTestDate, fontSize = 20.sp)
     }
 
     CarDetailWithIcon(
