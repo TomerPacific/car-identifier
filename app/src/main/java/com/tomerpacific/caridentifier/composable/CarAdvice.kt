@@ -99,7 +99,7 @@ fun Advice(mainViewModel: MainViewModel, serverError: String?) {
         } else if (serverError != null) {
             Spacer(modifier = Modifier.size(20.dp))
             Text(
-                text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
+                text = stringResource(R.string.car_details_not_obtained_error_msg),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
