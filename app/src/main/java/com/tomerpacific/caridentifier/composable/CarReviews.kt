@@ -10,12 +10,14 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.model.MainViewModel
 
 @Composable
@@ -31,7 +33,7 @@ fun Reviews(mainViewModel: MainViewModel,
     ) {
         if (serverError != null) {
             Text(
-                text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
+                text = stringResource(R.string.car_details_not_obtained_error_msg),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 1,
