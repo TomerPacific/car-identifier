@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -92,7 +93,7 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
         text = {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                 Column {
-                    Text("הכנס מספר לוחית רישוי בן 7 או 8 ספרות", fontWeight = FontWeight.Bold)
+                    Text(stringResource(R.string.amount_of_digits_in_license_plate), fontWeight = FontWeight.Bold)
                     Spacer(Modifier.height(10.dp))
                     TextField(
                         modifier = Modifier.focusRequester(focusRequester),
@@ -130,21 +131,21 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                             )
                         },
                         placeholder = {
-                            Text("?מספר לוחית רישוי", maxLines = 1)
+                            Text(stringResource(R.string.license_plate_placeholder), maxLines = 1)
                         },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         isError = isLicensePlateLengthLimitReached,
                         supportingText = {
                             if (isLicensePlateLengthLimitReached) {
                                 Text(
-                                    "מספר לוחית רישוי יכול להכיל עד 8 ספרות",
+                                    stringResource(R.string.license_plate_input_limit_error),
                                     modifier = Modifier.fillMaxWidth(),
                                     color = Color.Red
                                 )
                             }
                             if (didClickConfirmBtn) {
                                 Text(
-                                    "מספר לוחית רישוי צריך להכיל בין 7 ל-8 ספרות",
+                                    stringResource(R.string.license_plate_input_amount_of_digits_error),
                                     modifier = Modifier.fillMaxWidth(),
                                     color = Color.Red
                                 )
@@ -203,7 +204,7 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                 },
                 enabled = licensePlateNumberState.text.isNotEmpty()
             ) {
-                Text("אישור")
+                Text(stringResource(R.string.approve))
             }
         },
         dismissButton = {
@@ -212,7 +213,7 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                     navController.popBackStack()
                 }
             ) {
-                Text("ביטול")
+                Text(stringResource(R.string.cancel))
             }
         }
     )

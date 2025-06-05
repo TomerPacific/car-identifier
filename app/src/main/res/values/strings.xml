@@ -21,5 +21,10 @@
     <string name="first_time_on_road">עלה לכביש:</string>
     <string name="camera_permission_disclaimer">יש צורך לתת הרשאות למצלמה דרך מסך ההגדרות</string>
     <string name="camera_permission_clarification">צריך לאשר הרשאה למצלמה כדי לסרוק לוחית רישוי</string>
-
+    <string name="amount_of_digits_in_license_plate">הכנס מספר לוחית רישוי בן 7 או 8 ספרות</string>
+    <string name="license_plate_placeholder">מספר לוחית רישוי?</string>
+    <string name="license_plate_input_limit_error">מספר לוחית רישוי יכול להכיל עד 8 ספרות</string>
+    <string name="license_plate_input_amount_of_digits_error">מספר לוחית רישוי צריך להכיל בין 7 ל-8 ספרות</string>
+    <string name="approve">אישור</string>
+    <string name="cancel">ביטול</string>
 </resources>

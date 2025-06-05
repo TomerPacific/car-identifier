@@ -22,4 +22,13 @@
     <string name="first_time_on_road">First time on the road:</string>
     <string name="camera_permission_disclaimer">You need to allow camera permissions through the Settings screen</string>
     <string name="camera_permission_clarification">Camera permission is needed to scan license plate</string>
+    <string name="amount_of_digits_in_license_plate">Please enter a 7 or 8 digit license plate number</string>
+    <string name="license_plate_placeholder">License Plate Number?</string>
+    <string name="license_plate_input_limit_error">A license plate can contain at most 8 digits</string>
+    <string name="license_plate_input_amount_of_digits_error">A license plate needs to contain 7 or 8 digits</string>
+    <string name="approve">Approve</string>
+    <string name="cancel">Cancel</string>
+
+
+
 </resources>
