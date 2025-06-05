@@ -1,5 +1,6 @@
 package com.tomerpacific.caridentifier
 
+import androidx.compose.ui.text.intl.Locale
 import com.google.mlkit.common.model.DownloadConditions
 import com.google.mlkit.nl.translate.TranslateLanguage
 import com.google.mlkit.nl.translate.Translation
@@ -9,27 +10,31 @@ import kotlinx.coroutines.tasks.await
 
 class LanguageTranslator {
 
-    private val englishHebrewTranslator: Translator
+    private lateinit var englishHebrewTranslator: Translator
 
     private var isLanguageModelDownloaded = false
 
-    init {
-        val translatorOptions = TranslatorOptions.Builder()
-            .setSourceLanguage(TranslateLanguage.ENGLISH)
-            .setTargetLanguage(TranslateLanguage.HEBREW)
-            .build()
-        englishHebrewTranslator = Translation.getClient(translatorOptions)
+    private val currentLocal = Locale.current.language
 
-        val downloadConditions = DownloadConditions.Builder()
-            .requireWifi()
-            .build()
-        englishHebrewTranslator.downloadModelIfNeeded(downloadConditions)
-            .addOnSuccessListener {
-                isLanguageModelDownloaded = true
-            }
-            .addOnFailureListener {
-                isLanguageModelDownloaded = false
-            }
+    init {
+        if (isUserLanguageHebrew(currentLocal)) {
+            val translatorOptions = TranslatorOptions.Builder()
+                .setSourceLanguage(TranslateLanguage.ENGLISH)
+                .setTargetLanguage(TranslateLanguage.HEBREW)
+                .build()
+            englishHebrewTranslator = Translation.getClient(translatorOptions)
+
+            val downloadConditions = DownloadConditions.Builder()
+                .requireWifi()
+                .build()
+            englishHebrewTranslator.downloadModelIfNeeded(downloadConditions)
+                .addOnSuccessListener {
+                    isLanguageModelDownloaded = true
+                }
+                .addOnFailureListener {
+                    isLanguageModelDownloaded = false
+                }
+        }
     }
 
     suspend fun translate(text: String): Result<String> {
@@ -44,5 +49,9 @@ class LanguageTranslator {
         } catch (e: Exception) {
             Result.failure(Exception("Translation failed: ${e.message}", e))
         }
+    }
+
+    private fun isUserLanguageHebrew(locale: String): Boolean {
+        return locale == "iw"
     }
 }
