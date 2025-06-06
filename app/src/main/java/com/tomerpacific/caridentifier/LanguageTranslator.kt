@@ -8,20 +8,18 @@ import com.google.mlkit.nl.translate.Translator
 import com.google.mlkit.nl.translate.TranslatorOptions
 import kotlinx.coroutines.tasks.await
 
+private const val HEBREW_LANGUAGE_CODE = "iw"
+
 class LanguageTranslator {
 
-    private lateinit var englishHebrewTranslator: Translator
+    private val englishHebrewTranslator: Translator
 
     private var isLanguageModelDownloaded = false
 
-    private val currentLocal = Locale.current.language
+    val currentLocal = Locale.current.language
 
     init {
-        if (isUserLanguageHebrew(currentLocal)) {
-            val translatorOptions = TranslatorOptions.Builder()
-                .setSourceLanguage(TranslateLanguage.ENGLISH)
-                .setTargetLanguage(TranslateLanguage.HEBREW)
-                .build()
+            val translatorOptions = buildTranslatorOptions(currentLocal)
             englishHebrewTranslator = Translation.getClient(translatorOptions)
 
             val downloadConditions = DownloadConditions.Builder()
@@ -34,7 +32,6 @@ class LanguageTranslator {
                 .addOnFailureListener {
                     isLanguageModelDownloaded = false
                 }
-        }
     }
 
     suspend fun translate(text: String): Result<String> {
@@ -51,7 +48,16 @@ class LanguageTranslator {
         }
     }
 
-    private fun isUserLanguageHebrew(locale: String): Boolean {
-        return locale == "iw"
+    private fun buildTranslatorOptions(locale: String): TranslatorOptions {
+        return when(locale) {
+            HEBREW_LANGUAGE_CODE -> TranslatorOptions.Builder()
+                .setSourceLanguage(TranslateLanguage.ENGLISH)
+                .setTargetLanguage(TranslateLanguage.HEBREW)
+                .build()
+            else -> TranslatorOptions.Builder()
+                .setSourceLanguage(TranslateLanguage.HEBREW)
+                .setTargetLanguage(TranslateLanguage.ENGLISH)
+                .build()
+        }
     }
 }
