@@ -6,6 +6,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tomerpacific.caridentifier.HEBREW_LANGUAGE_CODE
 import com.tomerpacific.caridentifier.LanguageTranslator
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
@@ -76,8 +77,8 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
     }
 
 
-    fun getCarDetails( context: Context,
-                       licensePlateNumber: String? = null) {
+    fun getCarDetails(context: Context,
+                      licensePlateNumber: String? = null) {
 
         licensePlateNumber?.let {
             _licensePlateNumber = it
@@ -95,11 +96,15 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
             withContext(Dispatchers.IO) {
                 carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess { carDetails ->
                     _carDetails.value = carDetails
-                    languageTranslator.translate(concatenateCarMakeAndModel(carDetails)).onSuccess { translatedText ->
-                        searchTerm = translatedText
-                        setupWebView(context)
-                    }.onFailure {
-                        _serverError.value = it.localizedMessage
+                    if (languageTranslator.currentLocal == HEBREW_LANGUAGE_CODE) {
+                        languageTranslator.translate(concatenateCarMakeAndModel(carDetails)).onSuccess { translatedText ->
+                            searchTerm = translatedText
+                            setupWebView(context)
+                        }.onFailure {
+                            _serverError.value = it.localizedMessage
+                        }
+                    } else {
+                       searchTerm = concatenateCarMakeAndModel(carDetails)
                     }
                 }.onFailure { exception ->
                     exception.localizedMessage?.let {
@@ -143,7 +148,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                carDetailsRepository.getCarReview(searchTerm)
+                carDetailsRepository.getCarReview(searchTerm, languageTranslator.currentLocal)
                     .onSuccess {
                         _searchTermCompletionText.value = formatCarReviewResponse(it)
                     }.onFailure {
