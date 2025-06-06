@@ -8,7 +8,7 @@ import com.google.mlkit.nl.translate.Translator
 import com.google.mlkit.nl.translate.TranslatorOptions
 import kotlinx.coroutines.tasks.await
 
-private const val HEBREW_LANGUAGE_CODE = "iw"
+const val HEBREW_LANGUAGE_CODE = "iw"
 
 class LanguageTranslator {
 
