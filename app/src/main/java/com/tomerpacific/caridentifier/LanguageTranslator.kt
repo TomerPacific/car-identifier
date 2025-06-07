@@ -1,5 +1,6 @@
 package com.tomerpacific.caridentifier
 
+import android.util.Log
 import androidx.compose.ui.text.intl.Locale
 import com.google.mlkit.common.model.DownloadConditions
 import com.google.mlkit.nl.translate.TranslateLanguage
@@ -9,8 +10,11 @@ import com.google.mlkit.nl.translate.TranslatorOptions
 import kotlinx.coroutines.tasks.await
 
 const val HEBREW_LANGUAGE_CODE = "iw"
+private val TAG = LanguageTranslator::class.simpleName
 
 class LanguageTranslator {
+
+
 
     private val englishHebrewTranslator: Translator
 
@@ -34,18 +38,24 @@ class LanguageTranslator {
                 }
     }
 
-    suspend fun translate(text: String): Result<String> {
+    suspend fun translate(vararg text: String): Result<List<String>> {
 
         if (!isLanguageModelDownloaded) {
             return Result.failure(Exception("Failed to download language model"))
         }
 
-        return try {
-            val translatedText = englishHebrewTranslator.translate(text).await()
-            Result.success(translatedText)
-        } catch (e: Exception) {
-            Result.failure(Exception("Translation failed: ${e.message}", e))
+        val results = mutableListOf<String>()
+
+        for (t in text) {
+            try {
+                val translatedText = englishHebrewTranslator.translate(t).await()
+                results.add(translatedText)
+            } catch (e: Exception) {
+                Log.e(TAG, "Translation failed: ${e.message}")
+            }
         }
+
+        return Result.success(results)
     }
 
     private fun buildTranslatorOptions(locale: String): TranslatorOptions {
