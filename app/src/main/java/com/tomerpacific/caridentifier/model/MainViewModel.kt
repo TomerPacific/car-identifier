@@ -102,7 +102,8 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                         HEBREW_LANGUAGE_CODE -> {
                             languageTranslator.translate(concatenateCarMakeAndModel(carDetails))
                                 .onSuccess { translatedText ->
-                                    searchTerm = translatedText.first()
+                                    searchTerm = "ביקורת ${translatedText.first()}"
+
                                 }
                         }
 
@@ -113,7 +114,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                                 carDetails.ownership = languageTranslator.translateOwnership(carDetails.ownership)
                                 carDetails.fuelType = languageTranslator.translateFuelType(carDetails.fuelType)
                                 carDetails.color = translatedText.first()
-                                searchTerm = concatenateCarMakeAndModel(carDetails)
+                                searchTerm = concatenateCarMakeAndModel(carDetails) + " review"
                             }
                         }
                     }
@@ -189,7 +190,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                     settings.loadWithOverviewMode = true
                     settings.useWideViewPort = true
                     settings.setSupportZoom(true)
-                    loadUrl("${CAR_REVIEW_ENDPOINT}ביקורת$searchTerm")
+                    loadUrl("${CAR_REVIEW_ENDPOINT}$searchTerm")
                 }
             }
         }
