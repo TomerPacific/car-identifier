@@ -23,6 +23,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 const val DID_REQUEST_CAMERA_PERMISSION_KEY = "didRequestCameraPermission"
+private const val CAR_REVIEW_ENDPOINT = "https://www.youtube.com/results?search_query="
+
 class MainViewModel(private val sharedPreferences: SharedPreferences,
                     private val connectivityObserver: ConnectivityObserver,
                     private val carDetailsRepository: CarDetailsRepository = CarDetailsRepository(),
@@ -95,17 +97,28 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess { carDetails ->
-                    _carDetails.value = carDetails
-                    if (languageTranslator.currentLocal == HEBREW_LANGUAGE_CODE) {
-                        languageTranslator.translate(concatenateCarMakeAndModel(carDetails)).onSuccess { translatedText ->
-                            searchTerm = translatedText
-                            setupWebView(context)
-                        }.onFailure {
-                            _serverError.value = it.localizedMessage
+
+                    when (languageTranslator.currentLocal) {
+                        HEBREW_LANGUAGE_CODE -> {
+                            languageTranslator.translate(concatenateCarMakeAndModel(carDetails))
+                                .onSuccess { translatedText ->
+                                    searchTerm = translatedText.first()
+                                }
                         }
-                    } else {
-                       searchTerm = concatenateCarMakeAndModel(carDetails)
+
+                        else -> {
+                            languageTranslator.translate(
+                                carDetails.color
+                            ).onSuccess { translatedText ->
+                                carDetails.ownership = languageTranslator.translateOwnership(carDetails.ownership)
+                                carDetails.fuelType = languageTranslator.translateFuelType(carDetails.fuelType)
+                                carDetails.color = translatedText.first()
+                                searchTerm = concatenateCarMakeAndModel(carDetails)
+                            }
+                        }
                     }
+                    _carDetails.value = carDetails
+                    setupWebView(context)
                 }.onFailure { exception ->
                     exception.localizedMessage?.let {
                         _serverError.value = when (it.contains("[")) {
@@ -176,7 +189,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                     settings.loadWithOverviewMode = true
                     settings.useWideViewPort = true
                     settings.setSupportZoom(true)
-                    loadUrl("https://www.youtube.com/results?search_query=ביקורת $searchTerm")
+                    loadUrl("${CAR_REVIEW_ENDPOINT}ביקורת$searchTerm")
                 }
             }
         }
