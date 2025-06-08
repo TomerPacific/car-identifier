@@ -58,6 +58,24 @@ class LanguageTranslator {
         return Result.success(results)
     }
 
+    fun translateOwnership(ownership: String): String {
+        return when (ownership) {
+            "פרטי" -> "Private"
+            "חברה" -> "Company"
+            "ליסינג" -> "Lease"
+            else -> ownership
+        }
+    }
+
+    fun translateFuelType(fuelType: String): String {
+        return when (fuelType) {
+            "בנזין" -> "Gasoline"
+            "דיזל" -> "Diesel"
+            "חשמלי" -> "Electric"
+            else -> fuelType
+        }
+    }
+
     private fun buildTranslatorOptions(locale: String): TranslatorOptions {
         return when(locale) {
             HEBREW_LANGUAGE_CODE -> TranslatorOptions.Builder()
