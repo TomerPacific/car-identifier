@@ -128,8 +128,8 @@ fun CarInformation(details: CarDetails) {
         )
     }
     Spacer(modifier = Modifier.height(50.dp))
-    
-    CarDetailWithIcon(iconId = "keysIcon",
+
+    CarDetailWithIcon(iconId = "checkIcon",
         labelText = stringResource(R.string.last_test_date_for_car),
         content = details.lastTestDate) {
         Icon(
