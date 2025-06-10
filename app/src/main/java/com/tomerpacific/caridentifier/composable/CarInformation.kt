@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -127,11 +128,16 @@ fun CarInformation(details: CarDetails) {
         )
     }
     Spacer(modifier = Modifier.height(50.dp))
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Text(stringResource(R.string.last_test_date_for_car) + " " + details.lastTestDate, fontSize = 20.sp)
+    
+    CarDetailWithIcon(iconId = "keysIcon",
+        labelText = stringResource(R.string.last_test_date_for_car),
+        content = details.lastTestDate) {
+        Icon(
+            Icons.Default.Check,
+            contentDescription = "Check Icon",
+            tint = Color(0, 0, 0),
+            modifier = Modifier.fillMaxSize()
+        )
     }
 
     CarDetailWithIcon(
