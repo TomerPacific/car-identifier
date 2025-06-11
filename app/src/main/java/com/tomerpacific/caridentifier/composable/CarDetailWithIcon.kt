@@ -24,6 +24,7 @@ fun CarDetailWithIcon(iconId: String,
 
     val annotatedString = buildAnnotatedString {
             appendInlineContent(iconId, "[icon]")
+            append(" ")
             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                 append(labelText)
                 append(" ")
