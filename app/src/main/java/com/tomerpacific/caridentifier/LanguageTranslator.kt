@@ -14,8 +14,6 @@ private val TAG = LanguageTranslator::class.simpleName
 
 class LanguageTranslator {
 
-
-
     private val englishHebrewTranslator: Translator
 
     private var isLanguageModelDownloaded = false
@@ -27,7 +25,6 @@ class LanguageTranslator {
             englishHebrewTranslator = Translation.getClient(translatorOptions)
 
             val downloadConditions = DownloadConditions.Builder()
-                .requireWifi()
                 .build()
             englishHebrewTranslator.downloadModelIfNeeded(downloadConditions)
                 .addOnSuccessListener {
