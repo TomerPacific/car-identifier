@@ -111,9 +111,11 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                             languageTranslator.translate(
                                 carDetails.color
                             ).onSuccess { translatedText ->
-                                carDetails.ownership = languageTranslator.translateOwnership(carDetails.ownership)
-                                carDetails.fuelType = languageTranslator.translateFuelType(carDetails.fuelType)
-                                carDetails.color = translatedText.first()
+                                carDetails.apply {
+                                    ownership = languageTranslator.translateOwnership(carDetails.ownership)
+                                    fuelType = languageTranslator.translateFuelType(carDetails.fuelType)
+                                    color = translatedText.first()
+                                }
                                 searchTerm = concatenateCarMakeAndModel(carDetails) + " review"
                             }
                         }
