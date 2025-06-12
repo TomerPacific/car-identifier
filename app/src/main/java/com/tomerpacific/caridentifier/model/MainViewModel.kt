@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.tomerpacific.caridentifier.FAILED_TO_TRANSLATE_MSG
 import com.tomerpacific.caridentifier.HEBREW_LANGUAGE_CODE
 import com.tomerpacific.caridentifier.LanguageTranslator
+import com.tomerpacific.caridentifier.SectionHeader
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import com.tomerpacific.caridentifier.formatCarReviewResponse
@@ -173,7 +174,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
             withContext(Dispatchers.IO) {
                 carDetailsRepository.getCarReview(searchTerm, languageTranslator.currentLocal)
                     .onSuccess {
-                        _searchTermCompletionText.value = formatCarReviewResponse(it)
+                        _searchTermCompletionText.value = formatCarReviewResponse(it, languageTranslator.currentLocal)
                     }.onFailure {
                         _serverError.value = it.localizedMessage
                     }
@@ -208,6 +209,10 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
     fun shouldShowRetryRequestButton(): Boolean {
         return _serverError.value == NO_INTERNET_CONNECTION_ERROR ||
                 _serverError.value == REQUEST_TIMEOUT_ERROR
+    }
+
+    fun getTranslatedSectionHeader(sectionHeader: SectionHeader): String {
+        return languageTranslator.getSectionHeaderTitle(sectionHeader)
     }
 
     override fun onCleared() {
