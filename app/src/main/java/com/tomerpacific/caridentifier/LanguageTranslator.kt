@@ -10,6 +10,7 @@ import com.google.mlkit.nl.translate.TranslatorOptions
 import kotlinx.coroutines.tasks.await
 
 const val HEBREW_LANGUAGE_CODE = "iw"
+const val FAILED_TO_TRANSLATE_MSG = "Failed to translate"
 private val TAG = LanguageTranslator::class.simpleName
 
 class LanguageTranslator {
