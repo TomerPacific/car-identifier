@@ -11,6 +11,7 @@ import kotlinx.coroutines.tasks.await
 
 const val HEBREW_LANGUAGE_CODE = "iw"
 const val FAILED_TO_TRANSLATE_MSG = "Failed to translate"
+
 private val TAG = LanguageTranslator::class.simpleName
 
 class LanguageTranslator {
@@ -74,6 +75,22 @@ class LanguageTranslator {
         }
     }
 
+    fun getSectionHeaderTitle(sectionHeader: SectionHeader): String {
+        return when (sectionHeader) {
+            SectionHeader.PROS -> {
+                return when (currentLocal) {
+                    HEBREW_LANGUAGE_CODE -> PROS_SECTION_HEBREW
+                    else -> PROS_SECTION_ENGLISH
+                }
+            }
+
+            SectionHeader.CONS -> when (currentLocal) {
+                HEBREW_LANGUAGE_CODE -> CONS_SECTION_HEBREW
+                else -> CONS_SECTION_ENGLISH
+            }
+        }
+    }
+
     private fun buildTranslatorOptions(locale: String): TranslatorOptions {
         return when(locale) {
             HEBREW_LANGUAGE_CODE -> TranslatorOptions.Builder()
@@ -86,4 +103,9 @@ class LanguageTranslator {
                 .build()
         }
     }
+}
+
+enum class SectionHeader {
+    PROS,
+    CONS
 }
