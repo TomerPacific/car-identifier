@@ -3,8 +3,10 @@ package com.tomerpacific.caridentifier
 import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.CarReview
 
-const val PROS = "יתרונות"
-const val CONS = "חסרונות"
+const val PROS_SECTION_HEBREW = "יתרונות"
+const val CONS_SECTION_HEBREW = "חסרונות"
+const val PROS_SECTION_ENGLISH = "Pros"
+const val CONS_SECTION_ENGLISH = "Cons"
 const val SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES = 9
 const val EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES = 10
 
@@ -128,7 +130,11 @@ fun getCarManufacturer(manufacturer: String): String {
     return CAR_MANUFACTURER_NAME_TRANSLATION_TO_ENGLISH[manufacturer] ?: "Unknown Manufacturer"
 }
 
-fun formatCarReviewResponse(carReview: String): CarReview {
+fun formatCarReviewResponse(carReview: String, locale: String): CarReview {
+
+    val prosSection = if (locale == HEBREW_LANGUAGE_CODE) PROS_SECTION_HEBREW else PROS_SECTION_ENGLISH
+    val consSection = if (locale == HEBREW_LANGUAGE_CODE) CONS_SECTION_HEBREW else CONS_SECTION_ENGLISH
+
     val carReviewLines = carReview.removePrefix("\"").removeSuffix("\"").split("\\n")
     val prosList = mutableListOf<String>()
     val consList = mutableListOf<String>()
@@ -137,8 +143,8 @@ fun formatCarReviewResponse(carReview: String): CarReview {
     carReviewLines.forEach { line ->
         val formattedLine = line.replace("\\", "")
         when {
-            formattedLine.contains(PROS, true) -> isInProsSection = true
-            formattedLine.contains(CONS, true) -> isInProsSection = false
+            formattedLine.contains(prosSection, true) -> isInProsSection = true
+            formattedLine.contains(consSection, true) -> isInProsSection = false
             formattedLine.isNotBlank() -> if (isInProsSection) prosList.add(formattedLine) else consList.add(formattedLine)
         }
     }
