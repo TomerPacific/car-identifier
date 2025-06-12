@@ -6,6 +6,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tomerpacific.caridentifier.FAILED_TO_TRANSLATE_MSG
 import com.tomerpacific.caridentifier.HEBREW_LANGUAGE_CODE
 import com.tomerpacific.caridentifier.LanguageTranslator
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
@@ -117,6 +118,12 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                                     color = translatedText.first()
                                 }
                                 searchTerm = concatenateCarMakeAndModel(carDetails) + " review"
+                            }.onFailure {
+                                carDetails.apply {
+                                    ownership = FAILED_TO_TRANSLATE_MSG
+                                    fuelType = FAILED_TO_TRANSLATE_MSG
+                                    color = FAILED_TO_TRANSLATE_MSG
+                                }
                             }
                         }
                     }
