@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -33,9 +34,8 @@ import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tomerpacific.caridentifier.CONS
-import com.tomerpacific.caridentifier.PROS
 import com.tomerpacific.caridentifier.R
+import com.tomerpacific.caridentifier.SectionHeader
 import com.tomerpacific.caridentifier.model.MainViewModel
 
 @Composable
@@ -60,9 +60,6 @@ fun Advice(mainViewModel: MainViewModel, serverError: String?) {
                 LoaderAnimation(R.raw.truck_loading_animation)
             }
         } else if (carReview.value != null) {
-
-            val prosText: String = createBulletPoints(carReview.value!!.prosList)
-            val consText: String = createBulletPoints(carReview.value!!.consList)
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -94,8 +91,14 @@ fun Advice(mainViewModel: MainViewModel, serverError: String?) {
                 )
             }
 
-            AdviceList(title = PROS, adviceList = prosText, Modifier.align(Alignment.Start))
-            AdviceList(title = CONS, adviceList = consText, Modifier.align(Alignment.Start))
+            AdviceList(
+                title = mainViewModel.getTranslatedSectionHeader(SectionHeader.PROS),
+                adviceList = carReview.value!!.prosList,
+                Modifier.align(Alignment.Start))
+            AdviceList(
+                title = mainViewModel.getTranslatedSectionHeader(SectionHeader.CONS),
+                adviceList = carReview.value!!.consList,
+                Modifier.align(Alignment.Start))
         } else if (serverError != null) {
             Spacer(modifier = Modifier.size(20.dp))
             Text(
@@ -117,22 +120,26 @@ fun Advice(mainViewModel: MainViewModel, serverError: String?) {
 
 @Composable
 private fun AdviceList(title: String,
-                       adviceList: String,
+                       adviceList: List<String>,
                        modifier: Modifier = Modifier) {
-    Text(
-        "$title:",
-        fontSize = 25.sp,
-        fontWeight = FontWeight.Bold,
-        modifier = modifier
-            .padding(start = 5.dp)
-    )
-    Text(
-        text = adviceList,
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Bold,
-        textAlign = TextAlign.Start,
-        modifier = Modifier.padding(start = 10.dp)
-    )
+    Column(modifier = modifier
+        .padding(start = 5.dp)) {
+        Text(
+            "$title:",
+            fontSize = 25.sp,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        adviceList.forEach { advice ->
+            Text(
+                text = advice,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Normal,
+                textAlign = TextAlign.Start,
+                modifier = Modifier.padding(start = 10.dp)
+            )
+        }
+    }
 }
 
 fun createBulletPoints(list: List<String>): String {
