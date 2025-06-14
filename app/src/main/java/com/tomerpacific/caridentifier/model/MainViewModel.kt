@@ -121,10 +121,11 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                                 searchTerm = concatenateCarMakeAndModel(carDetails) + " review"
                             }.onFailure {
                                 carDetails.apply {
-                                    ownership = FAILED_TO_TRANSLATE_MSG
-                                    fuelType = FAILED_TO_TRANSLATE_MSG
+                                    ownership = languageTranslator.translateOwnership(carDetails.ownership)
+                                    fuelType = languageTranslator.translateFuelType(carDetails.fuelType)
                                     color = FAILED_TO_TRANSLATE_MSG
                                 }
+                                searchTerm = concatenateCarMakeAndModel(carDetails) + " review"
                             }
                         }
                     }
