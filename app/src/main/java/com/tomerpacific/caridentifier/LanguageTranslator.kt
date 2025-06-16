@@ -20,10 +20,10 @@ class LanguageTranslator {
 
     private var isLanguageModelDownloaded = false
 
-    val currentLocal = Locale.current.language
+    val currentLocale = Locale.current.language
 
     init {
-            val translatorOptions = buildTranslatorOptions(currentLocal)
+            val translatorOptions = buildTranslatorOptions(currentLocale)
             englishHebrewTranslator = Translation.getClient(translatorOptions)
 
             val downloadConditions = DownloadConditions.Builder()
@@ -78,13 +78,13 @@ class LanguageTranslator {
     fun getSectionHeaderTitle(sectionHeader: SectionHeader): String {
         return when (sectionHeader) {
             SectionHeader.PROS -> {
-                return when (currentLocal) {
+                return when (currentLocale) {
                     HEBREW_LANGUAGE_CODE -> PROS_SECTION_HEBREW
                     else -> PROS_SECTION_ENGLISH
                 }
             }
 
-            SectionHeader.CONS -> when (currentLocal) {
+            SectionHeader.CONS -> when (currentLocale) {
                 HEBREW_LANGUAGE_CODE -> CONS_SECTION_HEBREW
                 else -> CONS_SECTION_ENGLISH
             }
