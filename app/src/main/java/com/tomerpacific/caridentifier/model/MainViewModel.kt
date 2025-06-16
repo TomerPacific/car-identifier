@@ -100,7 +100,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
             withContext(Dispatchers.IO) {
                 carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess { carDetails ->
 
-                    when (languageTranslator.currentLocal) {
+                    when (languageTranslator.currentLocale) {
                         HEBREW_LANGUAGE_CODE -> {
                             languageTranslator.translate(concatenateCarMakeAndModel(carDetails))
                                 .onSuccess { translatedText ->
@@ -173,9 +173,9 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                carDetailsRepository.getCarReview(searchTerm, languageTranslator.currentLocal)
+                carDetailsRepository.getCarReview(searchTerm, languageTranslator.currentLocale)
                     .onSuccess {
-                        _searchTermCompletionText.value = formatCarReviewResponse(it, languageTranslator.currentLocal)
+                        _searchTermCompletionText.value = formatCarReviewResponse(it, languageTranslator.currentLocale)
                     }.onFailure {
                         _serverError.value = it.localizedMessage
                     }
