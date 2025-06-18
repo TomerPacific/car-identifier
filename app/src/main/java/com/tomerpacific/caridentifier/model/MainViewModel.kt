@@ -105,28 +105,11 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                             languageTranslator.translate(concatenateCarMakeAndModel(carDetails))
                                 .onSuccess { translatedText ->
                                     searchTerm = "ביקורת ${translatedText.first()}"
-
                                 }
                         }
 
                         else -> {
-                            languageTranslator.translate(
-                                carDetails.color
-                            ).onSuccess { translatedText ->
-                                carDetails.apply {
-                                    ownership = languageTranslator.translateOwnership(carDetails.ownership)
-                                    fuelType = languageTranslator.translateFuelType(carDetails.fuelType)
-                                    color = translatedText.first()
-                                }
-                                searchTerm = concatenateCarMakeAndModel(carDetails) + " review"
-                            }.onFailure {
-                                carDetails.apply {
-                                    ownership = languageTranslator.translateOwnership(carDetails.ownership)
-                                    fuelType = languageTranslator.translateFuelType(carDetails.fuelType)
-                                    color = FAILED_TO_TRANSLATE_MSG
-                                }
-                                searchTerm = concatenateCarMakeAndModel(carDetails) + " review"
-                            }
+                            handleHebrewToEnglishTranslation(carDetails)
                         }
                     }
                     _carDetails.value = carDetails
@@ -214,6 +197,22 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
 
     fun getTranslatedSectionHeader(sectionHeader: SectionHeader): String {
         return languageTranslator.getSectionHeaderTitle(sectionHeader)
+    }
+
+    private suspend fun handleHebrewToEnglishTranslation(carDetails: CarDetails) {
+        languageTranslator.translate(
+            carDetails.color
+        ).onSuccess { translatedText ->
+            carDetails.color = translatedText.first()
+        }.onFailure {
+            carDetails.color = FAILED_TO_TRANSLATE_MSG
+        }
+
+        carDetails.apply {
+            ownership = languageTranslator.translateOwnership(carDetails.ownership)
+            fuelType = languageTranslator.translateFuelType(carDetails.fuelType)
+        }
+        searchTerm = concatenateCarMakeAndModel(carDetails) + " review"
     }
 
     override fun onCleared() {
