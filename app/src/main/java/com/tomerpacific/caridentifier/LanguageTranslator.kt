@@ -32,7 +32,8 @@ class LanguageTranslator {
                 .addOnSuccessListener {
                     isLanguageModelDownloaded = true
                 }
-                .addOnFailureListener {
+                .addOnFailureListener { error ->
+                    Log.e(TAG, "Failed to download language model: ${error.message}")
                     isLanguageModelDownloaded = false
                 }
     }
