@@ -25,6 +25,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import androidx.core.content.edit
+import com.tomerpacific.caridentifier.REVIEW_ENGLISH
+import com.tomerpacific.caridentifier.REVIEW_HEBREW
 
 const val DID_REQUEST_CAMERA_PERMISSION_KEY = "didRequestCameraPermission"
 private const val CAR_REVIEW_ENDPOINT = "https://www.youtube.com/results?search_query="
@@ -107,10 +109,10 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                         HEBREW_LANGUAGE_CODE -> {
                             languageTranslator.translate(concatenateCarMakeAndModel(carDetails))
                                 .onSuccess { translatedText ->
-                                    searchTerm = "ביקורת ${translatedText.first()}"
+                                    searchTerm = "$REVIEW_HEBREW${translatedText.first()}"
                                 }.onFailure { error ->
                                     Log.e(TAG, error.localizedMessage ?: FAILED_TO_TRANSLATE_MSG)
-                                    searchTerm = concatenateCarMakeAndModel(carDetails) + " review"
+                                    searchTerm = concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH
                                 }
                         }
 
@@ -218,7 +220,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
             ownership = languageTranslator.translateOwnership(carDetails.ownership)
             fuelType = languageTranslator.translateFuelType(carDetails.fuelType)
         }
-        searchTerm = concatenateCarMakeAndModel(carDetails) + " review"
+        searchTerm = concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH
     }
 
     override fun onCleared() {

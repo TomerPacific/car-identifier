@@ -7,6 +7,8 @@ const val PROS_SECTION_HEBREW = "יתרונות"
 const val CONS_SECTION_HEBREW = "חסרונות"
 const val PROS_SECTION_ENGLISH = "Pros"
 const val CONS_SECTION_ENGLISH = "Cons"
+const val REVIEW_HEBREW = "ביקורת "
+const val REVIEW_ENGLISH = " review"
 const val SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES = 9
 const val EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES = 10
 
