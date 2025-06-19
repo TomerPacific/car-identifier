@@ -110,7 +110,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                                     searchTerm = "ביקורת ${translatedText.first()}"
                                 }.onFailure { error ->
                                     Log.e(TAG, error.localizedMessage ?: FAILED_TO_TRANSLATE_MSG)
-                                    concatenateCarMakeAndModel(carDetails) + " review"
+                                    searchTerm = concatenateCarMakeAndModel(carDetails) + " review"
                                 }
                         }
 
