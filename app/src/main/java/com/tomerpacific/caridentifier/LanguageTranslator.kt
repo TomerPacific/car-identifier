@@ -16,7 +16,7 @@ private val TAG = LanguageTranslator::class.simpleName
 
 class LanguageTranslator {
 
-    private val englishHebrewTranslator: Translator
+    private val translator: Translator
 
     private var isLanguageModelDownloaded = false
 
@@ -24,11 +24,12 @@ class LanguageTranslator {
 
     init {
             val translatorOptions = buildTranslatorOptions(currentLocale)
-            englishHebrewTranslator = Translation.getClient(translatorOptions)
+            translator = Translation.getClient(translatorOptions)
+
 
             val downloadConditions = DownloadConditions.Builder()
                 .build()
-            englishHebrewTranslator.downloadModelIfNeeded(downloadConditions)
+            translator.downloadModelIfNeeded(downloadConditions)
                 .addOnSuccessListener {
                     isLanguageModelDownloaded = true
                 }
@@ -48,7 +49,7 @@ class LanguageTranslator {
 
         for (t in text) {
             try {
-                val translatedText = englishHebrewTranslator.translate(t).await()
+                val translatedText = translator.translate(t).await()
                 results.add(translatedText)
             } catch (e: Exception) {
                 Log.e(TAG, "Translation failed: ${e.message}")
@@ -103,6 +104,10 @@ class LanguageTranslator {
                 .setTargetLanguage(TranslateLanguage.ENGLISH)
                 .build()
         }
+    }
+
+    fun clear() {
+        translator.close()
     }
 }
 
