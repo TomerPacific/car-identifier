@@ -56,7 +56,10 @@ class LanguageTranslator {
             }
         }
 
-        return Result.success(results)
+        return when (results.isEmpty()) {
+            true -> Result.failure(Exception("Failed to translate text"))
+            false -> Result.success(results)
+        }
     }
 
     fun translateOwnership(ownership: String): String {
