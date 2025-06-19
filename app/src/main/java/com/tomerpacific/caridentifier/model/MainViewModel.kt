@@ -219,5 +219,6 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
         super.onCleared()
         _webView.value?.destroy()
         connectivityObserver.unregisterNetworkCallback()
+        languageTranslator.clear()
     }
 }
