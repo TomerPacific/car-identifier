@@ -2,6 +2,7 @@ package com.tomerpacific.caridentifier.model
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.lifecycle.ViewModel
@@ -23,9 +24,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.core.content.edit
 
 const val DID_REQUEST_CAMERA_PERMISSION_KEY = "didRequestCameraPermission"
 private const val CAR_REVIEW_ENDPOINT = "https://www.youtube.com/results?search_query="
+private val TAG = MainViewModel::class.simpleName
 
 class MainViewModel(private val sharedPreferences: SharedPreferences,
                     private val connectivityObserver: ConnectivityObserver,
@@ -105,6 +108,9 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                             languageTranslator.translate(concatenateCarMakeAndModel(carDetails))
                                 .onSuccess { translatedText ->
                                     searchTerm = "ביקורת ${translatedText.first()}"
+                                }.onFailure { error ->
+                                    Log.e(TAG, error.localizedMessage ?: FAILED_TO_TRANSLATE_MSG)
+                                    concatenateCarMakeAndModel(carDetails) + " review"
                                 }
                         }
 
@@ -135,7 +141,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
     fun setDidRequestCameraPermission(didRequest: Boolean) {
         if (!_didRequestCameraPermission.value) {
             _didRequestCameraPermission.value = didRequest
-            sharedPreferences.edit().putBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, didRequest).apply()
+            sharedPreferences.edit { putBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, didRequest) }
         }
     }
 
