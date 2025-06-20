@@ -9,7 +9,7 @@ import com.google.mlkit.nl.translate.Translator
 import com.google.mlkit.nl.translate.TranslatorOptions
 import kotlinx.coroutines.tasks.await
 
-const val HEBREW_LANGUAGE_CODE = "iw"
+const val HEBREW_LANGUAGE_CODE = "he"
 const val FAILED_TO_TRANSLATE_MSG = "Failed to translate"
 
 private val TAG = LanguageTranslator::class.simpleName
@@ -28,6 +28,7 @@ class LanguageTranslator {
 
 
             val downloadConditions = DownloadConditions.Builder()
+                .requireWifi()
                 .build()
             translator.downloadModelIfNeeded(downloadConditions)
                 .addOnSuccessListener {
