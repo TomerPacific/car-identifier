@@ -6,10 +6,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -52,18 +53,19 @@ fun VerifyPhotoDialog(imageUri: Uri,
                       navController: NavController,
                       mainViewModel: MainViewModel) {
 
-    val context = LocalContext.current
+    val context = LocalContext.current.applicationContext
 
     Dialog(
         onDismissRequest = {
             navController.popBackStack()
         }) {
         Card(modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
+            .wrapContentHeight()
             .padding(16.dp),
             shape = RoundedCornerShape(16.dp),) {
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -75,6 +77,7 @@ fun VerifyPhotoDialog(imageUri: Uri,
                         .build(),
                     contentDescription = "icon",
                     contentScale = ContentScale.Inside,
+                    modifier = Modifier.heightIn(max = 300.dp).fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.size(20.dp))
                 Row(
