@@ -8,7 +8,6 @@ import android.webkit.WebViewClient
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tomerpacific.caridentifier.FAILED_TO_TRANSLATE_MSG
-import com.tomerpacific.caridentifier.HEBREW_LANGUAGE_CODE
 import com.tomerpacific.caridentifier.LanguageTranslator
 import com.tomerpacific.caridentifier.SectionHeader
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
@@ -105,8 +104,8 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
             withContext(Dispatchers.IO) {
                 carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess { carDetails ->
 
-                    when (languageTranslator.currentLocale) {
-                        HEBREW_LANGUAGE_CODE -> {
+                    when (languageTranslator.isHebrewLanguage()) {
+                        true -> {
                             languageTranslator.translate(concatenateCarMakeAndModel(carDetails))
                                 .onSuccess { translatedText ->
                                     searchTerm = "$REVIEW_HEBREW${translatedText.first()}"
@@ -166,7 +165,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
             withContext(Dispatchers.IO) {
                 carDetailsRepository.getCarReview(searchTerm, languageTranslator.currentLocale)
                     .onSuccess {
-                        _searchTermCompletionText.value = formatCarReviewResponse(it, languageTranslator.currentLocale)
+                        _searchTermCompletionText.value = formatCarReviewResponse(it, languageTranslator)
                     }.onFailure {
                         _serverError.value = it.localizedMessage
                     }

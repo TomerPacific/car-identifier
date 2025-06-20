@@ -132,13 +132,13 @@ fun getCarManufacturer(manufacturer: String): String {
     return CAR_MANUFACTURER_NAME_TRANSLATION_TO_ENGLISH[manufacturer] ?: "Unknown Manufacturer"
 }
 
-fun formatCarReviewResponse(carReview: String, locale: String): CarReview {
+fun formatCarReviewResponse(carReview: String, languageTranslator: LanguageTranslator): CarReview {
 
     val prosSection: String
     val consSection: String
 
-    when (locale) {
-        HEBREW_LANGUAGE_CODE -> {
+    when (languageTranslator.isHebrewLanguage()) {
+        true -> {
             prosSection = PROS_SECTION_HEBREW
             consSection = CONS_SECTION_HEBREW
         }
