@@ -90,7 +90,7 @@ class LanguageTranslator {
     fun getSectionHeaderTitle(sectionHeader: SectionHeader): String {
         return when (sectionHeader) {
             SectionHeader.PROS -> {
-                return when (isHebrewLanguage(currentLocale)) {
+                when (isHebrewLanguage(currentLocale)) {
                     true -> PROS_SECTION_HEBREW
                     else -> PROS_SECTION_ENGLISH
                 }
