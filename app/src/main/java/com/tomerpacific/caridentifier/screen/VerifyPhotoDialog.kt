@@ -87,7 +87,7 @@ fun VerifyPhotoDialog(imageUri: String,
                 Spacer(modifier = Modifier.size(20.dp))
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(imageUri)
+                        .data(uri)
                         .build(),
                     contentDescription = "icon",
                     contentScale = ContentScale.Inside,
