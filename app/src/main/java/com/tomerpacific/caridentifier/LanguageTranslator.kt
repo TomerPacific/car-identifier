@@ -7,6 +7,9 @@ import com.google.mlkit.nl.translate.TranslateLanguage
 import com.google.mlkit.nl.translate.Translation
 import com.google.mlkit.nl.translate.Translator
 import com.google.mlkit.nl.translate.TranslatorOptions
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
 
 const val HEBREW_LANGUAGE_CODE_UPDATED = "he"
@@ -42,26 +45,27 @@ class LanguageTranslator {
                 }
     }
 
-    suspend fun translate(vararg text: String): Result<List<String>> {
-
+    suspend fun translate(vararg text: String): Result<List<String>> = coroutineScope {
         if (!isLanguageModelDownloaded) {
-            return Result.failure(Exception("Failed to download language model"))
+            return@coroutineScope Result.failure(Exception("Failed to download language model"))
         }
 
-        val results = mutableListOf<String>()
-
-        for (t in text) {
-            try {
-                val translatedText = translator.translate(t).await()
-                results.add(translatedText)
-            } catch (e: Exception) {
-                Log.e(TAG, "Translation failed: ${e.message}")
+        val deferredTranslations = text.map { t ->
+            async {
+                try {
+                    translator.translate(t).await()
+                } catch (e: Exception) {
+                    Log.e(TAG, "Translation failed: ${e.message}")
+                    null
+                }
             }
         }
 
-        return when (results.isEmpty()) {
-            true -> Result.failure(Exception("Failed to translate text"))
-            false -> Result.success(results)
+        val results = deferredTranslations.awaitAll().filterNotNull()
+
+        return@coroutineScope when {
+            results.isEmpty() -> Result.failure(Exception("Failed to translate text"))
+            else -> Result.success(results)
         }
     }
 
