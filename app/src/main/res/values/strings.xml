@@ -27,4 +27,6 @@
     <string name="license_plate_input_amount_of_digits_error">מספר לוחית רישוי צריך להכיל בין 7 ל-8 ספרות</string>
     <string name="approve">אישור</string>
     <string name="cancel">ביטול</string>
+    <string name="invalid_image_uri_error">אירעה שגיאה בפרסור ה-URI של התמונה</string>
+
 </resources>

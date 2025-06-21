@@ -28,7 +28,7 @@
     <string name="license_plate_input_amount_of_digits_error">A license plate needs to contain 7 or 8 digits</string>
     <string name="approve">Approve</string>
     <string name="cancel">Cancel</string>
-
+    <string name="invalid_image_uri_error">An error has occurred parsing the uri of the image</string>
 
 
 </resources>

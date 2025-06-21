@@ -2,6 +2,7 @@ package com.tomerpacific.caridentifier.screen
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,27 +44,40 @@ import com.tomerpacific.caridentifier.isLicensePlateNumberValid
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import java.io.IOException
+import androidx.core.net.toUri
 
 
 val textRecognizer =
     TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
 @Composable
-fun VerifyPhotoDialog(imageUri: Uri,
+fun VerifyPhotoDialog(imageUri: String,
                       navController: NavController,
                       mainViewModel: MainViewModel) {
 
-    val context = LocalContext.current.applicationContext
+    val context = LocalContext.current
+    val uri: Uri?
+
+    try {
+        uri = imageUri.toUri()
+    } catch (e: Exception) {
+        Log.e("VerifyPhotoDialog", "Invalid URI: $imageUri", e)
+        mainViewModel.triggerSnackBarEvent(stringResource(R.string.invalid_image_uri_error))
+        navController.popBackStack()
+        return
+    }
 
     Dialog(
         onDismissRequest = {
             navController.popBackStack()
         }) {
-        Card(modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
             Column(
                 modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                 verticalArrangement = Arrangement.Center,
@@ -95,7 +109,7 @@ fun VerifyPhotoDialog(imageUri: Uri,
                         )
                     }
                     Button(
-                        onClick = { processImage(context, imageUri, mainViewModel, navController) },
+                        onClick = { processImage(context, uri, mainViewModel, navController) },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(50, 168, 82)),
                         modifier = Modifier.padding(end = 6.dp)) {
                         Icon(
