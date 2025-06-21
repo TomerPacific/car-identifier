@@ -24,14 +24,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
-import androidx.compose.ui.text.style.TextIndent
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tomerpacific.caridentifier.R
@@ -140,16 +136,4 @@ private fun AdviceList(title: String,
             )
         }
     }
-}
-
-fun createBulletPoints(list: List<String>): String {
-    val paragraphStyle = ParagraphStyle(textIndent = TextIndent(restLine = 12.sp))
-    return buildAnnotatedString {
-        list.forEach {
-            withStyle(style = paragraphStyle) {
-                append(it)
-                append("\n")
-            }
-        }
-    }.text
 }
