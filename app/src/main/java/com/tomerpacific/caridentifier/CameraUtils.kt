@@ -10,6 +10,9 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 
+private const val DIRECTORY_NAME = "CarIdentifier"
+private const val FILE_EXTENSION = ".jpg"
+
 object CameraFileUtils {
     fun takePicture(
         cameraController: CameraController,
@@ -48,12 +51,12 @@ object CameraFileUtils {
 
     private fun generatePhotoFileName() =
         SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS", Locale.US)
-            .format(System.currentTimeMillis()) + ".jpg"
+            .format(System.currentTimeMillis()) + FILE_EXTENSION
 
 
     private fun getOutputDirectory(context: Context): File {
         val mediaDir = context.getExternalFilesDir(null)?.let {
-            File(it, context.resources.getString(R.string.app_name)).apply { mkdirs() }
+            File(it, DIRECTORY_NAME).apply { mkdirs() }
         }
 
         return if (mediaDir != null && mediaDir.exists()) mediaDir else context.filesDir
