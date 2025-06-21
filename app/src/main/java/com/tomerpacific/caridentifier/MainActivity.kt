@@ -20,7 +20,6 @@ import com.tomerpacific.caridentifier.screen.HandleCameraPermission
 import com.tomerpacific.caridentifier.screen.VerifyPhotoDialog
 import com.tomerpacific.caridentifier.screen.LicensePlateNumberDialog
 import com.tomerpacific.caridentifier.screen.MainScreen
-import androidx.core.net.toUri
 
 const val IMAGE_URI_KEY = "imageUri"
 
@@ -58,7 +57,7 @@ class MainActivity : ComponentActivity() {
             )) {
                 it.arguments?.let { bundle ->
                     bundle.getString(IMAGE_URI_KEY)?.let { uri ->
-                        VerifyPhotoDialog(uri.toUri(), navController, mainViewModel)
+                        VerifyPhotoDialog(uri, navController, mainViewModel)
                     }
                 }
             }
