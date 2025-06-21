@@ -3,8 +3,12 @@ package com.tomerpacific.caridentifier
 import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.CarReview
 
-const val PROS = "יתרונות"
-const val CONS = "חסרונות"
+const val PROS_SECTION_HEBREW = "יתרונות"
+const val CONS_SECTION_HEBREW = "חסרונות"
+const val PROS_SECTION_ENGLISH = "Pros"
+const val CONS_SECTION_ENGLISH = "Cons"
+const val REVIEW_HEBREW = "ביקורת "
+const val REVIEW_ENGLISH = " review"
 const val SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES = 9
 const val EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES = 10
 
@@ -128,18 +132,35 @@ fun getCarManufacturer(manufacturer: String): String {
     return CAR_MANUFACTURER_NAME_TRANSLATION_TO_ENGLISH[manufacturer] ?: "Unknown Manufacturer"
 }
 
-fun formatCarReviewResponse(carReview: String): CarReview {
-    val carReviewLines = carReview.removePrefix("\"").removeSuffix("\"").split("\\n")
+fun formatCarReviewResponse(carReview: String, languageTranslator: LanguageTranslator): CarReview {
+
+    val prosSection: String
+    val consSection: String
+
+    when (languageTranslator.isHebrewLanguage()) {
+        true -> {
+            prosSection = PROS_SECTION_HEBREW
+            consSection = CONS_SECTION_HEBREW
+        }
+        else -> {
+            prosSection = PROS_SECTION_ENGLISH
+            consSection = CONS_SECTION_ENGLISH
+        }
+    }
+
+    val carReviewLines = carReview
+        .removePrefix("\"")
+        .removeSuffix("\"")
+        .split("\\n")
     val prosList = mutableListOf<String>()
     val consList = mutableListOf<String>()
     var isInProsSection = false
 
     carReviewLines.forEach { line ->
-        val formattedLine = line.replace("\\", "")
         when {
-            formattedLine.contains(PROS, true) -> isInProsSection = true
-            formattedLine.contains(CONS, true) -> isInProsSection = false
-            formattedLine.isNotBlank() -> if (isInProsSection) prosList.add(formattedLine) else consList.add(formattedLine)
+            line.contains(prosSection, true) -> isInProsSection = true
+            line.contains(consSection, true) -> isInProsSection = false
+            line.isNotBlank() -> if (isInProsSection) prosList.add(line) else consList.add(line)
         }
     }
 

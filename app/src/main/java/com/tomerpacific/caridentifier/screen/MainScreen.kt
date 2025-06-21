@@ -70,7 +70,8 @@ private fun LicensePlateInputOptionsHeader() {
         .padding(top = 30.dp, start = 10.dp, end = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center) {
-        Text("בחר/י באפשרות לחפש פרטים בנוגע לרכב",
+        Text(
+            stringResource(R.string.main_screen_header),
             fontWeight = FontWeight.Bold,
             fontSize = 25.sp,
             textAlign = TextAlign.Center)
@@ -89,14 +90,14 @@ private fun LicensePlateInputOptions(navController: NavController,
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             CarLicensePlateSearchOptionButton(
-                buttonText = "חפש/י לפי תמונה",
+                buttonText = stringResource(R.string.main_screen_search_by_image),
                 drawableId = R.drawable.license_plate,
                 drawableContentDescription = "License Plate",
                 navController,
                 shouldDisableButton
             )
             CarLicensePlateSearchOptionButton(
-                buttonText = "חפש/י לפי מספר",
+                buttonText = stringResource(R.string.main_screen_search_by_license_plate),
                 drawableId = R.drawable.keyboard,
                 drawableContentDescription = "Smartphone Keyboard",
                 navController
@@ -114,7 +115,7 @@ private fun AppVersion() {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End) {
         Text(
-            text = stringResource(R.string.app_version, BuildConfig.VERSION_NAME),
+            text = "v.${BuildConfig.VERSION_NAME}",
             fontSize = 16.sp
         )
     }

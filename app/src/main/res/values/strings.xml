@@ -1,7 +1,32 @@
 <resources>
-    <string name="app_name">CarIdentifier</string>
-    <string name="app_version">v.%1$s</string>
+    <string name="app_name">מזהה מכוניות</string>
     <string name="tab_name_details">פרטים</string>
     <string name="tab_name_reviews">ביקורות</string>
     <string name="tab_name_recommendations">המלצות</string>
+    <string name="main_screen_header">בחר/י באפשרות לחפש פרטים בנוגע לרכב</string>
+    <string name="main_screen_search_by_image">חפש/י לפי תמונה</string>
+    <string name="main_screen_search_by_license_plate">חפש/י לפי מספר</string>
+    <string name="no_license_plate_error">לא נמצאה לוחית רישוי. אנא צלמו תמונה עם לוחית רישוי.</string>
+    <string name="verify_photo_msg">להמשיך עם התמונה הזאת?"</string>
+    <string name="error_processing_image">שגיאה בעיבוד תמונה</string>
+    <string name="car_advice_header">המלצות בינה מלאכותית</string>
+    <string name="car_advice_disclaimer">הבינה המלאכותית יכולה לטעות, אנא שימו לב</string>
+    <string name="car_details_not_obtained_error_msg"> לא ניתן להשיג את פרטי הרכב. נסו שנית.</string>
+    <string name="last_test_date_for_car">טסט אחרון בוצע בתאריך:</string>
+    <string name="current_ownership">בעלות נוכחית:</string>
+    <string name="fuel_type">סוג דלק:</string>
+    <string name="safety_rating">רמת אבזור בטיחות:</string>
+    <string name="air_pollution_rating">רמת זיהום אוויר:</string>
+    <string name="car_color">צבע:</string>
+    <string name="first_time_on_road">עלה לכביש:</string>
+    <string name="camera_permission_disclaimer">יש צורך לתת הרשאות למצלמה דרך מסך ההגדרות</string>
+    <string name="camera_permission_clarification">צריך לאשר הרשאה למצלמה כדי לסרוק לוחית רישוי</string>
+    <string name="amount_of_digits_in_license_plate">הכנס מספר לוחית רישוי בן 7 או 8 ספרות</string>
+    <string name="license_plate_placeholder">מספר לוחית רישוי?</string>
+    <string name="license_plate_input_limit_error">מספר לוחית רישוי יכול להכיל עד 8 ספרות</string>
+    <string name="license_plate_input_amount_of_digits_error">מספר לוחית רישוי צריך להכיל בין 7 ל-8 ספרות</string>
+    <string name="approve">אישור</string>
+    <string name="cancel">ביטול</string>
+    <string name="invalid_image_uri_error">אירעה שגיאה בפרסור ה-URI של התמונה</string>
+
 </resources>

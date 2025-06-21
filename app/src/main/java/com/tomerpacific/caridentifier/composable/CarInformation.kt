@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -74,7 +76,7 @@ fun Details(mainViewModel: MainViewModel, serverError: String?) {
                     contentDescription = "broken car",
                 )
                 Spacer(modifier = Modifier.size(100.dp))
-                Text(text = " לא ניתן להשיג את פרטי הרכב. נסו שנית.",
+                Text(text = stringResource(R.string.car_details_not_obtained_error_msg),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
@@ -126,16 +128,21 @@ fun CarInformation(details: CarDetails) {
         )
     }
     Spacer(modifier = Modifier.height(50.dp))
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Text(" טסט אחרון בוצע בתאריך: ${details.lastTestDate}", fontSize = 20.sp)
+
+    CarDetailWithIcon(iconId = "checkIcon",
+        labelText = stringResource(R.string.last_test_date_for_car),
+        content = details.lastTestDate) {
+        Icon(
+            Icons.Default.Check,
+            contentDescription = "Check Icon",
+            tint = Color(0, 0, 0),
+            modifier = Modifier.fillMaxSize()
+        )
     }
 
     CarDetailWithIcon(
         iconId = "keysIcon",
-        labelText = " בעלות נוכחית: ",
+        labelText = stringResource(R.string.current_ownership),
         content = details.ownership
     ) {
         Icon(
@@ -146,7 +153,7 @@ fun CarInformation(details: CarDetails) {
 
     CarDetailWithIcon(
         iconId = "fuelIcon",
-        labelText = " סוג דלק: ",
+        labelText = stringResource(R.string.fuel_type),
         content = details.fuelType
     ) {
         Icon(
@@ -158,7 +165,7 @@ fun CarInformation(details: CarDetails) {
 
     CarDetailWithIcon(
         iconId = "safetyIcon",
-        labelText = " רמת אבזור בטיחות: ",
+        labelText = stringResource(R.string.safety_rating),
         content = "${details.safetyFeatureLevel}/8"
     ) {
         Icon(
@@ -170,7 +177,7 @@ fun CarInformation(details: CarDetails) {
 
     CarDetailWithIcon(
         iconId = "pollutionIcon",
-        labelText = " רמת זיהום אוויר: ",
+        labelText = stringResource(R.string.air_pollution_rating),
         content = "${details.pollutionLevel}/15"
     ) {
         Icon(
@@ -182,7 +189,7 @@ fun CarInformation(details: CarDetails) {
 
     CarDetailWithIcon(
         iconId = "paletteIcon",
-        labelText = " צבע: ",
+        labelText = stringResource(R.string.car_color),
         content = details.color
     ) {
         Icon(
@@ -194,7 +201,7 @@ fun CarInformation(details: CarDetails) {
 
     CarDetailWithIcon(
         iconId = "roadIcon",
-        labelText = " עלה לכביש: ",
+        labelText = stringResource(R.string.first_time_on_road),
         content = details.firstOnRoadDate
     ) {
         Icon(

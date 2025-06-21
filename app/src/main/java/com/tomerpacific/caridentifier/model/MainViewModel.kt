@@ -2,11 +2,14 @@ package com.tomerpacific.caridentifier.model
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.tomerpacific.caridentifier.FAILED_TO_TRANSLATE_MSG
 import com.tomerpacific.caridentifier.LanguageTranslator
+import com.tomerpacific.caridentifier.SectionHeader
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import com.tomerpacific.caridentifier.formatCarReviewResponse
@@ -20,8 +23,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.core.content.edit
+import com.tomerpacific.caridentifier.REVIEW_ENGLISH
+import com.tomerpacific.caridentifier.REVIEW_HEBREW
 
 const val DID_REQUEST_CAMERA_PERMISSION_KEY = "didRequestCameraPermission"
+private const val CAR_REVIEW_ENDPOINT = "https://www.youtube.com/results?search_query="
+private val TAG = MainViewModel::class.simpleName
+
 class MainViewModel(private val sharedPreferences: SharedPreferences,
                     private val connectivityObserver: ConnectivityObserver,
                     private val carDetailsRepository: CarDetailsRepository = CarDetailsRepository(),
@@ -76,8 +85,8 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
     }
 
 
-    fun getCarDetails( context: Context,
-                       licensePlateNumber: String? = null) {
+    fun getCarDetails(context: Context,
+                      licensePlateNumber: String? = null) {
 
         licensePlateNumber?.let {
             _licensePlateNumber = it
@@ -94,13 +103,24 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess { carDetails ->
-                    _carDetails.value = carDetails
-                    languageTranslator.translate(concatenateCarMakeAndModel(carDetails)).onSuccess { translatedText ->
-                        searchTerm = translatedText
-                        setupWebView(context)
-                    }.onFailure {
-                        _serverError.value = it.localizedMessage
+
+                    when (languageTranslator.isHebrewLanguage()) {
+                        true -> {
+                            languageTranslator.translate(concatenateCarMakeAndModel(carDetails))
+                                .onSuccess { translatedText ->
+                                    searchTerm = "$REVIEW_HEBREW${translatedText.first()}"
+                                }.onFailure { error ->
+                                    Log.e(TAG, error.localizedMessage ?: FAILED_TO_TRANSLATE_MSG)
+                                    searchTerm = concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH
+                                }
+                        }
+
+                        else -> {
+                            handleHebrewToEnglishTranslation(carDetails)
+                        }
                     }
+                    _carDetails.value = carDetails
+                    setupWebView(context)
                 }.onFailure { exception ->
                     exception.localizedMessage?.let {
                         _serverError.value = when (it.contains("[")) {
@@ -122,7 +142,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
     fun setDidRequestCameraPermission(didRequest: Boolean) {
         if (!_didRequestCameraPermission.value) {
             _didRequestCameraPermission.value = didRequest
-            sharedPreferences.edit().putBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, didRequest).apply()
+            sharedPreferences.edit { putBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, didRequest) }
         }
     }
 
@@ -143,9 +163,9 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                carDetailsRepository.getCarReview(searchTerm)
+                carDetailsRepository.getCarReview(searchTerm, languageTranslator.currentLocale)
                     .onSuccess {
-                        _searchTermCompletionText.value = formatCarReviewResponse(it)
+                        _searchTermCompletionText.value = formatCarReviewResponse(it, languageTranslator)
                     }.onFailure {
                         _serverError.value = it.localizedMessage
                     }
@@ -171,7 +191,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                     settings.loadWithOverviewMode = true
                     settings.useWideViewPort = true
                     settings.setSupportZoom(true)
-                    loadUrl("https://www.youtube.com/results?search_query=ביקורת $searchTerm")
+                    loadUrl("${CAR_REVIEW_ENDPOINT}$searchTerm")
                 }
             }
         }
@@ -182,9 +202,30 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                 _serverError.value == REQUEST_TIMEOUT_ERROR
     }
 
+    fun getTranslatedSectionHeader(sectionHeader: SectionHeader): String {
+        return languageTranslator.getSectionHeaderTitle(sectionHeader)
+    }
+
+    private suspend fun handleHebrewToEnglishTranslation(carDetails: CarDetails) {
+        languageTranslator.translate(
+            carDetails.color
+        ).onSuccess { translatedText ->
+            carDetails.color = translatedText.first()
+        }.onFailure {
+            carDetails.color = FAILED_TO_TRANSLATE_MSG
+        }
+
+        carDetails.apply {
+            ownership = languageTranslator.translateOwnership(carDetails.ownership)
+            fuelType = languageTranslator.translateFuelType(carDetails.fuelType)
+        }
+        searchTerm = concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH
+    }
+
     override fun onCleared() {
         super.onCleared()
         _webView.value?.destroy()
         connectivityObserver.unregisterNetworkCallback()
+        languageTranslator.clear()
     }
 }

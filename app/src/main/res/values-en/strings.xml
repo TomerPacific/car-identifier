@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CarIdentifier</string>
+    <string name="tab_name_details">Details</string>
+    <string name="tab_name_reviews">Reviews</string>
+    <string name="tab_name_recommendations">Advice</string>
+    <string name="main_screen_header">Choose an option to search for details about a car</string>
+    <string name="main_screen_search_by_image">Search By Image</string>
+    <string name="main_screen_search_by_license_plate">Search By License Plate</string>
+    <string name="no_license_plate_error">There was no license plate found. Please take a photo with one.</string>
+    <string name="verify_photo_msg">Continue with this photo?</string>
+    <string name="error_processing_image">Error processing image</string>
+    <string name="car_advice_header">AI Recommendations</string>
+    <string name="car_advice_disclaimer">AI can make mistakes. Please pay attention</string>
+    <string name="car_details_not_obtained_error_msg">The car details cannot be obtained. Please try again.</string>
+    <string name="last_test_date_for_car">Last test date:</string>
+    <string name="current_ownership">Current ownership:</string>
+    <string name="fuel_type">Fuel type:</string>
+    <string name="safety_rating">Safety rating:</string>
+    <string name="air_pollution_rating">Air pollution rating:</string>
+    <string name="car_color">Color:</string>
+    <string name="first_time_on_road">First time on the road:</string>
+    <string name="camera_permission_disclaimer">You need to allow camera permissions through the Settings screen</string>
+    <string name="camera_permission_clarification">Camera permission is needed to scan license plate</string>
+    <string name="amount_of_digits_in_license_plate">Please enter a 7 or 8 digit license plate number</string>
+    <string name="license_plate_placeholder">License Plate Number?</string>
+    <string name="license_plate_input_limit_error">A license plate can contain at most 8 digits</string>
+    <string name="license_plate_input_amount_of_digits_error">A license plate needs to contain 7 or 8 digits</string>
+    <string name="approve">Approve</string>
+    <string name="cancel">Cancel</string>
+    <string name="invalid_image_uri_error">An error has occurred parsing the uri of the image</string>
+
+
+</resources>

@@ -1,6 +1,5 @@
 package com.tomerpacific.caridentifier
 
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -57,9 +56,8 @@ class MainActivity : ComponentActivity() {
                 }
             )) {
                 it.arguments?.let { bundle ->
-                    val uri = bundle.getString(IMAGE_URI_KEY)
-                    if (uri != null) {
-                        VerifyPhotoDialog(Uri.parse(uri), navController, mainViewModel)
+                    bundle.getString(IMAGE_URI_KEY)?.let { uri ->
+                        VerifyPhotoDialog(uri, navController, mainViewModel)
                     }
                 }
             }

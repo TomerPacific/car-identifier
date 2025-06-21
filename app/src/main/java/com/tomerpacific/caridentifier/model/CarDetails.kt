@@ -22,17 +22,17 @@ data class CarDetails(
     @SerialName("valid_date")
     val validDate: String,
     @SerialName("ownership")
-    val ownership: String,
+    var ownership: String,
     @SerialName("frame_number")
     val frameNumber: String,
     @SerialName("color")
-    val color: String,
+    var color: String,
     @SerialName("front_wheel")
     val frontWheel: String,
     @SerialName("rear_wheel")
     val rearWheel: String,
     @SerialName("fuel_type")
-    val fuelType: String,
+    var fuelType: String,
     @SerialName("first_on_road_date")
     val firstOnRoadDate: String,
     @SerialName("commercial_name")
