@@ -132,7 +132,8 @@ fun CarInformation(details: CarDetails) {
     CarDetailWithIcon(iconId = "checkIcon",
         labelText = stringResource(R.string.last_test_date_for_car),
         content = details.lastTestDate,
-        tooltipDescription = "Displays the last time the car was tested") {
+        tooltipDescription = stringResource(R.string.last_test_date_tooltip_explanation)
+    ) {
         Icon(
             Icons.Default.Check,
             contentDescription = "Check Icon",
@@ -144,7 +145,7 @@ fun CarInformation(details: CarDetails) {
         iconId = "keysIcon",
         labelText = stringResource(R.string.current_ownership),
         content = details.ownership,
-        tooltipDescription = "Displays the type of ownership of the car (e.g., private, leased, etc.)"
+        tooltipDescription = stringResource(R.string.current_ownership_tooltip_explanation)
     ) {
         Icon(
             painterResource(id = R.drawable.ic_key_icon),"Key Icon",
@@ -155,7 +156,7 @@ fun CarInformation(details: CarDetails) {
         iconId = "fuelIcon",
         labelText = stringResource(R.string.fuel_type),
         content = details.fuelType,
-        tooltipDescription = "Displays the type of fuel the car accepts (e.g., petrol, diesel, electric, etc.)"
+        tooltipDescription = stringResource(R.string.fuel_type_tooltip_explanation)
 
     ) {
         Icon(
@@ -168,7 +169,7 @@ fun CarInformation(details: CarDetails) {
         iconId = "safetyIcon",
         labelText = stringResource(R.string.safety_rating),
         content = "${details.safetyFeatureLevel}/8",
-        tooltipDescription = "Displays the safety rating of the car, which is a score out of 8"
+        tooltipDescription = stringResource(R.string.safety_rating_tooltip_explanation)
     ) {
         Icon(
             painterResource(id = R.drawable.ic_shield), "Safety Icon",
@@ -180,7 +181,7 @@ fun CarInformation(details: CarDetails) {
         iconId = "pollutionIcon",
         labelText = stringResource(R.string.air_pollution_rating),
         content = "${details.pollutionLevel}/15",
-        tooltipDescription = "Displays the air pollution rating of the car, which is a score out of 15"
+        tooltipDescription = stringResource(R.string.air_pollution_rating_tooltip_explanation)
     ) {
         Icon(
             painterResource(id = R.drawable.ic_car_alert), "Pollution Icon",
@@ -192,7 +193,7 @@ fun CarInformation(details: CarDetails) {
         iconId = "paletteIcon",
         labelText = stringResource(R.string.car_color),
         content = details.color,
-        tooltipDescription = "Displays the color of the car"
+        tooltipDescription = stringResource(R.string.car_color_tooltip_explanation)
     ) {
         Icon(
             painterResource(id = R.drawable.ic_palette), "Palette Icon",
@@ -204,7 +205,7 @@ fun CarInformation(details: CarDetails) {
         iconId = "roadIcon",
         labelText = stringResource(R.string.first_time_on_road),
         content = details.firstOnRoadDate,
-        tooltipDescription = "Displays the date when the car was first registered to be on the road"
+        tooltipDescription = stringResource(R.string.first_time_on_road_tooltip_explanation)
     ) {
         Icon(
             painterResource(id = R.drawable.ic_road), "Road Icon",

@@ -28,5 +28,11 @@
     <string name="approve">אישור</string>
     <string name="cancel">ביטול</string>
     <string name="invalid_image_uri_error">אירעה שגיאה בפרסור ה-URI של התמונה</string>
-
+    <string name="last_test_date_tooltip_explanation">מציג את התאריך האחרון שהרכב עבר בו טסט</string>
+    <string name="current_ownership_tooltip_explanation">מציג את סוג הבעלות הנוכחית של הרכב (פרטי, השכרה וכו\')</string>
+    <string name="fuel_type_tooltip_explanation">מציג את סוג הדלק של הרכב (בנזין, דיזל וכו\')</string>
+    <string name="safety_rating_tooltip_explanation">מציג את דירוג הבטיחות של הרכב, שזהו מספר עד 8</string>
+    <string name="air_pollution_rating_tooltip_explanation">מציג את דירוג זיהום האוויר של הרכב, שזהו מספר עד 15</string>
+    <string name="car_color_tooltip_explanation">מציג את צבע הרכב</string>
+    <string name="first_time_on_road_tooltip_explanation">מציג את התאריך שבו הרכב נרשם לראשונה לעלות על הכביש</string>
 </resources>
