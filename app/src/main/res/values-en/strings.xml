@@ -29,6 +29,11 @@
     <string name="approve">Approve</string>
     <string name="cancel">Cancel</string>
     <string name="invalid_image_uri_error">An error has occurred parsing the uri of the image</string>
-
-
+    <string name="last_test_date_tooltip_explanation">Displays the last time the car was tested</string>
+    <string name="current_ownership_tooltip_explanation">Displays the type of ownership of the car (e.g., private, leased, etc.)</string>
+    <string name="fuel_type_tooltip_explanation">Displays the fuel type of the car (e.g., gasoline, diesel, etc.)</string>
+    <string name="safety_rating_tooltip_explanation">Displays the safety rating of the car, which is a score out of 8</string>
+    <string name="air_pollution_rating_tooltip_explanation">Displays the air pollution rating of the car, which is a score out of 15</string>
+    <string name="car_color_tooltip_explanation">Displays the color of the car</string>
+    <string name="first_time_on_road_tooltip_explanation">Displays the date when the car was first registered to be on the road</string>
 </resources>

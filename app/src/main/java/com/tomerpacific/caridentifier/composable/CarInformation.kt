@@ -131,83 +131,85 @@ fun CarInformation(details: CarDetails) {
 
     CarDetailWithIcon(iconId = "checkIcon",
         labelText = stringResource(R.string.last_test_date_for_car),
-        content = details.lastTestDate) {
+        content = details.lastTestDate,
+        tooltipDescription = stringResource(R.string.last_test_date_tooltip_explanation)
+    ) {
         Icon(
             Icons.Default.Check,
             contentDescription = "Check Icon",
-            tint = Color(0, 0, 0),
-            modifier = Modifier.fillMaxSize()
+            tint = Color(0, 0, 0)
         )
     }
 
     CarDetailWithIcon(
         iconId = "keysIcon",
         labelText = stringResource(R.string.current_ownership),
-        content = details.ownership
+        content = details.ownership,
+        tooltipDescription = stringResource(R.string.current_ownership_tooltip_explanation)
     ) {
         Icon(
             painterResource(id = R.drawable.ic_key_icon),"Key Icon",
-            tint = Color(254, 219, 0),
-            modifier = Modifier.fillMaxSize())
+            tint = Color(254, 219, 0))
     }
 
     CarDetailWithIcon(
         iconId = "fuelIcon",
         labelText = stringResource(R.string.fuel_type),
-        content = details.fuelType
+        content = details.fuelType,
+        tooltipDescription = stringResource(R.string.fuel_type_tooltip_explanation)
+
     ) {
         Icon(
             painterResource(id = R.drawable.ic_fuel_type), "Fuel Icon",
-            tint = Color(18, 80, 255),
-            modifier = Modifier.fillMaxSize()
+            tint = Color(18, 80, 255)
         )
     }
 
     CarDetailWithIcon(
         iconId = "safetyIcon",
         labelText = stringResource(R.string.safety_rating),
-        content = "${details.safetyFeatureLevel}/8"
+        content = "${details.safetyFeatureLevel}/8",
+        tooltipDescription = stringResource(R.string.safety_rating_tooltip_explanation)
     ) {
         Icon(
             painterResource(id = R.drawable.ic_shield), "Safety Icon",
-            tint = Color(50, 168, 82),
-            modifier = Modifier.fillMaxSize()
+            tint = Color(50, 168, 82)
         )
     }
 
     CarDetailWithIcon(
         iconId = "pollutionIcon",
         labelText = stringResource(R.string.air_pollution_rating),
-        content = "${details.pollutionLevel}/15"
+        content = "${details.pollutionLevel}/15",
+        tooltipDescription = stringResource(R.string.air_pollution_rating_tooltip_explanation)
     ) {
         Icon(
             painterResource(id = R.drawable.ic_car_alert), "Pollution Icon",
-            tint = Color(255, 0, 0),
-            modifier = Modifier.fillMaxSize()
+            tint = Color(255, 0, 0)
         )
     }
 
     CarDetailWithIcon(
         iconId = "paletteIcon",
         labelText = stringResource(R.string.car_color),
-        content = details.color
+        content = details.color,
+        tooltipDescription = stringResource(R.string.car_color_tooltip_explanation)
     ) {
         Icon(
             painterResource(id = R.drawable.ic_palette), "Palette Icon",
-            tint = Color(209, 150, 105),
-            modifier = Modifier.fillMaxSize()
+            tint = Color(209, 150, 105)
         )
     }
 
     CarDetailWithIcon(
         iconId = "roadIcon",
         labelText = stringResource(R.string.first_time_on_road),
-        content = details.firstOnRoadDate
+        content = details.firstOnRoadDate,
+        tooltipDescription = stringResource(R.string.first_time_on_road_tooltip_explanation)
     ) {
         Icon(
             painterResource(id = R.drawable.ic_road), "Road Icon",
-            tint = Color(0, 0, 0),
-            modifier = Modifier.fillMaxSize()
+            tint = Color(0, 0, 0)
         )
     }
 }
