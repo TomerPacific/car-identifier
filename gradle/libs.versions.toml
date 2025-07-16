@@ -101,3 +101,4 @@ compose-ui = [
 android-application = { id = "com.android.application", version = "8.9.1" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version = "1.8.10" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version = "1.8.10" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version = "1.8.10" }
