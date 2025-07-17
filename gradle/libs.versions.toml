@@ -46,7 +46,7 @@ camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cam
 camera-view = { module = "androidx.camera:camera-view", version.ref = "camera" }
 camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camera" }
 
-material3 = { module = "androidx.compose.material3:material3-android", version.ref = "compose-material3" }
+material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 
 # Compose BOM
 compose-bom = { module = "androidx.compose:compose-bom", version = "2023.03.00" }
