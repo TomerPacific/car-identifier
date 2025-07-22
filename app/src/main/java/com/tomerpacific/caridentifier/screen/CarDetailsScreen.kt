@@ -16,7 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -34,7 +34,7 @@ import com.tomerpacific.caridentifier.model.MainViewModel
 fun CarDetailsScreen(mainViewModel: MainViewModel, navController: NavController) {
 
 
-    var tabIndex by remember { mutableStateOf(0) }
+    var tabIndex by remember { mutableIntStateOf(0) }
 
     val tabs = listOf(
         stringResource(R.string.tab_name_details),
@@ -42,6 +42,8 @@ fun CarDetailsScreen(mainViewModel: MainViewModel, navController: NavController)
         stringResource(R.string.tab_name_recommendations))
 
     val serverError by mainViewModel.serverError.collectAsState()
+    val mainUiState by mainViewModel.mainUiState.collectAsState()
+
     Scaffold(contentWindowInsets = WindowInsets.safeContent) { innerPadding ->
         Column(modifier = Modifier.fillMaxWidth().padding(innerPadding)) {
             TabRow(selectedTabIndex = tabIndex) {
@@ -59,16 +61,16 @@ fun CarDetailsScreen(mainViewModel: MainViewModel, navController: NavController)
                                     modifier = Modifier.size(40.dp))
                             }
                         },
-                        enabled = serverError == null
+                        enabled = mainUiState.errorMessage == null
                     )
                 }
             }
             when (tabIndex) {
-                0 -> Details(mainViewModel, serverError)
-                1 -> Reviews(mainViewModel, serverError)
+                0 -> Details(mainViewModel)
+                1 -> Reviews(mainViewModel)
                 2 -> {
                     mainViewModel.getCarReview()
-                    Advice(mainViewModel, serverError)
+                    Advice(mainViewModel)
                 }
             }
         }
