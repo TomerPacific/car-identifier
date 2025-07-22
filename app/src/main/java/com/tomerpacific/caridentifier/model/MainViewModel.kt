@@ -1,10 +1,7 @@
 package com.tomerpacific.caridentifier.model
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tomerpacific.caridentifier.FAILED_TO_TRANSLATE_MSG
@@ -26,6 +23,9 @@ import kotlinx.coroutines.withContext
 import androidx.core.content.edit
 import com.tomerpacific.caridentifier.REVIEW_ENGLISH
 import com.tomerpacific.caridentifier.REVIEW_HEBREW
+import com.tomerpacific.caridentifier.data.MainUiState
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 const val DID_REQUEST_CAMERA_PERMISSION_KEY = "didRequestCameraPermission"
 private const val CAR_REVIEW_ENDPOINT = "https://www.youtube.com/results?search_query="
@@ -37,10 +37,9 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                     private val languageTranslator: LanguageTranslator = LanguageTranslator()
 ): ViewModel() {
 
-    private val _carDetails = MutableStateFlow<CarDetails?>(null)
 
-    val carDetails: StateFlow<CarDetails?>
-        get() = _carDetails
+    private val _mainUiState = MutableStateFlow(MainUiState())
+    val mainUiState: StateFlow<MainUiState> = _mainUiState.asStateFlow()
 
     private val _serverError = MutableStateFlow<String?>(null)
 
@@ -59,15 +58,6 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
 
     private var searchTerm: String = ""
 
-    private val _searchTermCompletionText = MutableStateFlow<CarReview?>(null)
-
-    val searchTermCompletionText: StateFlow<CarReview?>
-        get() = _searchTermCompletionText
-
-    private val _webView = MutableStateFlow<WebView?>(null)
-    val webView: StateFlow<WebView?>
-        get() = _webView
-
     private val _snackbarEvent = MutableSharedFlow<String>()
     val snackbarEvent = _snackbarEvent.asSharedFlow()
 
@@ -85,8 +75,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
     }
 
 
-    fun getCarDetails(context: Context,
-                      licensePlateNumber: String? = null) {
+    fun getCarDetails(licensePlateNumber: String? = null) {
 
         licensePlateNumber?.let {
             _licensePlateNumber = it
@@ -100,38 +89,48 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
         _serverError.value = null
 
         val licensePlateNumberWithoutDashes = _licensePlateNumber.replace("-", "")
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess { carDetails ->
+        viewModelScope.launch(Dispatchers.IO) {
+            _mainUiState.value = MainUiState(isLoading = true)
+            carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess { carDetails ->
 
-                    when (languageTranslator.isHebrewLanguage()) {
-                        true -> {
-                            languageTranslator.translate(concatenateCarMakeAndModel(carDetails))
-                                .onSuccess { translatedText ->
-                                    searchTerm = "$REVIEW_HEBREW${translatedText.first()}"
-                                }.onFailure { error ->
-                                    Log.e(TAG, error.localizedMessage ?: FAILED_TO_TRANSLATE_MSG)
-                                    searchTerm = concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH
-                                }
-                        }
-
-                        else -> {
-                            handleHebrewToEnglishTranslation(carDetails)
-                        }
-                    }
-                    _carDetails.value = carDetails
-                    setupWebView(context)
-                }.onFailure { exception ->
-                    exception.localizedMessage?.let {
-                        _serverError.value = when (it.contains("[")) {
-                            true -> {
-                                it.subSequence(
-                                    0,
-                                    it.indexOf("[")
-                                ).toString().trim()
+                when (languageTranslator.isHebrewLanguage()) {
+                    true -> {
+                        languageTranslator.translate(concatenateCarMakeAndModel(carDetails))
+                            .onSuccess { translatedText ->
+                                searchTerm = "$REVIEW_HEBREW${translatedText.first()}"
+                            }.onFailure { error ->
+                                Log.e(TAG, error.localizedMessage ?: FAILED_TO_TRANSLATE_MSG)
+                                searchTerm = concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH
                             }
+                    }
 
-                            false -> exception.localizedMessage?.trim()
+                    else -> {
+                        handleHebrewToEnglishTranslation(carDetails)
+                    }
+                }
+                withContext(Dispatchers.Main) {
+                    _mainUiState.update {
+                        it.copy(
+                            isLoading = false,
+                            carDetails = carDetails,
+                            reviewUrl = "${CAR_REVIEW_ENDPOINT}${searchTerm}")
+                    }
+                }
+            }.onFailure { exception ->
+                exception.localizedMessage?.let {
+                    _serverError.value = when (it.contains("[")) {
+                        true -> {
+                            it.subSequence(
+                                0,
+                                it.indexOf("[")
+                            ).toString().trim()
+                        }
+
+                        false -> exception.localizedMessage?.trim()
+                    }
+                    withContext(Dispatchers.Main) {
+                        _mainUiState.update {
+                            it.copy(isLoading = false, errorMessage = _serverError.value)
                         }
                     }
                 }
@@ -157,43 +156,43 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
             return
         }
 
-        if (_searchTermCompletionText.value != null) {
+        if (_mainUiState.value.carReview != null) {
             return
         }
 
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
                 carDetailsRepository.getCarReview(searchTerm, languageTranslator.currentLocale)
-                    .onSuccess {
-                        _searchTermCompletionText.value = formatCarReviewResponse(it, languageTranslator)
-                    }.onFailure {
-                        _serverError.value = it.localizedMessage
+                    .onSuccess { carReview ->
+                        withContext(Dispatchers.Main) {
+                            _mainUiState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    carReview = formatCarReviewResponse(carReview, languageTranslator)
+                                )
+                            }
+                        }
+                    }.onFailure { error ->
+                        withContext(Dispatchers.Main) {
+                            _mainUiState.update {
+                                it.copy(
+                                    isLoading = false,
+                                    errorMessage = error.localizedMessage
+                                )
+                            }
+                        }
                     }
             }
-        }
     }
 
     fun resetData() {
-        _carDetails.value = null
-        _serverError.value = null
-        _searchTermCompletionText.value = null
-        searchTerm = ""
-        _webView.value = null
-    }
-
-    private fun setupWebView(context: Context) {
-
-        if (_webView.value == null) {
-            viewModelScope.launch {
-                _webView.value = WebView(context).apply {
-                    webViewClient = WebViewClient()
-                    settings.javaScriptEnabled = true
-                    settings.loadWithOverviewMode = true
-                    settings.useWideViewPort = true
-                    settings.setSupportZoom(true)
-                    loadUrl("${CAR_REVIEW_ENDPOINT}$searchTerm")
-                }
-            }
+        _mainUiState.update {
+            it.copy(
+                isLoading = false,
+                errorMessage = null,
+                carDetails = null,
+                carReview = null,
+                reviewUrl = null
+            )
         }
     }
     
@@ -220,11 +219,19 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
             fuelType = languageTranslator.translateFuelType(carDetails.fuelType)
         }
         searchTerm = concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH
+        withContext(Dispatchers.Main) {
+            _mainUiState.update {
+                it.copy(
+                    isLoading = false,
+                    carDetails = carDetails,
+                    reviewUrl = "${CAR_REVIEW_ENDPOINT}${searchTerm}"
+                )
+            }
+        }
     }
 
     override fun onCleared() {
         super.onCleared()
-        _webView.value?.destroy()
         connectivityObserver.unregisterNetworkCallback()
         languageTranslator.clear()
     }
