@@ -41,7 +41,6 @@ fun CarDetailsScreen(mainViewModel: MainViewModel, navController: NavController)
         stringResource(R.string.tab_name_reviews),
         stringResource(R.string.tab_name_recommendations))
 
-    val serverError by mainViewModel.serverError.collectAsState()
     val mainUiState by mainViewModel.mainUiState.collectAsState()
 
     Scaffold(contentWindowInsets = WindowInsets.safeContent) { innerPadding ->

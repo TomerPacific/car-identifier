@@ -41,11 +41,6 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
     private val _mainUiState = MutableStateFlow(MainUiState())
     val mainUiState: StateFlow<MainUiState> = _mainUiState.asStateFlow()
 
-    private val _serverError = MutableStateFlow<String?>(null)
-
-    val serverError: StateFlow<String?>
-        get() = _serverError
-
     private val _didRequestCameraPermission = MutableStateFlow(false)
 
     val didRequestCameraPermission: StateFlow<Boolean>
@@ -82,15 +77,20 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
         }
 
         if (!connectivityObserver.isConnectedToNetwork()) {
-            _serverError.value = NO_INTERNET_CONNECTION_ERROR
+            _mainUiState.update {
+                it.copy(
+                    isLoading = false,
+                    errorMessage = NO_INTERNET_CONNECTION_ERROR
+                )
+            }
             return
         }
 
-        _serverError.value = null
-
         val licensePlateNumberWithoutDashes = _licensePlateNumber.replace("-", "")
         viewModelScope.launch(Dispatchers.IO) {
-            _mainUiState.value = MainUiState(isLoading = true)
+            _mainUiState.update {
+                it.copy(isLoading = true)
+            }
             carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess { carDetails ->
 
                 when (languageTranslator.isHebrewLanguage()) {
@@ -118,7 +118,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                 }
             }.onFailure { exception ->
                 exception.localizedMessage?.let {
-                    _serverError.value = when (it.contains("[")) {
+                   val errorMessage = when (it.contains("[")) {
                         true -> {
                             it.subSequence(
                                 0,
@@ -128,9 +128,13 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
 
                         false -> exception.localizedMessage?.trim()
                     }
+
                     withContext(Dispatchers.Main) {
                         _mainUiState.update {
-                            it.copy(isLoading = false, errorMessage = _serverError.value)
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = errorMessage
+                            )
                         }
                     }
                 }
@@ -152,7 +156,12 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
     fun getCarReview() {
 
         if (!connectivityObserver.isConnectedToNetwork()) {
-            _serverError.value = NO_INTERNET_CONNECTION_ERROR
+            _mainUiState.update {
+                it.copy(
+                    isLoading = false,
+                    errorMessage = NO_INTERNET_CONNECTION_ERROR
+                )
+            }
             return
         }
 
@@ -161,7 +170,9 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-                _mainUiState.value = MainUiState(isLoading = true)
+                _mainUiState.update {
+                    it.copy(isLoading = true)
+                }
                 carDetailsRepository.getCarReview(searchTerm, languageTranslator.currentLocale)
                     .onSuccess { carReview ->
                         withContext(Dispatchers.Main) {
@@ -198,8 +209,8 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
     }
     
     fun shouldShowRetryRequestButton(): Boolean {
-        return _serverError.value == NO_INTERNET_CONNECTION_ERROR ||
-                _serverError.value == REQUEST_TIMEOUT_ERROR
+        return _mainUiState.value.errorMessage == NO_INTERNET_CONNECTION_ERROR ||
+               _mainUiState.value.errorMessage == REQUEST_TIMEOUT_ERROR
     }
 
     fun getTranslatedSectionHeader(sectionHeader: SectionHeader): String {
