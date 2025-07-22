@@ -21,6 +21,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,13 +41,13 @@ import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.MainViewModel
 
 @Composable
-fun Details(mainViewModel: MainViewModel, serverError: String?) {
+fun Details(mainViewModel: MainViewModel) {
 
     val context = LocalContext.current
 
-    val carDetails = mainViewModel.carDetails.collectAsState()
+    val uiState by mainViewModel.mainUiState.collectAsState()
 
-    val columnVerticalArrangement: Arrangement.Vertical = when (carDetails.value) {
+    val columnVerticalArrangement: Arrangement.Vertical = when (uiState.carDetails) {
         null -> Arrangement.Center
         else -> Arrangement.Top
     }
@@ -55,15 +56,14 @@ fun Details(mainViewModel: MainViewModel, serverError: String?) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = columnVerticalArrangement
     ) {
-        when (serverError) {
-            null -> {
-                if (carDetails.value == null) {
-                    LoaderAnimation(R.raw.license_plate_scan_animation)
-                } else {
-                    CarInformation(carDetails.value!!)
-                }
+        when {
+            uiState.isLoading -> {
+                LoaderAnimation(R.raw.license_plate_scan_animation)
             }
-            else -> {
+            uiState.carDetails != null -> {
+                CarInformation(uiState.carDetails!!)
+            }
+            uiState.errorMessage != null -> {
                 Image(
                     modifier = Modifier
                         .size(200.dp)
@@ -82,14 +82,14 @@ fun Details(mainViewModel: MainViewModel, serverError: String?) {
                     maxLines = 1,
                     style = TextStyle(textDirection = TextDirection.Rtl)
                 )
-                Text(text = serverError,
+                Text(text = uiState.errorMessage!!,
                     textAlign = TextAlign.Center,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
                 if (mainViewModel.shouldShowRetryRequestButton()) {
                     IconButton(onClick = {
-                        mainViewModel.getCarDetails(context)
+                        mainViewModel.getCarDetails()
                     }) {
                         Icon(imageVector = Icons.Default.Refresh, contentDescription = "Retry")
                     }
@@ -98,6 +98,7 @@ fun Details(mainViewModel: MainViewModel, serverError: String?) {
         }
     }
 }
+
 @Composable
 fun CarInformation(details: CarDetails) {
     Row(
