@@ -161,6 +161,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
         }
 
         viewModelScope.launch(Dispatchers.IO) {
+                _mainUiState.value = MainUiState(isLoading = true)
                 carDetailsRepository.getCarReview(searchTerm, languageTranslator.currentLocale)
                     .onSuccess { carReview ->
                         withContext(Dispatchers.Main) {
