@@ -40,7 +40,7 @@ fun Advice(mainViewModel: MainViewModel) {
 
     val mainUiState by mainViewModel.mainUiState.collectAsState()
 
-    val columnVerticalArrangement: Arrangement.Vertical = when (mainUiState.carDetails) {
+    val columnVerticalArrangement: Arrangement.Vertical = when (mainUiState.carReview) {
         null -> Arrangement.Center
         else -> Arrangement.Top
     }
