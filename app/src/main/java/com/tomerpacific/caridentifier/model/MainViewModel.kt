@@ -89,7 +89,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
         val licensePlateNumberWithoutDashes = _licensePlateNumber.replace("-", "")
         viewModelScope.launch(Dispatchers.IO) {
             _mainUiState.update {
-                it.copy(isLoading = true)
+                it.copy(isLoading = true, errorMessage = null)
             }
             carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess { carDetails ->
 
