@@ -198,7 +198,7 @@ fun LicensePlateNumberDialog(navController: NavController, mainViewModel: MainVi
                             validLicensePlatePattern
                         )
                     ) {
-                        mainViewModel.getCarDetails(context, licensePlateNumberState.text)
+                        mainViewModel.getCarDetails(licensePlateNumberState.text)
                         navController.navigate(Screen.CarDetailsScreen.route)
                     }
                 },

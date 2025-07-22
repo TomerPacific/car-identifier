@@ -141,9 +141,7 @@ private fun processImage(context: Context,
                         return@addOnSuccessListener
                     }
                     else -> {
-                        mainViewModel.getCarDetails(
-                            context,
-                            licensePlateNumber)
+                        mainViewModel.getCarDetails(licensePlateNumber)
                         navController.navigate(Screen.CarDetailsScreen.route)
                         return@addOnSuccessListener
                     }
