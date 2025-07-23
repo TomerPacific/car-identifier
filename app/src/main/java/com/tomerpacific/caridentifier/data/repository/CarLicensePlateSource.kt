@@ -6,7 +6,8 @@ import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.ServerError
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
-import io.ktor.client.request.*
+import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.URLProtocol
@@ -37,7 +38,7 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
         return when (httpResponse.status.value) {
             in HTTP_STATUS_OK_LOWER_LIMIT..HTTP_STATUS_OK_UPPER_LIMIT -> {
                 val carDetails = httpResponse.body() as CarDetails
-                return Result.success(carDetails)
+                Result.success(carDetails)
             }
             else -> {
                 val serverError = httpResponse.body() as ServerError
@@ -46,7 +47,8 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
         }
     }
 
-    private suspend fun HttpClient.getCarReview(searchQuery: String, locale: String = HEBREW_LANGUAGE_CODE): Result<String> {
+    private suspend fun HttpClient.getCarReview(searchQuery: String,
+                                                locale: String = HEBREW_LANGUAGE_CODE): Result<String> {
         val httpResponse: HttpResponse = try {
             get {
                 url {
