@@ -4,7 +4,7 @@ on: pull_request
 
 jobs:
   build:
-
+    lint:
     runs-on: ubuntu-latest
 
     steps:
@@ -12,7 +12,10 @@ jobs:
 
       - name: Set Up JDK
         uses: actions/setup-java@v3
-        with: { java-version: '17' }
+        with:
+          distribution: 'temurin'
+          java-version: '17'       
+          cache: 'gradle'
 
       - name: Run detekt
         run: ./gradlew detekt
