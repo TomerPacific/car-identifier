@@ -4,7 +4,7 @@ on: pull_request
 
 jobs:
   build:
-    lint:
+
     runs-on: ubuntu-latest
 
     steps:
@@ -14,17 +14,17 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '17'       
+          java-version: '17'
           cache: 'gradle'
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
 
       - name: Run detekt
         run: ./gradlew detekt
 
       - name: Run ktlint
         run: ./gradlew ktlintCheck
-
-      - name: Change wrapper permissions
-        run: chmod +x ./gradlew
 
       - name: Run Tests
         run: ./gradlew test
