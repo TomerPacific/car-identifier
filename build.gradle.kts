@@ -18,7 +18,7 @@ detekt {
         "$projectDir/app/src/main/kotlin"
     )
 
-    config = files("$projectDir/config/detekt/detekt.yml")
+    config.from(files("$projectDir/config/detekt/detekt.yml"))
     baseline = file("$projectDir/config/detekt/baseline.xml")
 }
 
