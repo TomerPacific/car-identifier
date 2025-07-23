@@ -16,6 +16,9 @@ import kotlinx.coroutines.withContext
 
 
 private const val ENDPOINT = "car-license-number-fetcher.onrender.com"
+private const val HTTP_STATUS_OK_LOWER_LIMIT = 200
+private const val HTTP_STATUS_OK_UPPER_LIMIT = 299
+
 class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
 
     private suspend fun HttpClient.getCarDetails(licensePlateNumber: String): Result<CarDetails> {
@@ -32,7 +35,7 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
         }
 
         return when (httpResponse.status.value) {
-            in 200..299 -> {
+            in HTTP_STATUS_OK_LOWER_LIMIT..HTTP_STATUS_OK_UPPER_LIMIT -> {
                 val carDetails = httpResponse.body() as CarDetails
                 return Result.success(carDetails)
             }
@@ -58,7 +61,7 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
         }
 
         return when (httpResponse.status.value) {
-            in 200..299 -> {
+            in HTTP_STATUS_OK_LOWER_LIMIT..HTTP_STATUS_OK_UPPER_LIMIT -> {
                 Result.success(httpResponse.bodyAsText())
             }
 
