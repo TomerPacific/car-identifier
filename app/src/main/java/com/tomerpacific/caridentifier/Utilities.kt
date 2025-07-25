@@ -186,9 +186,13 @@ fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
 fun isLicensePlateNumberValid(licensePlateNumber: String, pattern: Regex? = null): Boolean {
     return when (pattern) {
         null ->
-            licensePlateNumber.length in SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES && licensePlateNumber.contains("-")
+            licensePlateNumber.length in SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..
+                    EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES &&
+                    licensePlateNumber.contains("-")
         else ->
-            licensePlateNumber.length in SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES && pattern.matches(licensePlateNumber)
+            licensePlateNumber.length in SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..
+                    EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES &&
+                    pattern.matches(licensePlateNumber)
     }
 }
 
