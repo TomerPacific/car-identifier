@@ -59,7 +59,11 @@ private fun handleCameraPermissionResult(context: Context,
                 val shouldShowRationale = shouldShowRequestPermissionRationale(it, android.Manifest.permission.CAMERA)
                 mainViewModel.setShouldShowRationale(shouldShowRationale)
                 if (shouldShowRationale) {
-                    Toast.makeText(context, context.getString(R.string.camera_permission_clarification), Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.camera_permission_clarification),
+                        Toast.LENGTH_LONG)
+                        .show()
                 }
             }
             mainViewModel.setDidRequestCameraPermission(true)
