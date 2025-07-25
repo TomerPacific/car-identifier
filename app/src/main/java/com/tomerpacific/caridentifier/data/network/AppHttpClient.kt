@@ -18,9 +18,8 @@ val AppHttpClient: HttpClient by lazy {
             json(
                 Json {
                     ignoreUnknownKeys = true
-                }
+                },
             )
         }
     }
-
 }

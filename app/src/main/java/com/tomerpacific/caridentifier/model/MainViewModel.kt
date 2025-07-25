@@ -2,42 +2,41 @@ package com.tomerpacific.caridentifier.model
 
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.tomerpacific.caridentifier.FAILED_TO_TRANSLATE_MSG
 import com.tomerpacific.caridentifier.LanguageTranslator
+import com.tomerpacific.caridentifier.REVIEW_ENGLISH
+import com.tomerpacific.caridentifier.REVIEW_HEBREW
 import com.tomerpacific.caridentifier.SectionHeader
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
-import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
-import com.tomerpacific.caridentifier.formatCarReviewResponse
+import com.tomerpacific.caridentifier.data.MainUiState
 import com.tomerpacific.caridentifier.data.network.ConnectivityObserver
 import com.tomerpacific.caridentifier.data.network.NO_INTERNET_CONNECTION_ERROR
 import com.tomerpacific.caridentifier.data.network.REQUEST_TIMEOUT_ERROR
+import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
+import com.tomerpacific.caridentifier.formatCarReviewResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import androidx.core.content.edit
-import com.tomerpacific.caridentifier.REVIEW_ENGLISH
-import com.tomerpacific.caridentifier.REVIEW_HEBREW
-import com.tomerpacific.caridentifier.data.MainUiState
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 const val DID_REQUEST_CAMERA_PERMISSION_KEY = "didRequestCameraPermission"
 private const val CAR_REVIEW_ENDPOINT = "https://www.youtube.com/results?search_query="
 private val TAG = MainViewModel::class.simpleName
 
-class MainViewModel(private val sharedPreferences: SharedPreferences,
-                    private val connectivityObserver: ConnectivityObserver,
-                    private val carDetailsRepository: CarDetailsRepository = CarDetailsRepository(),
-                    private val languageTranslator: LanguageTranslator = LanguageTranslator()
-): ViewModel() {
-
-
+class MainViewModel(
+    private val sharedPreferences: SharedPreferences,
+    private val connectivityObserver: ConnectivityObserver,
+    private val carDetailsRepository: CarDetailsRepository = CarDetailsRepository(),
+    private val languageTranslator: LanguageTranslator = LanguageTranslator(),
+) : ViewModel() {
     private val _mainUiState = MutableStateFlow(MainUiState())
     val mainUiState: StateFlow<MainUiState> = _mainUiState.asStateFlow()
 
@@ -69,9 +68,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
             sharedPreferences.getBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, false)
     }
 
-
     fun getCarDetails(licensePlateNumber: String? = null) {
-
         licensePlateNumber?.let {
             _licensePlateNumber = it
         }
@@ -80,7 +77,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
             _mainUiState.update {
                 it.copy(
                     isLoading = false,
-                    errorMessage = NO_INTERNET_CONNECTION_ERROR
+                    errorMessage = NO_INTERNET_CONNECTION_ERROR,
                 )
             }
             return
@@ -113,27 +110,29 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                         it.copy(
                             isLoading = false,
                             carDetails = carDetails,
-                            reviewUrl = "${CAR_REVIEW_ENDPOINT}${searchTerm}")
+                            reviewUrl = "${CAR_REVIEW_ENDPOINT}$searchTerm",
+                        )
                     }
                 }
             }.onFailure { exception ->
                 exception.localizedMessage?.let {
-                   val errorMessage = when (it.contains("[")) {
-                        true -> {
-                            it.subSequence(
-                                0,
-                                it.indexOf("[")
-                            ).toString().trim()
-                        }
+                    val errorMessage =
+                        when (it.contains("[")) {
+                            true -> {
+                                it.subSequence(
+                                    0,
+                                    it.indexOf("["),
+                                ).toString().trim()
+                            }
 
-                        false -> exception.localizedMessage?.trim()
-                    }
+                            false -> exception.localizedMessage?.trim()
+                        }
 
                     withContext(Dispatchers.Main) {
                         _mainUiState.update {
                             it.copy(
                                 isLoading = false,
-                                errorMessage = errorMessage
+                                errorMessage = errorMessage,
                             )
                         }
                     }
@@ -154,12 +153,11 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
     }
 
     fun getCarReview() {
-
         if (!connectivityObserver.isConnectedToNetwork()) {
             _mainUiState.update {
                 it.copy(
                     isLoading = false,
-                    errorMessage = NO_INTERNET_CONNECTION_ERROR
+                    errorMessage = NO_INTERNET_CONNECTION_ERROR,
                 )
             }
             return
@@ -170,30 +168,30 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
         }
 
         viewModelScope.launch(Dispatchers.IO) {
-                _mainUiState.update {
-                    it.copy(isLoading = true)
-                }
-                carDetailsRepository.getCarReview(searchTerm, languageTranslator.currentLocale)
-                    .onSuccess { carReview ->
-                        withContext(Dispatchers.Main) {
-                            _mainUiState.update {
-                                it.copy(
-                                    isLoading = false,
-                                    carReview = formatCarReviewResponse(carReview, languageTranslator)
-                                )
-                            }
-                        }
-                    }.onFailure { error ->
-                        withContext(Dispatchers.Main) {
-                            _mainUiState.update {
-                                it.copy(
-                                    isLoading = false,
-                                    errorMessage = error.localizedMessage
-                                )
-                            }
+            _mainUiState.update {
+                it.copy(isLoading = true)
+            }
+            carDetailsRepository.getCarReview(searchTerm, languageTranslator.currentLocale)
+                .onSuccess { carReview ->
+                    withContext(Dispatchers.Main) {
+                        _mainUiState.update {
+                            it.copy(
+                                isLoading = false,
+                                carReview = formatCarReviewResponse(carReview, languageTranslator),
+                            )
                         }
                     }
-            }
+                }.onFailure { error ->
+                    withContext(Dispatchers.Main) {
+                        _mainUiState.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = error.localizedMessage,
+                            )
+                        }
+                    }
+                }
+        }
     }
 
     fun resetData() {
@@ -203,14 +201,14 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                 errorMessage = null,
                 carDetails = null,
                 carReview = null,
-                reviewUrl = null
+                reviewUrl = null,
             )
         }
     }
-    
+
     fun shouldShowRetryRequestButton(): Boolean {
         return _mainUiState.value.errorMessage == NO_INTERNET_CONNECTION_ERROR ||
-               _mainUiState.value.errorMessage == REQUEST_TIMEOUT_ERROR
+            _mainUiState.value.errorMessage == REQUEST_TIMEOUT_ERROR
     }
 
     fun getTranslatedSectionHeader(sectionHeader: SectionHeader): String {
@@ -219,7 +217,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
 
     private suspend fun handleHebrewToEnglishTranslation(carDetails: CarDetails) {
         languageTranslator.translate(
-            carDetails.color
+            carDetails.color,
         ).onSuccess { translatedText ->
             carDetails.color = translatedText.first()
         }.onFailure {
@@ -236,7 +234,7 @@ class MainViewModel(private val sharedPreferences: SharedPreferences,
                 it.copy(
                     isLoading = false,
                     carDetails = carDetails,
-                    reviewUrl = "${CAR_REVIEW_ENDPOINT}${searchTerm}"
+                    reviewUrl = "${CAR_REVIEW_ENDPOINT}$searchTerm",
                 )
             }
         }

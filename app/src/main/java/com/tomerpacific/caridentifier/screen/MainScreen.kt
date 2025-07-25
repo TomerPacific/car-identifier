@@ -31,15 +31,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.BuildConfig
-import com.tomerpacific.caridentifier.composable.CarLicensePlateSearchOptionButton
 import com.tomerpacific.caridentifier.R
+import com.tomerpacific.caridentifier.composable.CarLicensePlateSearchOptionButton
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.ui.theme.CarIdentifierTheme
 
 @Composable
-fun MainScreen(navController: NavController,
-               mainViewModel: MainViewModel) {
-
+fun MainScreen(
+    navController: NavController,
+    mainViewModel: MainViewModel,
+) {
     val shouldShowRationale = mainViewModel.shouldShowRationale.collectAsState()
 
     val didRequestPermission = mainViewModel.didRequestCameraPermission.collectAsState()
@@ -50,13 +51,14 @@ fun MainScreen(navController: NavController,
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
             Surface(
                 modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
+                color = MaterialTheme.colorScheme.background,
             ) {
                 Scaffold(contentWindowInsets = WindowInsets.safeContent) { innerPadding ->
-                    Column(modifier = Modifier.fillMaxSize().padding(innerPadding),
+                    Column(
+                        modifier = Modifier.fillMaxSize().padding(innerPadding),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Top) {
-
+                        verticalArrangement = Arrangement.Top,
+                    ) {
                         LicensePlateInputOptionsHeader()
                         Spacer(modifier = Modifier.size(150.dp))
                         LicensePlateInputOptions(navController, shouldDisableButton, Modifier.weight(1f))
@@ -70,42 +72,51 @@ fun MainScreen(navController: NavController,
 
 @Composable
 private fun LicensePlateInputOptionsHeader() {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(top = 30.dp, start = 10.dp, end = 10.dp),
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 30.dp, start = 10.dp, end = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center) {
+        horizontalArrangement = Arrangement.Center,
+    ) {
         Text(
             stringResource(R.string.main_screen_header),
             fontWeight = FontWeight.Bold,
             fontSize = 25.sp,
-            textAlign = TextAlign.Center)
+            textAlign = TextAlign.Center,
+        )
     }
 }
 
 @Composable
-private fun LicensePlateInputOptions(navController: NavController,
-                                     shouldDisableButton:Boolean,
-                                     modifier: Modifier = Modifier) {
-    Box(modifier = modifier
-        .fillMaxWidth()
-        .height(300.dp)) {
+private fun LicensePlateInputOptions(
+    navController: NavController,
+    shouldDisableButton: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(300.dp),
+    ) {
         Row(
             modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             CarLicensePlateSearchOptionButton(
                 buttonText = stringResource(R.string.main_screen_search_by_image),
                 drawableId = R.drawable.license_plate,
                 drawableContentDescription = "License Plate",
                 navController,
-                shouldDisableButton
+                shouldDisableButton,
             )
             CarLicensePlateSearchOptionButton(
                 buttonText = stringResource(R.string.main_screen_search_by_license_plate),
                 drawableId = R.drawable.keyboard,
                 drawableContentDescription = "Smartphone Keyboard",
-                navController
+                navController,
             )
         }
     }
@@ -113,15 +124,18 @@ private fun LicensePlateInputOptions(navController: NavController,
 
 @Composable
 private fun AppVersion() {
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .height(intrinsicSize = IntrinsicSize.Max)
-        .padding(end = 6.dp),
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(intrinsicSize = IntrinsicSize.Max)
+                .padding(end = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.End) {
+        horizontalArrangement = Arrangement.End,
+    ) {
         Text(
             text = "v.${BuildConfig.VERSION_NAME}",
-            fontSize = 16.sp
+            fontSize = 16.sp,
         )
     }
 }

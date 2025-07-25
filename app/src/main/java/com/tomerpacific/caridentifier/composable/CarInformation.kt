@@ -40,25 +40,25 @@ import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.MainViewModel
 
 private val COLOR_YELLOW = Color(0xFFFFFDB00.toInt())
-private val COLOR_BLUE   = Color(0xFF1250FF.toInt())
-private val COLOR_GREEN  = Color(0xFF32A852.toInt())
-private val COLOR_RED    = Color(0xFFFF0000.toInt())
-private val COLOR_BROWN  = Color(0xFFD19669.toInt())
-private val COLOR_BLACK  = Color(0xFF000000.toInt())
+private val COLOR_BLUE = Color(0xFF1250FF.toInt())
+private val COLOR_GREEN = Color(0xFF32A852.toInt())
+private val COLOR_RED = Color(0xFFFF0000.toInt())
+private val COLOR_BROWN = Color(0xFFD19669.toInt())
+private val COLOR_BLACK = Color(0xFF000000.toInt())
 
 @Composable
 fun Details(mainViewModel: MainViewModel) {
-
     val uiState by mainViewModel.mainUiState.collectAsState()
 
-    val columnVerticalArrangement: Arrangement.Vertical = when (uiState.carDetails) {
-        null -> Arrangement.Center
-        else -> Arrangement.Top
-    }
+    val columnVerticalArrangement: Arrangement.Vertical =
+        when (uiState.carDetails) {
+            null -> Arrangement.Center
+            else -> Arrangement.Top
+        }
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = columnVerticalArrangement
+        verticalArrangement = columnVerticalArrangement,
     ) {
         when {
             uiState.isLoading -> {
@@ -69,27 +69,30 @@ fun Details(mainViewModel: MainViewModel) {
             }
             uiState.errorMessage != null -> {
                 Image(
-                    modifier = Modifier
-                        .size(200.dp)
-                        .border(
-                            BorderStroke(1.dp, Color.Black),
-                            CircleShape
-                        )
-                        .clip(CircleShape),
+                    modifier =
+                        Modifier
+                            .size(200.dp)
+                            .border(
+                                BorderStroke(1.dp, Color.Black),
+                                CircleShape,
+                            )
+                            .clip(CircleShape),
                     painter = painterResource(R.drawable.broken_car),
                     contentDescription = "broken car",
                 )
                 Spacer(modifier = Modifier.size(100.dp))
-                Text(text = stringResource(R.string.car_details_not_obtained_error_msg),
+                Text(
+                    text = stringResource(R.string.car_details_not_obtained_error_msg),
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
-                    style = TextStyle(textDirection = TextDirection.Rtl)
+                    style = TextStyle(textDirection = TextDirection.Rtl),
                 )
-                Text(text = uiState.errorMessage!!,
+                Text(
+                    text = uiState.errorMessage!!,
                     textAlign = TextAlign.Center,
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
                 if (mainViewModel.shouldShowRetryRequestButton()) {
                     IconButton(onClick = {
@@ -106,43 +109,48 @@ fun Details(mainViewModel: MainViewModel) {
 @Composable
 fun CarInformation(details: CarDetails) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp),
-        horizontalArrangement = Arrangement.Center
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 10.dp),
+        horizontalArrangement = Arrangement.Center,
     ) {
         Text(
             concatenateCarMakeAndModel(details),
-            fontSize = 25.sp, fontWeight = FontWeight.Bold)
+            fontSize = 25.sp,
+            fontWeight = FontWeight.Bold,
+        )
     }
     Spacer(modifier = Modifier.height(50.dp))
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
         Image(
-            modifier = Modifier
-                .size(250.dp)
-                .border(
-                    BorderStroke(1.dp, Color.Black),
-                    CircleShape
-                )
-                .clip(CircleShape),
+            modifier =
+                Modifier
+                    .size(250.dp)
+                    .border(
+                        BorderStroke(1.dp, Color.Black),
+                        CircleShape,
+                    )
+                    .clip(CircleShape),
             painter = painterResource(R.drawable.car_display),
             contentDescription = "mechanic in garage",
         )
     }
     Spacer(modifier = Modifier.height(50.dp))
 
-    CarDetailWithIcon(iconId = "checkIcon",
+    CarDetailWithIcon(
+        iconId = "checkIcon",
         labelText = stringResource(R.string.last_test_date_for_car),
         content = details.lastTestDate,
-        tooltipDescription = stringResource(R.string.last_test_date_tooltip_explanation)
+        tooltipDescription = stringResource(R.string.last_test_date_tooltip_explanation),
     ) {
         Icon(
             Icons.Default.Check,
             contentDescription = "Check Icon",
-            tint = Color(0, 0, 0)
+            tint = Color(0, 0, 0),
         )
     }
 
@@ -150,23 +158,25 @@ fun CarInformation(details: CarDetails) {
         iconId = "keysIcon",
         labelText = stringResource(R.string.current_ownership),
         content = details.ownership,
-        tooltipDescription = stringResource(R.string.current_ownership_tooltip_explanation)
+        tooltipDescription = stringResource(R.string.current_ownership_tooltip_explanation),
     ) {
         Icon(
-            painterResource(id = R.drawable.ic_key_icon),"Key Icon",
-            tint = COLOR_YELLOW)
+            painterResource(id = R.drawable.ic_key_icon),
+            "Key Icon",
+            tint = COLOR_YELLOW,
+        )
     }
 
     CarDetailWithIcon(
         iconId = "fuelIcon",
         labelText = stringResource(R.string.fuel_type),
         content = details.fuelType,
-        tooltipDescription = stringResource(R.string.fuel_type_tooltip_explanation)
-
+        tooltipDescription = stringResource(R.string.fuel_type_tooltip_explanation),
     ) {
         Icon(
-            painterResource(id = R.drawable.ic_fuel_type), "Fuel Icon",
-            tint = COLOR_BLUE
+            painterResource(id = R.drawable.ic_fuel_type),
+            "Fuel Icon",
+            tint = COLOR_BLUE,
         )
     }
 
@@ -174,11 +184,12 @@ fun CarInformation(details: CarDetails) {
         iconId = "safetyIcon",
         labelText = stringResource(R.string.safety_rating),
         content = "${details.safetyFeatureLevel}/8",
-        tooltipDescription = stringResource(R.string.safety_rating_tooltip_explanation)
+        tooltipDescription = stringResource(R.string.safety_rating_tooltip_explanation),
     ) {
         Icon(
-            painterResource(id = R.drawable.ic_shield), "Safety Icon",
-            tint = COLOR_GREEN
+            painterResource(id = R.drawable.ic_shield),
+            "Safety Icon",
+            tint = COLOR_GREEN,
         )
     }
 
@@ -186,11 +197,12 @@ fun CarInformation(details: CarDetails) {
         iconId = "pollutionIcon",
         labelText = stringResource(R.string.air_pollution_rating),
         content = "${details.pollutionLevel}/15",
-        tooltipDescription = stringResource(R.string.air_pollution_rating_tooltip_explanation)
+        tooltipDescription = stringResource(R.string.air_pollution_rating_tooltip_explanation),
     ) {
         Icon(
-            painterResource(id = R.drawable.ic_car_alert), "Pollution Icon",
-            tint = COLOR_RED
+            painterResource(id = R.drawable.ic_car_alert),
+            "Pollution Icon",
+            tint = COLOR_RED,
         )
     }
 
@@ -198,11 +210,12 @@ fun CarInformation(details: CarDetails) {
         iconId = "paletteIcon",
         labelText = stringResource(R.string.car_color),
         content = details.color,
-        tooltipDescription = stringResource(R.string.car_color_tooltip_explanation)
+        tooltipDescription = stringResource(R.string.car_color_tooltip_explanation),
     ) {
         Icon(
-            painterResource(id = R.drawable.ic_palette), "Palette Icon",
-            tint = COLOR_BROWN
+            painterResource(id = R.drawable.ic_palette),
+            "Palette Icon",
+            tint = COLOR_BROWN,
         )
     }
 
@@ -210,11 +223,12 @@ fun CarInformation(details: CarDetails) {
         iconId = "roadIcon",
         labelText = stringResource(R.string.first_time_on_road),
         content = details.firstOnRoadDate,
-        tooltipDescription = stringResource(R.string.first_time_on_road_tooltip_explanation)
+        tooltipDescription = stringResource(R.string.first_time_on_road_tooltip_explanation),
     ) {
         Icon(
-            painterResource(id = R.drawable.ic_road), "Road Icon",
-            tint = COLOR_BLACK
+            painterResource(id = R.drawable.ic_road),
+            "Road Icon",
+            tint = COLOR_BLACK,
         )
     }
 }

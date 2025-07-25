@@ -25,54 +25,60 @@ import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.model.Screen
 
-
 @Composable
-fun CarLicensePlateSearchOptionButton(buttonText: String,
-                                      drawableId: Int,
-                                      drawableContentDescription: String,
-                                      navController: NavController,
-                                      shouldDisableButton:Boolean = false) {
-
+fun CarLicensePlateSearchOptionButton(
+    buttonText: String,
+    drawableId: Int,
+    drawableContentDescription: String,
+    navController: NavController,
+    shouldDisableButton: Boolean = false,
+) {
     val context = LocalContext.current
 
     Column(
         modifier =
-                Modifier.clickable {
-                    if (shouldDisableButton) {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.camera_permission_disclaimer),
-                            Toast.LENGTH_LONG)
-                            .show()
-                        return@clickable
-                    }
-                    val navigationRoute = when (drawableId) {
+            Modifier.clickable {
+                if (shouldDisableButton) {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.camera_permission_disclaimer),
+                        Toast.LENGTH_LONG,
+                    )
+                        .show()
+                    return@clickable
+                }
+                val navigationRoute =
+                    when (drawableId) {
                         R.drawable.license_plate -> Screen.CameraPermission.route
                         else -> Screen.LicensePlateNumberInput.route
                     }
-                    navController.navigate(route = navigationRoute)
-                },
+                navController.navigate(route = navigationRoute)
+            },
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
-            modifier = Modifier
-                .size(150.dp)
-                .border(
-                    BorderStroke(1.dp, Color.Black),
-                    CircleShape
-                )
-                .clip(CircleShape),
+            modifier =
+                Modifier
+                    .size(150.dp)
+                    .border(
+                        BorderStroke(1.dp, Color.Black),
+                        CircleShape,
+                    )
+                    .clip(CircleShape),
             painter = painterResource(drawableId),
             contentDescription = drawableContentDescription,
             contentScale = ContentScale.Crop,
-            colorFilter = decideOnColorFilter(drawableId, shouldDisableButton)
+            colorFilter = decideOnColorFilter(drawableId, shouldDisableButton),
         )
         Text(buttonText)
     }
 }
 
-private fun decideOnColorFilter(drawableId: Int, shouldDisableButton: Boolean): ColorFilter? {
+private fun decideOnColorFilter(
+    drawableId: Int,
+    shouldDisableButton: Boolean,
+): ColorFilter? {
     if (drawableId == R.drawable.license_plate && shouldDisableButton) {
         return ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
     }

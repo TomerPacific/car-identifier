@@ -24,7 +24,6 @@ import com.tomerpacific.caridentifier.model.MainViewModel
 
 @Composable
 fun Reviews(mainViewModel: MainViewModel) {
-
     val mainUiState by mainViewModel.mainUiState.collectAsState()
 
     val context = LocalContext.current
@@ -32,7 +31,7 @@ fun Reviews(mainViewModel: MainViewModel) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         when {
             mainUiState.errorMessage != null -> {
@@ -41,13 +40,13 @@ fun Reviews(mainViewModel: MainViewModel) {
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
-                    style = TextStyle(textDirection = TextDirection.Rtl)
+                    style = TextStyle(textDirection = TextDirection.Rtl),
                 )
                 Text(
                     text = mainUiState.errorMessage!!,
                     textAlign = TextAlign.Center,
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
             }
             mainUiState.reviewUrl != null -> {

@@ -37,22 +37,22 @@ import com.tomerpacific.caridentifier.model.MainViewModel
 
 @Composable
 fun Advice(mainViewModel: MainViewModel) {
-
     val mainUiState by mainViewModel.mainUiState.collectAsState()
 
-    val columnVerticalArrangement: Arrangement.Vertical = when (mainUiState.carReview) {
-        null -> Arrangement.Center
-        else -> Arrangement.Top
-    }
+    val columnVerticalArrangement: Arrangement.Vertical =
+        when (mainUiState.carReview) {
+            null -> Arrangement.Center
+            else -> Arrangement.Top
+        }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = columnVerticalArrangement
+        verticalArrangement = columnVerticalArrangement,
     ) {
-
         when {
             mainUiState.isLoading -> {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -62,29 +62,30 @@ fun Advice(mainViewModel: MainViewModel) {
             mainUiState.carReview != null -> {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
                 ) {
                     Text(stringResource(R.string.car_advice_header), fontSize = 25.sp, fontWeight = FontWeight.Bold)
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
                 ) {
                     Text(stringResource(R.string.car_advice_disclaimer), fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 }
                 Spacer(modifier = Modifier.size(20.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
                 ) {
                     Image(
-                        modifier = Modifier
-                            .size(200.dp)
-                            .border(
-                                BorderStroke(1.dp, Color.Black),
-                                CircleShape
-                            )
-                            .clip(CircleShape),
+                        modifier =
+                            Modifier
+                                .size(200.dp)
+                                .border(
+                                    BorderStroke(1.dp, Color.Black),
+                                    CircleShape,
+                                )
+                                .clip(CircleShape),
                         painter = painterResource(R.drawable.car_advice),
                         contentDescription = "mechanic in garage",
                     )
@@ -93,11 +94,13 @@ fun Advice(mainViewModel: MainViewModel) {
                 AdviceList(
                     title = mainViewModel.getTranslatedSectionHeader(SectionHeader.PROS),
                     adviceList = mainUiState.carReview!!.prosList,
-                    Modifier.align(Alignment.Start))
+                    Modifier.align(Alignment.Start),
+                )
                 AdviceList(
                     title = mainViewModel.getTranslatedSectionHeader(SectionHeader.CONS),
                     adviceList = mainUiState.carReview!!.consList,
-                    Modifier.align(Alignment.Start))
+                    Modifier.align(Alignment.Start),
+                )
             }
             mainUiState.errorMessage != null -> {
                 Spacer(modifier = Modifier.size(20.dp))
@@ -106,13 +109,13 @@ fun Advice(mainViewModel: MainViewModel) {
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
-                    style = TextStyle(textDirection = TextDirection.Rtl)
+                    style = TextStyle(textDirection = TextDirection.Rtl),
                 )
                 Text(
                     text = mainUiState.errorMessage!!,
                     textAlign = TextAlign.Center,
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
             }
         }
@@ -120,15 +123,20 @@ fun Advice(mainViewModel: MainViewModel) {
 }
 
 @Composable
-private fun AdviceList(title: String,
-                       adviceList: List<String>,
-                       modifier: Modifier = Modifier) {
-    Column(modifier = modifier
-        .padding(start = 5.dp)) {
+private fun AdviceList(
+    title: String,
+    adviceList: List<String>,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier =
+            modifier
+                .padding(start = 5.dp),
+    ) {
         Text(
             "$title:",
             fontSize = 25.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
         Spacer(modifier = Modifier.height(4.dp))
         adviceList.forEach { advice ->
@@ -137,7 +145,7 @@ private fun AdviceList(title: String,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Normal,
                 textAlign = TextAlign.Start,
-                modifier = Modifier.padding(start = 10.dp)
+                modifier = Modifier.padding(start = 10.dp),
             )
         }
     }

@@ -8,5 +8,5 @@ data class MainUiState(
     val errorMessage: String? = null,
     val carDetails: CarDetails? = null,
     val carReview: CarReview? = null,
-    val reviewUrl: String? = null
+    val reviewUrl: String? = null,
 )
