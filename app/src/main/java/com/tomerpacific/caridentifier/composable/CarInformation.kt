@@ -26,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -40,10 +39,15 @@ import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.MainViewModel
 
+private val COLOR_YELLOW = Color(254, 219, 0)
+private val COLOR_BLUE = Color(18, 80, 255)
+private val COLOR_GREEN = Color(50, 168, 82)
+private val COLOR_RED = Color(255, 0, 0)
+private val COLOR_BROWN = Color(209, 150, 105)
+private val COLOR_BLACK = Color(0, 0, 0)
+
 @Composable
 fun Details(mainViewModel: MainViewModel) {
-
-    val context = LocalContext.current
 
     val uiState by mainViewModel.mainUiState.collectAsState()
 
@@ -150,7 +154,7 @@ fun CarInformation(details: CarDetails) {
     ) {
         Icon(
             painterResource(id = R.drawable.ic_key_icon),"Key Icon",
-            tint = Color(254, 219, 0))
+            tint = COLOR_YELLOW)
     }
 
     CarDetailWithIcon(
@@ -162,7 +166,7 @@ fun CarInformation(details: CarDetails) {
     ) {
         Icon(
             painterResource(id = R.drawable.ic_fuel_type), "Fuel Icon",
-            tint = Color(18, 80, 255)
+            tint = COLOR_BLUE
         )
     }
 
@@ -174,7 +178,7 @@ fun CarInformation(details: CarDetails) {
     ) {
         Icon(
             painterResource(id = R.drawable.ic_shield), "Safety Icon",
-            tint = Color(50, 168, 82)
+            tint = COLOR_GREEN
         )
     }
 
@@ -186,7 +190,7 @@ fun CarInformation(details: CarDetails) {
     ) {
         Icon(
             painterResource(id = R.drawable.ic_car_alert), "Pollution Icon",
-            tint = Color(255, 0, 0)
+            tint = COLOR_RED
         )
     }
 
@@ -198,7 +202,7 @@ fun CarInformation(details: CarDetails) {
     ) {
         Icon(
             painterResource(id = R.drawable.ic_palette), "Palette Icon",
-            tint = Color(209, 150, 105)
+            tint = COLOR_BROWN
         )
     }
 
@@ -210,7 +214,7 @@ fun CarInformation(details: CarDetails) {
     ) {
         Icon(
             painterResource(id = R.drawable.ic_road), "Road Icon",
-            tint = Color(0, 0, 0)
+            tint = COLOR_BLACK
         )
     }
 }
