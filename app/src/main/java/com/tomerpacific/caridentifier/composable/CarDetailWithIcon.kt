@@ -93,6 +93,4 @@ fun CarDetailWithIcon(iconId: String,
         }
 
     }
-
-
 }
