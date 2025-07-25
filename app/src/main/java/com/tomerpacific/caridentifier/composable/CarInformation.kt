@@ -39,12 +39,12 @@ import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.MainViewModel
 
-private val COLOR_YELLOW = Color(254, 219, 0)
-private val COLOR_BLUE = Color(18, 80, 255)
-private val COLOR_GREEN = Color(50, 168, 82)
-private val COLOR_RED = Color(255, 0, 0)
-private val COLOR_BROWN = Color(209, 150, 105)
-private val COLOR_BLACK = Color(0, 0, 0)
+private val COLOR_YELLOW = Color(0xFFFFFDB00.toInt())
+private val COLOR_BLUE   = Color(0xFF1250FF.toInt())
+private val COLOR_GREEN  = Color(0xFF32A852.toInt())
+private val COLOR_RED    = Color(0xFFFF0000.toInt())
+private val COLOR_BROWN  = Color(0xFFD19669.toInt())
+private val COLOR_BLACK  = Color(0xFF000000.toInt())
 
 @Composable
 fun Details(mainViewModel: MainViewModel) {
