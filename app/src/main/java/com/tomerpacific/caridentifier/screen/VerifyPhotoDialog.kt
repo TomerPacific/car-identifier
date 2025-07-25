@@ -101,7 +101,7 @@ fun VerifyPhotoDialog(imageUri: String,
                     Button(
                         onClick = {
                         navController.popBackStack()
-                    }, colors = ButtonDefaults.buttonColors(containerColor = Color(212, 37, 11)),
+                    }, colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
                         modifier = Modifier.padding(start = 6.dp)) {
                         Icon(
                             imageVector = Icons.Default.Close,
@@ -110,7 +110,7 @@ fun VerifyPhotoDialog(imageUri: String,
                     }
                     Button(
                         onClick = { processImage(context, uri, mainViewModel, navController) },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(50, 168, 82)),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Green),
                         modifier = Modifier.padding(end = 6.dp)) {
                         Icon(
                             imageVector = Icons.Default.Done,

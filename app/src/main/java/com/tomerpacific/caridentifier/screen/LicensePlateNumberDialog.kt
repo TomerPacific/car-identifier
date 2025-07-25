@@ -50,7 +50,7 @@ import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 
 
-private val TEXT_FIELD_BACKGROUND_COLOR = Color(253, 209, 63, 255)
+private val TEXT_FIELD_BACKGROUND_COLOR = Color(0xFFFDD13F.toInt())
 private const val FIRST_DASH_INDEX = 2
 private const val SECOND_DASH_INDEX = 6
 
