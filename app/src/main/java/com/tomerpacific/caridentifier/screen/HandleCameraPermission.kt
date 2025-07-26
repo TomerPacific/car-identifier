@@ -19,37 +19,44 @@ import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 
 @Composable
-fun HandleCameraPermission(navController: NavController,
-                           mainViewModel: MainViewModel) {
-
+fun HandleCameraPermission(
+    navController: NavController,
+    mainViewModel: MainViewModel,
+) {
     val context = LocalContext.current
 
-    var cameraPermissionStatus = remember {
-        ContextCompat.checkSelfPermission(
-            context,
-            android.Manifest.permission.CAMERA
-        )
-    }
+    var cameraPermissionStatus =
+        remember {
+            ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.CAMERA,
+            )
+        }
 
-    val cameraPermissionRequestLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            cameraPermissionStatus = when (isGranted) {
-                true -> PackageManager.PERMISSION_GRANTED
-                false -> PackageManager.PERMISSION_DENIED
-            }
-        handleCameraPermissionResult(context, navController, mainViewModel, isGranted)
-    }
+    val cameraPermissionRequestLauncher =
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestPermission(),
+        ) { isGranted: Boolean ->
+            cameraPermissionStatus =
+                when (isGranted) {
+                    true -> PackageManager.PERMISSION_GRANTED
+                    false -> PackageManager.PERMISSION_DENIED
+                }
+            handleCameraPermissionResult(context, navController, mainViewModel, isGranted)
+        }
 
     LaunchedEffect(cameraPermissionStatus) {
         cameraPermissionRequestLauncher.launch(android.Manifest.permission.CAMERA)
     }
 }
 
-private fun handleCameraPermissionResult(context: Context,
-                                         navController: NavController,
-                                         mainViewModel: MainViewModel,
-                                         isGranted: Boolean) {
-    when(isGranted) {
+private fun handleCameraPermissionResult(
+    context: Context,
+    navController: NavController,
+    mainViewModel: MainViewModel,
+    isGranted: Boolean,
+) {
+    when (isGranted) {
         true -> {
             navController.navigate(Screen.CameraPreview.route)
         }
@@ -59,7 +66,12 @@ private fun handleCameraPermissionResult(context: Context,
                 val shouldShowRationale = shouldShowRequestPermissionRationale(it, android.Manifest.permission.CAMERA)
                 mainViewModel.setShouldShowRationale(shouldShowRationale)
                 if (shouldShowRationale) {
-                    Toast.makeText(context, context.getString(R.string.camera_permission_clarification), Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.camera_permission_clarification),
+                        Toast.LENGTH_LONG,
+                    )
+                        .show()
                 }
             }
             mainViewModel.setDidRequestCameraPermission(true)

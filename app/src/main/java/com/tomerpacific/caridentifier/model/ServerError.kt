@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ServerError(
     @SerialName("error")
-    val errorMsg: String
+    val errorMsg: String,
 )

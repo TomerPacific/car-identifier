@@ -10,39 +10,37 @@ import androidx.core.content.getSystemService
 
 const val NO_INTERNET_CONNECTION_ERROR = "No internet connection"
 const val REQUEST_TIMEOUT_ERROR = "Request timeout has expired"
+
 class ConnectivityObserver(
-    context: Context
+    context: Context,
 ) {
-
-
-
     private val connectivityManager = context.getSystemService<ConnectivityManager>()
 
-    private val isConnected : MutableState<Boolean> = mutableStateOf(false)
+    private val isConnected: MutableState<Boolean> = mutableStateOf(false)
 
-    private val callback = object: ConnectivityManager.NetworkCallback() {
+    private val callback =
+        object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                isConnected.value = true
+            }
 
-        override fun onAvailable(network: Network) {
-            isConnected.value = true
+            override fun onLost(network: Network) {
+                isConnected.value = false
+            }
+
+            override fun onUnavailable() {
+                isConnected.value = false
+            }
+
+            override fun onCapabilitiesChanged(
+                network: Network,
+                networkCapabilities: NetworkCapabilities,
+            ) {
+                super.onCapabilitiesChanged(network, networkCapabilities)
+                val connected: Boolean = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+                isConnected.value = connected
+            }
         }
-
-        override fun onLost(network: Network) {
-            isConnected.value = false
-        }
-
-        override fun onUnavailable() {
-            isConnected.value = false
-        }
-
-        override fun onCapabilitiesChanged(
-            network: Network,
-            networkCapabilities: NetworkCapabilities
-        ) {
-            super.onCapabilitiesChanged(network, networkCapabilities)
-            val connected: Boolean = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
-            isConnected.value = connected
-        }
-    }
 
     init {
         connectivityManager?.registerDefaultNetworkCallback(callback)

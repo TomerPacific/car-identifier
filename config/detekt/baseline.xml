@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues></ManuallySuppressedIssues>
+  <CurrentIssues>
+    <ID>FunctionNaming:CameraPreview.kt$@Composable fun CameraPreview( navController: NavController, mainViewModel: MainViewModel, )</ID>
+    <ID>FunctionNaming:CarAdvice.kt$@Composable fun Advice(mainViewModel: MainViewModel)</ID>
+    <ID>FunctionNaming:CarAdvice.kt$@Composable private fun AdviceList( title: String, adviceList: List&lt;String&gt;, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:CarDetailWithIcon.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun CarDetailWithIcon( iconId: String, labelText: String, content: String, tooltipDescription: String, icon: @Composable () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:CarDetailsScreen.kt$@Composable fun CarDetailsScreen( mainViewModel: MainViewModel, navController: NavController, )</ID>
+    <ID>FunctionNaming:CarInformation.kt$@Composable fun CarInformation(details: CarDetails)</ID>
+    <ID>FunctionNaming:CarInformation.kt$@Composable fun Details(mainViewModel: MainViewModel)</ID>
+    <ID>FunctionNaming:CarLicensePlateSearchOptionButton.kt$@Composable fun CarLicensePlateSearchOptionButton( buttonText: String, drawableId: Int, drawableContentDescription: String, navController: NavController, shouldDisableButton: Boolean = false, )</ID>
+    <ID>FunctionNaming:CarReviews.kt$@Composable fun Reviews(mainViewModel: MainViewModel)</ID>
+    <ID>FunctionNaming:HandleCameraPermission.kt$@Composable fun HandleCameraPermission( navController: NavController, mainViewModel: MainViewModel, )</ID>
+    <ID>FunctionNaming:LicensePlateNumberDialog.kt$@Composable fun LicensePlateNumberDialog( navController: NavController, mainViewModel: MainViewModel, )</ID>
+    <ID>FunctionNaming:LoaderAnimation.kt$@Composable fun LoaderAnimation(animationResourceId: Int)</ID>
+    <ID>FunctionNaming:MainActivity.kt$MainActivity$@Composable private fun CreateNavigationGraph(navController: NavHostController)</ID>
+    <ID>FunctionNaming:MainScreen.kt$@Composable fun MainScreen( navController: NavController, mainViewModel: MainViewModel, )</ID>
+    <ID>FunctionNaming:MainScreen.kt$@Composable private fun AppVersion()</ID>
+    <ID>FunctionNaming:MainScreen.kt$@Composable private fun LicensePlateInputOptions( navController: NavController, shouldDisableButton: Boolean, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:MainScreen.kt$@Composable private fun LicensePlateInputOptionsHeader()</ID>
+    <ID>FunctionNaming:Theme.kt$@Composable fun CarIdentifierTheme( darkTheme: Boolean = isSystemInDarkTheme(), // Dynamic color is available on Android 12+ dynamicColor: Boolean = true, content: @Composable () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:VerifyPhotoDialog.kt$@Composable fun VerifyPhotoDialog( imageUri: String, navController: NavController, mainViewModel: MainViewModel, )</ID>
+    <ID>LongMethod:CameraPreview.kt$@Composable fun CameraPreview( navController: NavController, mainViewModel: MainViewModel, )</ID>
+    <ID>LongMethod:CarAdvice.kt$@Composable fun Advice(mainViewModel: MainViewModel)</ID>
+    <ID>LongMethod:CarDetailWithIcon.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun CarDetailWithIcon( iconId: String, labelText: String, content: String, tooltipDescription: String, icon: @Composable () -&gt; Unit, )</ID>
+    <ID>LongMethod:CarInformation.kt$@Composable fun CarInformation(details: CarDetails)</ID>
+    <ID>LongMethod:LicensePlateNumberDialog.kt$@Composable fun LicensePlateNumberDialog( navController: NavController, mainViewModel: MainViewModel, )</ID>
+    <ID>LongMethod:MainViewModel.kt$MainViewModel$fun getCarDetails(licensePlateNumber: String? = null)</ID>
+    <ID>LongMethod:VerifyPhotoDialog.kt$@Composable fun VerifyPhotoDialog( imageUri: String, navController: NavController, mainViewModel: MainViewModel, )</ID>
+    <ID>MagicNumber:Color.kt$0xFF625b71</ID>
+    <ID>MagicNumber:Color.kt$0xFF6650a4</ID>
+    <ID>MagicNumber:Color.kt$0xFF7D5260</ID>
+    <ID>MagicNumber:Color.kt$0xFFCCC2DC</ID>
+    <ID>MagicNumber:Color.kt$0xFFD0BCFF</ID>
+    <ID>MagicNumber:Color.kt$0xFFEFB8C8</ID>
+    <ID>MagicNumber:LicensePlateNumberDialog.kt$3</ID>
+    <ID>MagicNumber:LicensePlateNumberDialog.kt$4</ID>
+    <ID>MagicNumber:LicensePlateNumberDialog.kt$7</ID>
+    <ID>MaxLineLength:LicensePlateNumberDialog.kt$if</ID>
+    <ID>MaxLineLength:MainActivity.kt$MainActivity$dialog(route = Screen.LicensePlateNumberInput.route) { LicensePlateNumberDialog(navController, mainViewModel) }</ID>
+    <ID>MaxLineLength:Utilities.kt$licensePlateNumber.length in SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES</ID>
+    <ID>TooGenericExceptionCaught:CarLicensePlateSource.kt$CarLicensePlateSource$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:LanguageTranslator.kt$LanguageTranslator$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:VerifyPhotoDialog.kt$e: Exception</ID>
+  </CurrentIssues>
+</SmellBaseline>

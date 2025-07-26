@@ -35,8 +35,10 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.Executors
 
 @Composable
-fun CameraPreview(navController: NavController, mainViewModel: MainViewModel) {
-
+fun CameraPreview(
+    navController: NavController,
+    mainViewModel: MainViewModel,
+) {
     mainViewModel.resetData()
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -44,13 +46,14 @@ fun CameraPreview(navController: NavController, mainViewModel: MainViewModel) {
     val executor = remember { Executors.newSingleThreadExecutor() }
     val coroutineScope = rememberCoroutineScope()
 
-    val cameraController: LifecycleCameraController = remember {
-        LifecycleCameraController(context).apply {
-            bindToLifecycle(lifecycleOwner)
+    val cameraController: LifecycleCameraController =
+        remember {
+            LifecycleCameraController(context).apply {
+                bindToLifecycle(lifecycleOwner)
+            }
+        }.apply {
+            isTapToFocusEnabled = true
         }
-    }.apply {
-        isTapToFocusEnabled = true
-    }
 
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -58,9 +61,9 @@ fun CameraPreview(navController: NavController, mainViewModel: MainViewModel) {
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
-        }
+        },
     ) { contentPadding ->
-        
+
         LaunchedEffect(key1 = mainViewModel.snackbarEvent, block = {
             mainViewModel.snackbarEvent.collect { message ->
                 scope.launch {
@@ -69,26 +72,31 @@ fun CameraPreview(navController: NavController, mainViewModel: MainViewModel) {
             }
         })
 
-        Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier
-            .fillMaxSize()
-            .padding(contentPadding)
+        Box(
+            contentAlignment = Alignment.BottomCenter,
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(contentPadding),
         ) {
-            AndroidView(modifier = Modifier.fillMaxSize(),
+            AndroidView(
+                modifier = Modifier.fillMaxSize(),
                 factory = {
-                        ctx: Context -> PreviewView(ctx).apply {
-                            scaleType = PreviewView.ScaleType.FILL_START
-                            implementationMode = PreviewView.ImplementationMode.COMPATIBLE
-                            controller = cameraController
-                     }
-            },
-            onRelease = {
-                cameraController.unbind()
-            }
-        )
+                        ctx: Context ->
+                    PreviewView(ctx).apply {
+                        scaleType = PreviewView.ScaleType.FILL_START
+                        implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+                        controller = cameraController
+                    }
+                },
+                onRelease = {
+                    cameraController.unbind()
+                },
+            )
             Button(onClick = {
                 takePicture(cameraController, context, executor, { uri ->
-                    coroutineScope.launch(Dispatchers.Main){
-                        navController.navigate(Screen.VerifyPhoto.route +"/${Uri.encode(uri.toString())}")
+                    coroutineScope.launch(Dispatchers.Main) {
+                        navController.navigate(Screen.VerifyPhoto.route + "/${Uri.encode(uri.toString())}")
                     }
                 }, { imageCaptureException ->
                     Log.e("CameraPreview", "Error capturing image", imageCaptureException)
@@ -98,9 +106,11 @@ fun CameraPreview(navController: NavController, mainViewModel: MainViewModel) {
                     navController.popBackStack()
                 })
             }, modifier = Modifier.padding(bottom = 15.dp)) {
-                Icon(painterResource(R.drawable.ic_camera),
+                Icon(
+                    painterResource(R.drawable.ic_camera),
                     contentDescription = "Capture Image",
-                    modifier = Modifier.size(50.dp))
+                    modifier = Modifier.size(50.dp),
+                )
             }
         }
     }

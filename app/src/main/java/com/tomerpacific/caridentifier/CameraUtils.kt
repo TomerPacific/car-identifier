@@ -19,9 +19,8 @@ object CameraFileUtils {
         context: Context,
         executor: ExecutorService,
         onImageCaptured: (Uri) -> Unit,
-        onError: (ImageCaptureException) -> Unit
+        onError: (ImageCaptureException) -> Unit,
     ) {
-
         val photoFile = createPhotoFile(context)
 
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
@@ -37,7 +36,7 @@ object CameraFileUtils {
                 override fun onError(exception: ImageCaptureException) {
                     onError(exception)
                 }
-            }
+            },
         )
     }
 
@@ -53,11 +52,11 @@ object CameraFileUtils {
         SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS", Locale.US)
             .format(System.currentTimeMillis()) + FILE_EXTENSION
 
-
     private fun getOutputDirectory(context: Context): File {
-        val mediaDir = context.getExternalFilesDir(null)?.let {
-            File(it, DIRECTORY_NAME).apply { mkdirs() }
-        }
+        val mediaDir =
+            context.getExternalFilesDir(null)?.let {
+                File(it, DIRECTORY_NAME).apply { mkdirs() }
+            }
 
         return if (mediaDir != null && mediaDir.exists()) mediaDir else context.filesDir
     }
