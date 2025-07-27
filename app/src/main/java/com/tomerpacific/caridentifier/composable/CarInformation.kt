@@ -39,7 +39,7 @@ import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.MainViewModel
 
-private val COLOR_YELLOW = Color(0xFFFFFDB00.toInt())
+private val COLOR_YELLOW = Color(0xFFFDB000.toInt())
 private val COLOR_BLUE = Color(0xFF1250FF.toInt())
 private val COLOR_GREEN = Color(0xFF32A852.toInt())
 private val COLOR_RED = Color(0xFFFF0000.toInt())
