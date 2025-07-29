@@ -4,7 +4,6 @@ import com.tomerpacific.caridentifier.model.CarDetails
 import org.junit.Test
 
 class UtilitiesUnitTest {
-
     private val carManufacturerNissan = "ניסאן"
     private val carManufacturerUnknown = "משהו"
     private val validLicensePlateNumber = "17-655-76"
@@ -38,24 +37,25 @@ class UtilitiesUnitTest {
 
     @Test
     fun `should return true when car make and model are concatenated correctly`() {
-        val carDetails = CarDetails(
-            1765576,
-            "גרמניה",
-            "SPORT",
-            0,
-            15,
-            2013,
-            "2024-03-21",
-            "2025-04-30",
-            "פרטי",
-            "WF0KXXGCBKDU75517",
-            "כחול מטלי",
-            "215/55R16",
-            "215/55R16",
-            "בנזין",
-            "2013-5",
-            "FOCUS",
-            "פורד",
+        val carDetails =
+            CarDetails(
+                1765576,
+                "גרמניה",
+                "SPORT",
+                0,
+                15,
+                2013,
+                "2024-03-21",
+                "2025-04-30",
+                "פרטי",
+                "WF0KXXGCBKDU75517",
+                "כחול מטלי",
+                "215/55R16",
+                "215/55R16",
+                "בנזין",
+                "2013-5",
+                "FOCUS",
+                "פורד",
             )
 
         val concatenatedCarMakeAndModel = concatenateCarMakeAndModel(carDetails)

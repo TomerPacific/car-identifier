@@ -32,13 +32,15 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CarDetailWithIcon(iconId: String,
-                      labelText: String,
-                      content: String,
-                      tooltipDescription: String,
-                      icon: @Composable () -> Unit) {
-
-    val annotatedString = buildAnnotatedString {
+fun CarDetailWithIcon(
+    iconId: String,
+    labelText: String,
+    content: String,
+    tooltipDescription: String,
+    icon: @Composable () -> Unit,
+) {
+    val annotatedString =
+        buildAnnotatedString {
             appendInlineContent(iconId, "[icon]")
             append(" ")
             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
@@ -46,53 +48,55 @@ fun CarDetailWithIcon(iconId: String,
                 append(" ")
             }
             append(content)
-    }
+        }
 
-    val inlineTextContent = mapOf(
-        Pair(
-            iconId,
-            InlineTextContent(
-                Placeholder(
-                    width = 20.sp,
-                    height = 20.sp,
-                    placeholderVerticalAlign = PlaceholderVerticalAlign.Center
-                )
-            ) {
-                icon()
-            }
+    val inlineTextContent =
+        mapOf(
+            Pair(
+                iconId,
+                InlineTextContent(
+                    Placeholder(
+                        width = 20.sp,
+                        height = 20.sp,
+                        placeholderVerticalAlign = PlaceholderVerticalAlign.Center,
+                    ),
+                ) {
+                    icon()
+                },
+            ),
         )
-    )
 
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
         TooltipBox(
             positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
             tooltip = {
                 PlainTooltip {
-                    Column(modifier = Modifier
-                        .padding(8.dp)
-                        .clip(
-                            RoundedCornerShape(16.dp)
-                        )
-                        .background(Color.White)
-                        .padding(8.dp)) {
+                    Column(
+                        modifier =
+                            Modifier
+                                .padding(8.dp)
+                                .clip(
+                                    RoundedCornerShape(16.dp),
+                                )
+                                .background(Color.White)
+                                .padding(8.dp),
+                    ) {
                         icon()
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(tooltipDescription, color = Color.Black, fontSize = 20.sp, lineHeight = 28.sp)
                     }
-
                 }
-              },
-            state = rememberTooltipState()
+            },
+            state = rememberTooltipState(),
         ) {
-            Text(annotatedString,
+            Text(
+                annotatedString,
                 inlineContent = inlineTextContent,
-                fontSize = 20.sp)
+                fontSize = 20.sp,
+            )
         }
-
     }
-
-
 }

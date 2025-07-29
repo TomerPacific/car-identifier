@@ -12,20 +12,20 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tomerpacific.caridentifier.composable.CameraPreview
+import com.tomerpacific.caridentifier.data.network.ConnectivityObserver
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
-import com.tomerpacific.caridentifier.data.network.ConnectivityObserver
 import com.tomerpacific.caridentifier.screen.CarDetailsScreen
 import com.tomerpacific.caridentifier.screen.HandleCameraPermission
-import com.tomerpacific.caridentifier.screen.VerifyPhotoDialog
 import com.tomerpacific.caridentifier.screen.LicensePlateNumberDialog
 import com.tomerpacific.caridentifier.screen.MainScreen
+import com.tomerpacific.caridentifier.screen.VerifyPhotoDialog
 
 const val IMAGE_URI_KEY = "imageUri"
 
 class MainActivity : ComponentActivity() {
-
     private lateinit var mainViewModel: MainViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -39,9 +39,9 @@ class MainActivity : ComponentActivity() {
             CreateNavigationGraph(navController)
         }
     }
+
     @Composable
     private fun CreateNavigationGraph(navController: NavHostController) {
-
         NavHost(navController, startDestination = Screen.MainScreen.route) {
             composable(route = Screen.MainScreen.route) {
                 MainScreen(navController, mainViewModel)
@@ -50,11 +50,15 @@ class MainActivity : ComponentActivity() {
             composable(route = Screen.CarDetailsScreen.route) { CarDetailsScreen(mainViewModel, navController) }
             dialog(route = Screen.CameraPermission.route) { HandleCameraPermission(navController, mainViewModel) }
             composable(route = Screen.CameraPreview.route) { CameraPreview(navController, mainViewModel) }
-            dialog(route = Screen.VerifyPhoto.route + "/{imageUri}", arguments = listOf(
-                navArgument(IMAGE_URI_KEY) {
-                    type = NavType.StringType
-                }
-            )) {
+            dialog(
+                route = Screen.VerifyPhoto.route + "/{imageUri}",
+                arguments =
+                    listOf(
+                        navArgument(IMAGE_URI_KEY) {
+                            type = NavType.StringType
+                        },
+                    ),
+            ) {
                 it.arguments?.let { bundle ->
                     bundle.getString(IMAGE_URI_KEY)?.let { uri ->
                         VerifyPhotoDialog(uri, navController, mainViewModel)

@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -44,17 +45,16 @@ import com.tomerpacific.caridentifier.isLicensePlateNumberValid
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import java.io.IOException
-import androidx.core.net.toUri
-
 
 val textRecognizer =
     TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
 @Composable
-fun VerifyPhotoDialog(imageUri: String,
-                      navController: NavController,
-                      mainViewModel: MainViewModel) {
-
+fun VerifyPhotoDialog(
+    imageUri: String,
+    navController: NavController,
+    mainViewModel: MainViewModel,
+) {
     val context = LocalContext.current
     val uri: Uri?
 
@@ -70,51 +70,57 @@ fun VerifyPhotoDialog(imageUri: String,
     Dialog(
         onDismissRequest = {
             navController.popBackStack()
-        }) {
+        },
+    ) {
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                 verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(text = stringResource(R.string.verify_photo_msg), fontSize = 22.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.size(20.dp))
                 AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(uri)
-                        .build(),
+                    model =
+                        ImageRequest.Builder(LocalContext.current)
+                            .data(uri)
+                            .build(),
                     contentDescription = "icon",
                     contentScale = ContentScale.Inside,
-                    modifier = Modifier.heightIn(max = 300.dp).fillMaxWidth()
+                    modifier = Modifier.heightIn(max = 300.dp).fillMaxWidth(),
                 )
                 Spacer(modifier = Modifier.size(20.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Button(
                         onClick = {
-                        navController.popBackStack()
-                    }, colors = ButtonDefaults.buttonColors(containerColor = Color(212, 37, 11)),
-                        modifier = Modifier.padding(start = 6.dp)) {
+                            navController.popBackStack()
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                        modifier = Modifier.padding(start = 6.dp),
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Close,
-                            contentDescription = "No"
+                            contentDescription = "No",
                         )
                     }
                     Button(
                         onClick = { processImage(context, uri, mainViewModel, navController) },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(50, 168, 82)),
-                        modifier = Modifier.padding(end = 6.dp)) {
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Green),
+                        modifier = Modifier.padding(end = 6.dp),
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Done,
-                            contentDescription = "Yes"
+                            contentDescription = "Yes",
                         )
                     }
                 }
@@ -123,11 +129,12 @@ fun VerifyPhotoDialog(imageUri: String,
     }
 }
 
-private fun processImage(context: Context,
-                         imageUri: Uri,
-                         mainViewModel: MainViewModel,
-                         navController: NavController) {
-
+private fun processImage(
+    context: Context,
+    imageUri: Uri,
+    mainViewModel: MainViewModel,
+    navController: NavController,
+) {
     try {
         val image = InputImage.fromFilePath(context, imageUri)
         textRecognizer.process(image)
@@ -141,9 +148,7 @@ private fun processImage(context: Context,
                         return@addOnSuccessListener
                     }
                     else -> {
-                        mainViewModel.getCarDetails(
-                            context,
-                            licensePlateNumber)
+                        mainViewModel.getCarDetails(licensePlateNumber)
                         navController.navigate(Screen.CarDetailsScreen.route)
                         return@addOnSuccessListener
                     }

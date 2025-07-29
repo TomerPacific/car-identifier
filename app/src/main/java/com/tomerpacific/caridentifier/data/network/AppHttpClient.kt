@@ -7,18 +7,19 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
+private const val REQUEST_TIMEOUT_DURATION = 10000L
+
 val AppHttpClient: HttpClient by lazy {
     HttpClient(Android) {
         install(HttpTimeout) {
-            requestTimeoutMillis = 10000
+            requestTimeoutMillis = REQUEST_TIMEOUT_DURATION
         }
         install(ContentNegotiation) {
             json(
                 Json {
                     ignoreUnknownKeys = true
-                }
+                },
             )
         }
     }
-
 }

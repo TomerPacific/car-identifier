@@ -20,7 +20,6 @@ const val FAILED_TO_TRANSLATE_MSG = "Failed to translate"
 private val TAG = LanguageTranslator::class.simpleName
 
 class LanguageTranslator {
-
     private val translator: Translator
 
     private var isLanguageModelDownloaded = false
@@ -28,46 +27,48 @@ class LanguageTranslator {
     val currentLocale = Locale.current.language
 
     init {
-            val translatorOptions = buildTranslatorOptions(currentLocale)
-            translator = Translation.getClient(translatorOptions)
+        val translatorOptions = buildTranslatorOptions(currentLocale)
+        translator = Translation.getClient(translatorOptions)
 
-
-            val downloadConditions = DownloadConditions.Builder()
+        val downloadConditions =
+            DownloadConditions.Builder()
                 .requireWifi()
                 .build()
-            translator.downloadModelIfNeeded(downloadConditions)
-                .addOnSuccessListener {
-                    isLanguageModelDownloaded = true
-                }
-                .addOnFailureListener { error ->
-                    Log.e(TAG, "Failed to download language model: ${error.message}")
-                    isLanguageModelDownloaded = false
-                }
+        translator.downloadModelIfNeeded(downloadConditions)
+            .addOnSuccessListener {
+                isLanguageModelDownloaded = true
+            }
+            .addOnFailureListener { error ->
+                Log.e(TAG, "Failed to download language model: ${error.message}")
+                isLanguageModelDownloaded = false
+            }
     }
 
-    suspend fun translate(vararg text: String): Result<List<String>> = coroutineScope {
-        if (!isLanguageModelDownloaded) {
-            return@coroutineScope Result.failure(Exception("Failed to download language model"))
-        }
+    suspend fun translate(vararg text: String): Result<List<String>> =
+        coroutineScope {
+            if (!isLanguageModelDownloaded) {
+                return@coroutineScope Result.failure(Exception("Failed to download language model"))
+            }
 
-        val deferredTranslations = text.map { t ->
-            async {
-                try {
-                    translator.translate(t).await()
-                } catch (e: Exception) {
-                    Log.e(TAG, "Translation failed: ${e.message}")
-                    null
+            val deferredTranslations =
+                text.map { t ->
+                    async {
+                        try {
+                            translator.translate(t).await()
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Translation failed: ${e.message}")
+                            null
+                        }
+                    }
                 }
+
+            val results = deferredTranslations.awaitAll().filterNotNull()
+
+            return@coroutineScope when {
+                results.isEmpty() -> Result.failure(Exception("Failed to translate text"))
+                else -> Result.success(results)
             }
         }
-
-        val results = deferredTranslations.awaitAll().filterNotNull()
-
-        return@coroutineScope when {
-            results.isEmpty() -> Result.failure(Exception("Failed to translate text"))
-            else -> Result.success(results)
-        }
-    }
 
     fun translateOwnership(ownership: String): String {
         return when (ownership) {
@@ -96,23 +97,26 @@ class LanguageTranslator {
                 }
             }
 
-            SectionHeader.CONS -> when (isHebrewLanguage(currentLocale)) {
-                true -> CONS_SECTION_HEBREW
-                else -> CONS_SECTION_ENGLISH
-            }
+            SectionHeader.CONS ->
+                when (isHebrewLanguage(currentLocale)) {
+                    true -> CONS_SECTION_HEBREW
+                    else -> CONS_SECTION_ENGLISH
+                }
         }
     }
 
     private fun buildTranslatorOptions(locale: String): TranslatorOptions {
-        return when(isHebrewLanguage(locale)) {
-            true -> TranslatorOptions.Builder()
-                .setSourceLanguage(TranslateLanguage.ENGLISH)
-                .setTargetLanguage(TranslateLanguage.HEBREW)
-                .build()
-            else -> TranslatorOptions.Builder()
-                .setSourceLanguage(TranslateLanguage.HEBREW)
-                .setTargetLanguage(TranslateLanguage.ENGLISH)
-                .build()
+        return when (isHebrewLanguage(locale)) {
+            true ->
+                TranslatorOptions.Builder()
+                    .setSourceLanguage(TranslateLanguage.ENGLISH)
+                    .setTargetLanguage(TranslateLanguage.HEBREW)
+                    .build()
+            else ->
+                TranslatorOptions.Builder()
+                    .setSourceLanguage(TranslateLanguage.HEBREW)
+                    .setTargetLanguage(TranslateLanguage.ENGLISH)
+                    .build()
         }
     }
 
@@ -127,5 +131,5 @@ class LanguageTranslator {
 
 enum class SectionHeader {
     PROS,
-    CONS
+    CONS,
 }

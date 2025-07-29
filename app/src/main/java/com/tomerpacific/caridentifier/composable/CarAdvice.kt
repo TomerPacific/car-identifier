@@ -18,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,95 +36,107 @@ import com.tomerpacific.caridentifier.SectionHeader
 import com.tomerpacific.caridentifier.model.MainViewModel
 
 @Composable
-fun Advice(mainViewModel: MainViewModel, serverError: String?) {
+fun Advice(mainViewModel: MainViewModel) {
+    val mainUiState by mainViewModel.mainUiState.collectAsState()
 
-    val carReview = mainViewModel.searchTermCompletionText.collectAsState()
-
-    val columnVerticalArrangement: Arrangement.Vertical = when (carReview.value) {
-        null -> Arrangement.Center
-        else -> Arrangement.Top
-    }
+    val columnVerticalArrangement: Arrangement.Vertical =
+        when (mainUiState.carReview) {
+            null -> Arrangement.Center
+            else -> Arrangement.Top
+        }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = columnVerticalArrangement
+        verticalArrangement = columnVerticalArrangement,
     ) {
-        if (carReview.value == null && serverError == null) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                LoaderAnimation(R.raw.truck_loading_animation)
+        when {
+            mainUiState.isLoading -> {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    LoaderAnimation(R.raw.truck_loading_animation)
+                }
             }
-        } else if (carReview.value != null) {
+            mainUiState.carReview != null -> {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Text(stringResource(R.string.car_advice_header), fontSize = 25.sp, fontWeight = FontWeight.Bold)
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Text(stringResource(R.string.car_advice_disclaimer), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                }
+                Spacer(modifier = Modifier.size(20.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Image(
+                        modifier =
+                            Modifier
+                                .size(200.dp)
+                                .border(
+                                    BorderStroke(1.dp, Color.Black),
+                                    CircleShape,
+                                )
+                                .clip(CircleShape),
+                        painter = painterResource(R.drawable.car_advice),
+                        contentDescription = "mechanic in garage",
+                    )
+                }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(stringResource(R.string.car_advice_header), fontSize = 25.sp, fontWeight = FontWeight.Bold)
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(stringResource(R.string.car_advice_disclaimer), fontSize = 16.sp, fontWeight = FontWeight.Bold)
-            }
-            Spacer(modifier = Modifier.size(20.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Image(
-                    modifier = Modifier
-                        .size(200.dp)
-                        .border(
-                            BorderStroke(1.dp, Color.Black),
-                            CircleShape
-                        )
-                        .clip(CircleShape),
-                    painter = painterResource(R.drawable.car_advice),
-                    contentDescription = "mechanic in garage",
+                AdviceList(
+                    title = mainViewModel.getTranslatedSectionHeader(SectionHeader.PROS),
+                    adviceList = mainUiState.carReview!!.prosList,
+                    Modifier.align(Alignment.Start),
+                )
+                AdviceList(
+                    title = mainViewModel.getTranslatedSectionHeader(SectionHeader.CONS),
+                    adviceList = mainUiState.carReview!!.consList,
+                    Modifier.align(Alignment.Start),
                 )
             }
-
-            AdviceList(
-                title = mainViewModel.getTranslatedSectionHeader(SectionHeader.PROS),
-                adviceList = carReview.value!!.prosList,
-                Modifier.align(Alignment.Start))
-            AdviceList(
-                title = mainViewModel.getTranslatedSectionHeader(SectionHeader.CONS),
-                adviceList = carReview.value!!.consList,
-                Modifier.align(Alignment.Start))
-        } else if (serverError != null) {
-            Spacer(modifier = Modifier.size(20.dp))
-            Text(
-                text = stringResource(R.string.car_details_not_obtained_error_msg),
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                style = TextStyle(textDirection = TextDirection.Rtl)
-            )
-            Text(
-                text = serverError,
-                textAlign = TextAlign.Center,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
+            mainUiState.errorMessage != null -> {
+                Spacer(modifier = Modifier.size(20.dp))
+                Text(
+                    text = stringResource(R.string.car_details_not_obtained_error_msg),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    style = TextStyle(textDirection = TextDirection.Rtl),
+                )
+                Text(
+                    text = mainUiState.errorMessage!!,
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun AdviceList(title: String,
-                       adviceList: List<String>,
-                       modifier: Modifier = Modifier) {
-    Column(modifier = modifier
-        .padding(start = 5.dp)) {
+private fun AdviceList(
+    title: String,
+    adviceList: List<String>,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier =
+            modifier
+                .padding(start = 5.dp),
+    ) {
         Text(
             "$title:",
             fontSize = 25.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
         )
         Spacer(modifier = Modifier.height(4.dp))
         adviceList.forEach { advice ->
@@ -132,7 +145,7 @@ private fun AdviceList(title: String,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Normal,
                 textAlign = TextAlign.Start,
-                modifier = Modifier.padding(start = 10.dp)
+                modifier = Modifier.padding(start = 10.dp),
             )
         }
     }
