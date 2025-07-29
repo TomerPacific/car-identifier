@@ -31,6 +31,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -49,7 +50,6 @@ import com.tomerpacific.caridentifier.isLicensePlateNumberValid
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 
-private val TEXT_FIELD_BACKGROUND_COLOR = Color(0xFFFDD13F)
 private const val FIRST_DASH_INDEX = 2
 private const val SECOND_DASH_INDEX = 6
 
@@ -100,8 +100,8 @@ fun LicensePlateNumberDialog(
                         singleLine = true,
                         colors =
                             TextFieldDefaults.colors().copy(
-                                unfocusedContainerColor = TEXT_FIELD_BACKGROUND_COLOR,
-                                focusedContainerColor = TEXT_FIELD_BACKGROUND_COLOR,
+                                unfocusedContainerColor = colorResource(R.color.gold),
+                                focusedContainerColor = colorResource(R.color.gold),
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent,
                             ),
