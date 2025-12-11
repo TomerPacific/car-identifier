@@ -1,0 +1,53 @@
+name: Android Publish
+
+on:
+  workflow_run:
+    workflows: [Android Build]
+    types: [completed]
+    branches: ['release/**']
+
+jobs:
+  on-success:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Set Up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17
+          cache: gradle
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
+      - name: Build Release AAB
+        run: ./gradlew bundleRelease
+
+      - name: Sign AAB
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: app/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.SIGN_KEY }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.STORE_KEY_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Deploy to Play Store
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{secrets.SERVICE_ACCOUNT}}
+          packageName: com.tomerpacific.caridentifier
+          releaseFiles: app/build/outputs/bundle/release/app-release.aab
+          track: production
+          status: completed
+
+  on-failure:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - run: echo 'Publish workflow failed due to Build workflow failing'
