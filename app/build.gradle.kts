@@ -8,12 +8,12 @@ plugins {
 
 android {
     namespace = "com.tomerpacific.caridentifier"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.tomerpacific.caridentifier"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 12
         versionName = "1.0.8"
 
