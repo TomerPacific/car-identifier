@@ -32,7 +32,6 @@ fun CarLicensePlateSearchOptionButton(
     drawableContentDescription: String,
     navController: NavController,
     shouldDisableButton: Boolean = false,
-    onOptionClicked: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
 
@@ -48,17 +47,13 @@ fun CarLicensePlateSearchOptionButton(
                         .show()
                     return@clickable
                 }
-
-                if (onOptionClicked != null) {
-                    onOptionClicked()
-                } else {
-                    val navigationRoute =
-                        when (drawableId) {
-                            R.drawable.license_plate -> Screen.CameraPermission.route
-                            else -> Screen.LicensePlateNumberInput.route
-                        }
-                    navController.navigate(route = navigationRoute)
-                }
+                val navigationRoute =
+                    when (drawableId) {
+                        R.drawable.license_plate -> Screen.CameraPermission.route
+                        R.drawable.car_display -> Screen.GalleryPicker.route
+                        else -> Screen.LicensePlateNumberInput.route
+                    }
+                navController.navigate(route = navigationRoute)
             },
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
