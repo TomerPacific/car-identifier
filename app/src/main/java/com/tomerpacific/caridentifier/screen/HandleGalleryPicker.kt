@@ -11,7 +11,7 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 @Composable
-fun HandleGalleryPicker(navController: NavController) {
+fun handleGalleryPicker(navController: NavController) {
     val launcher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia(),
