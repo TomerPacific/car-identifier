@@ -1,10 +1,5 @@
 package com.tomerpacific.caridentifier.screen
 
-import android.net.Uri
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -43,9 +38,7 @@ import com.tomerpacific.caridentifier.BuildConfig
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.composable.CarLicensePlateSearchOptionButton
 import com.tomerpacific.caridentifier.model.MainViewModel
-import com.tomerpacific.caridentifier.model.Screen
 import com.tomerpacific.caridentifier.ui.theme.CarIdentifierTheme
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
@@ -60,19 +53,8 @@ fun MainScreen(
     val shouldDisableButton = didRequestPermission.value && !shouldShowRationale.value
 
     val coroutineScope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
 
-    val imagePickerLauncher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.PickVisualMedia(),
-            onResult = { uri ->
-                if (uri != null) {
-                    coroutineScope.launch(Dispatchers.Main) {
-                        navController.navigate(Screen.VerifyPhoto.route + "/${Uri.encode(uri.toString())}")
-                    }
-                }
-            },
-        )
+    val snackbarHostState = remember { SnackbarHostState() }
 
     CarIdentifierTheme {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
@@ -80,7 +62,8 @@ fun MainScreen(
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background,
             ) {
-                Scaffold(contentWindowInsets = WindowInsets.safeContent,
+                Scaffold(
+                    contentWindowInsets = WindowInsets.safeContent,
                     snackbarHost = {
                         SnackbarHost(hostState = snackbarHostState)
                     }) { innerPadding ->
@@ -94,13 +77,19 @@ fun MainScreen(
                     })
 
                     Column(
-                        modifier = Modifier.fillMaxSize().padding(innerPadding),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Top,
                     ) {
                         LicensePlateInputOptionsHeader()
                         Spacer(modifier = Modifier.size(100.dp))
-                        LicensePlateInputOptions(navController, shouldDisableButton, imagePickerLauncher, Modifier.weight(1f))
+                        LicensePlateInputOptions(
+                            navController,
+                            shouldDisableButton,
+                            Modifier.weight(1f)
+                        )
                         AppVersion()
                     }
                 }
@@ -132,7 +121,6 @@ private fun LicensePlateInputOptionsHeader() {
 private fun LicensePlateInputOptions(
     navController: NavController,
     shouldDisableButton: Boolean,
-    launcher: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -156,9 +144,6 @@ private fun LicensePlateInputOptions(
                 drawableId = R.drawable.car_display,
                 drawableContentDescription = "Gallery",
                 navController,
-                onOptionClicked = {
-                    launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                },
             )
         }
         Spacer(modifier = Modifier.height(20.dp))
