@@ -23,7 +23,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -39,7 +38,6 @@ import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.composable.CarLicensePlateSearchOptionButton
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.ui.theme.CarIdentifierTheme
-import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(
@@ -51,8 +49,6 @@ fun MainScreen(
     val didRequestPermission = mainViewModel.didRequestCameraPermission.collectAsState()
 
     val shouldDisableButton = didRequestPermission.value && !shouldShowRationale.value
-
-    val coroutineScope = rememberCoroutineScope()
 
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -70,9 +66,7 @@ fun MainScreen(
 
                     LaunchedEffect(key1 = mainViewModel.snackbarEvent, block = {
                         mainViewModel.snackbarEvent.collect { message ->
-                            coroutineScope.launch {
-                                snackbarHostState.showSnackbar(message)
-                            }
+                            snackbarHostState.showSnackbar(message)
                         }
                     })
 
