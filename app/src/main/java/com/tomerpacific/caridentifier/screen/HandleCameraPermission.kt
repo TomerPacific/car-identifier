@@ -19,7 +19,7 @@ import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 
 @Composable
-fun handleCameraPermission(
+fun HandleCameraPermission(
     navController: NavController,
     mainViewModel: MainViewModel,
 ) {
