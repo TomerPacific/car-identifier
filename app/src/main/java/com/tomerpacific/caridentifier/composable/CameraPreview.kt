@@ -64,7 +64,7 @@ fun CameraPreview(
         },
     ) { contentPadding ->
 
-        LaunchedEffect(key1 = mainViewModel.snackbarEvent, block = {
+        LaunchedEffect(Unit, block = {
             mainViewModel.snackbarEvent.collect { message ->
                 scope.launch {
                     snackbarHostState.showSnackbar(message)

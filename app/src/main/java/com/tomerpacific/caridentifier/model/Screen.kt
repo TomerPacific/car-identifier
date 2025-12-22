@@ -11,5 +11,7 @@ sealed class Screen(val route: String) {
 
     object CameraPreview : Screen("camera_preview")
 
+    object GalleryPicker : Screen("gallery_picker")
+
     object VerifyPhoto : Screen("verify_photo")
 }

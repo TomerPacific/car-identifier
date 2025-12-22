@@ -50,6 +50,7 @@ fun CarLicensePlateSearchOptionButton(
                 val navigationRoute =
                     when (drawableId) {
                         R.drawable.license_plate -> Screen.CameraPermission.route
+                        R.drawable.car_display -> Screen.GalleryPicker.route
                         else -> Screen.LicensePlateNumberInput.route
                     }
                 navController.navigate(route = navigationRoute)

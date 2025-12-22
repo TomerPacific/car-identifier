@@ -16,10 +16,11 @@ import com.tomerpacific.caridentifier.data.network.ConnectivityObserver
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import com.tomerpacific.caridentifier.screen.CarDetailsScreen
-import com.tomerpacific.caridentifier.screen.HandleCameraPermission
 import com.tomerpacific.caridentifier.screen.LicensePlateNumberDialog
 import com.tomerpacific.caridentifier.screen.MainScreen
 import com.tomerpacific.caridentifier.screen.VerifyPhotoDialog
+import com.tomerpacific.caridentifier.screen.HandleCameraPermission
+import com.tomerpacific.caridentifier.screen.HandleGalleryPicker
 
 const val IMAGE_URI_KEY = "imageUri"
 
@@ -50,6 +51,7 @@ class MainActivity : ComponentActivity() {
             composable(route = Screen.CarDetailsScreen.route) { CarDetailsScreen(mainViewModel, navController) }
             dialog(route = Screen.CameraPermission.route) { HandleCameraPermission(navController, mainViewModel) }
             composable(route = Screen.CameraPreview.route) { CameraPreview(navController, mainViewModel) }
+            dialog(route = Screen.GalleryPicker.route) { HandleGalleryPicker(navController) }
             dialog(
                 route = Screen.VerifyPhoto.route + "/{imageUri}",
                 arguments =

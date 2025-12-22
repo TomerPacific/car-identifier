@@ -1,7 +1,6 @@
 package com.tomerpacific.caridentifier.screen
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -15,11 +14,15 @@ import androidx.compose.foundation.layout.safeContent
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -47,21 +50,40 @@ fun MainScreen(
 
     val shouldDisableButton = didRequestPermission.value && !shouldShowRationale.value
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     CarIdentifierTheme {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
             Surface(
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background,
             ) {
-                Scaffold(contentWindowInsets = WindowInsets.safeContent) { innerPadding ->
+                Scaffold(
+                    contentWindowInsets = WindowInsets.safeContent,
+                    snackbarHost = {
+                        SnackbarHost(hostState = snackbarHostState)
+                    }) { innerPadding ->
+
+                    LaunchedEffect(Unit, block = {
+                        mainViewModel.snackbarEvent.collect { message ->
+                            snackbarHostState.showSnackbar(message)
+                        }
+                    })
+
                     Column(
-                        modifier = Modifier.fillMaxSize().padding(innerPadding),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Top,
                     ) {
                         LicensePlateInputOptionsHeader()
-                        Spacer(modifier = Modifier.size(150.dp))
-                        LicensePlateInputOptions(navController, shouldDisableButton, Modifier.weight(1f))
+                        Spacer(modifier = Modifier.size(100.dp))
+                        LicensePlateInputOptions(
+                            navController,
+                            shouldDisableButton,
+                            Modifier.weight(1f)
+                        )
                         AppVersion()
                     }
                 }
@@ -95,14 +117,13 @@ private fun LicensePlateInputOptions(
     shouldDisableButton: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .height(300.dp),
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             CarLicensePlateSearchOptionButton(
@@ -113,12 +134,19 @@ private fun LicensePlateInputOptions(
                 shouldDisableButton,
             )
             CarLicensePlateSearchOptionButton(
-                buttonText = stringResource(R.string.main_screen_search_by_license_plate),
-                drawableId = R.drawable.keyboard,
-                drawableContentDescription = "Smartphone Keyboard",
+                buttonText = stringResource(R.string.main_screen_search_by_gallery),
+                drawableId = R.drawable.car_display,
+                drawableContentDescription = "Gallery",
                 navController,
             )
         }
+        Spacer(modifier = Modifier.height(20.dp))
+        CarLicensePlateSearchOptionButton(
+            buttonText = stringResource(R.string.main_screen_search_by_license_plate),
+            drawableId = R.drawable.keyboard,
+            drawableContentDescription = "Smartphone Keyboard",
+            navController,
+        )
     }
 }
 
