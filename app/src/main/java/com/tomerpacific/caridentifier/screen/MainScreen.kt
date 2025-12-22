@@ -64,7 +64,7 @@ fun MainScreen(
                         SnackbarHost(hostState = snackbarHostState)
                     }) { innerPadding ->
 
-                    LaunchedEffect(key1 = mainViewModel.snackbarEvent, block = {
+                    LaunchedEffect(Unit, block = {
                         mainViewModel.snackbarEvent.collect { message ->
                             snackbarHostState.showSnackbar(message)
                         }
