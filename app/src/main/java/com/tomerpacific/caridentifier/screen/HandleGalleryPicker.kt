@@ -10,7 +10,7 @@ import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.model.Screen
 
 @Composable
-fun handleGalleryPicker(navController: NavController) {
+fun HandleGalleryPicker(navController: NavController) {
     val launcher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia(),
