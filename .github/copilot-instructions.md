@@ -135,7 +135,7 @@ app/src/main/java/com/tomerpacific/caridentifier/
 
 ### Configuration Files
 - `config/detekt/detekt.yml` - Detekt linting configuration
-- `config/detekt/baseline.xml` - Detekt baseline (47 lines, contains suppressed FunctionNaming and LongMethod issues for Compose functions)
+- `config/detekt/baseline.xml` - Detekt baseline (47 lines total, 41 suppressed violations - mostly FunctionNaming and LongMethod issues for Compose functions)
 - `app/proguard-rules.pro` - ProGuard rules (mostly default)
 - `.gitignore` - Git ignore rules (excludes build/, .gradle/, *.apk, local.properties, etc.)
 
@@ -154,8 +154,10 @@ app/src/main/java/com/tomerpacific/caridentifier/
 ```
 
 **Common Issues in Baseline** (acceptable as per project standards):
-- `FunctionNaming` - Compose functions start with uppercase (Compose convention)
-- `LongMethod` - Some Compose functions exceed length threshold (acceptable for UI)
+- `FunctionNaming` - Compose functions start with uppercase (Compose convention) - 19 violations
+- `LongMethod` - Some Compose functions exceed length threshold (acceptable for UI) - 7 violations
+- `MagicNumber` - Color hex codes and other constants - 15 violations
+- Total: 41 suppressed violations in baseline
 
 ### ktlint (Code Formatting)
 **Plugin**: org.jlleitschuh.gradle.ktlint v12.1.1
