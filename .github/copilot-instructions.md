@@ -155,8 +155,10 @@ app/src/main/java/com/tomerpacific/caridentifier/
 
 **Common Issues in Baseline** (acceptable as per project standards):
 - `FunctionNaming` - Compose functions start with uppercase (Compose convention) - 19 violations
+- `MagicNumber` - Color hex codes and numeric constants - 9 violations
 - `LongMethod` - Some Compose functions exceed length threshold (acceptable for UI) - 7 violations
-- `MagicNumber` - Color hex codes and other constants - 15 violations
+- `TooGenericExceptionCaught` - Generic exception handling - 3 violations
+- `MaxLineLength` - Lines exceeding length limit - 3 violations
 - Total: 41 suppressed violations in baseline
 
 ### ktlint (Code Formatting)
