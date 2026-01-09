@@ -144,7 +144,7 @@ app/src/main/java/com/tomerpacific/caridentifier/
 ### Detekt (Static Analysis)
 **Configuration**: `config/detekt/detekt.yml`
 - Scans: `app/src/main/java` and `app/src/main/kotlin`
-- Baseline: `config/detekt/baseline.xml` (contains 27 pre-approved violations)
+- Baseline: `config/detekt/baseline.xml` (41 suppressed violations)
 - Parallel execution enabled
 - Generates HTML and XML reports
 
