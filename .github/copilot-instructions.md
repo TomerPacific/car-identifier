@@ -135,7 +135,7 @@ app/src/main/java/com/tomerpacific/caridentifier/
 
 ### Configuration Files
 - `config/detekt/detekt.yml` - Detekt linting configuration
-- `config/detekt/baseline.xml` - Detekt baseline (47 lines total, 41 suppressed violations - mostly FunctionNaming and LongMethod issues for Compose functions)
+- `config/detekt/baseline.xml` - Detekt baseline (48 lines total, including a trailing blank line, 41 suppressed violations - mostly FunctionNaming and LongMethod issues for Compose functions)
 - `app/proguard-rules.pro` - ProGuard rules (mostly default)
 - `.gitignore` - Git ignore rules (excludes build/, .gradle/, *.apk, local.properties, etc.)
 
