@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.graphics.createBitmap
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -54,7 +55,6 @@ import com.tomerpacific.caridentifier.isLicensePlateNumberValid
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import java.io.IOException
-import androidx.core.graphics.createBitmap
 
 val textRecognizer =
     TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
@@ -197,8 +197,15 @@ private fun getBitmapWithImageDecoder(context: Context, imageUri: Uri): Bitmap {
 }
 
 private fun toGrayscale(bmpOriginal: Bitmap): Bitmap {
-    val height: Int = bmpOriginal.height
-    val width: Int = bmpOriginal.width
+    val bmpToProcess = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && bmpOriginal.config == Bitmap.Config.HARDWARE) {
+        bmpOriginal.copy(Bitmap.Config.ARGB_8888, true)
+    } else {
+        bmpOriginal
+    }
+
+    val height: Int = bmpToProcess.height
+    val width: Int = bmpToProcess.width
+
     val bmpGrayscale = createBitmap(width, height)
     val c = Canvas(bmpGrayscale)
     val paint = Paint()
@@ -206,7 +213,7 @@ private fun toGrayscale(bmpOriginal: Bitmap): Bitmap {
     cm.setSaturation(0f)
     val f = ColorMatrixColorFilter(cm)
     paint.colorFilter = f
-    c.drawBitmap(bmpOriginal, 0f, 0f, paint)
+    c.drawBitmap(bmpToProcess, 0f, 0f, paint)
     return bmpGrayscale
 }
 
