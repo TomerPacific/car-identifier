@@ -1,7 +1,14 @@
 package com.tomerpacific.caridentifier.screen
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.Paint
 import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -74,14 +81,16 @@ fun VerifyPhotoDialog(
     ) {
         Card(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(16.dp),
+            Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -94,7 +103,9 @@ fun VerifyPhotoDialog(
                             .build(),
                     contentDescription = "icon",
                     contentScale = ContentScale.Inside,
-                    modifier = Modifier.heightIn(max = 300.dp).fillMaxWidth(),
+                    modifier = Modifier
+                        .heightIn(max = 300.dp)
+                        .fillMaxWidth(),
                 )
                 Spacer(modifier = Modifier.size(20.dp))
                 Row(
@@ -136,7 +147,15 @@ private fun processImage(
     navController: NavController,
 ) {
     try {
-        val image = InputImage.fromFilePath(context, imageUri)
+        val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
+        } else {
+            MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
+        }
+
+        val grayscaleBitmap = toGrayscale(bitmap)
+        val image = InputImage.fromBitmap(grayscaleBitmap, 0)
+
         textRecognizer.process(image)
             .addOnSuccessListener { visionText ->
                 val licensePlateNumber =
@@ -162,6 +181,20 @@ private fun processImage(
         mainViewModel.triggerSnackBarEvent(e.message ?: context.getString(R.string.error_processing_image))
         navController.popBackStack()
     }
+}
+
+private fun toGrayscale(bmpOriginal: Bitmap): Bitmap {
+    val height: Int = bmpOriginal.height
+    val width: Int = bmpOriginal.width
+    val bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val c = Canvas(bmpGrayscale)
+    val paint = Paint()
+    val cm = ColorMatrix()
+    cm.setSaturation(0f)
+    val f = ColorMatrixColorFilter(cm)
+    paint.colorFilter = f
+    c.drawBitmap(bmpOriginal, 0f, 0f, paint)
+    return bmpGrayscale
 }
 
 private fun getLicensePlateNumberFromImageText(text: Text): String? {
