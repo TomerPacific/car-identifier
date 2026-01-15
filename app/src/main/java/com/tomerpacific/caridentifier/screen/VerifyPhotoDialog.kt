@@ -5,11 +5,13 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
+import android.graphics.ImageDecoder
 import android.graphics.Paint
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,6 +54,7 @@ import com.tomerpacific.caridentifier.isLicensePlateNumberValid
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import java.io.IOException
+import androidx.core.graphics.createBitmap
 
 val textRecognizer =
     TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
@@ -98,9 +101,9 @@ fun VerifyPhotoDialog(
                 Spacer(modifier = Modifier.size(20.dp))
                 AsyncImage(
                     model =
-                        ImageRequest.Builder(LocalContext.current)
-                            .data(uri)
-                            .build(),
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(uri)
+                        .build(),
                     contentDescription = "icon",
                     contentScale = ContentScale.Inside,
                     modifier = Modifier
@@ -147,12 +150,7 @@ private fun processImage(
     navController: NavController,
 ) {
     try {
-        val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
-        } else {
-            MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
-        }
-
+        val bitmap = getBitmapFromUri(context, imageUri)
         val grayscaleBitmap = toGrayscale(bitmap)
         val image = InputImage.fromBitmap(grayscaleBitmap, 0)
 
@@ -183,10 +181,25 @@ private fun processImage(
     }
 }
 
+private fun getBitmapFromUri(context: Context, imageUri: Uri): Bitmap {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        getBitmapWithImageDecoder(context, imageUri)
+    } else {
+        @Suppress("DEPRECATION")
+        MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.P)
+private fun getBitmapWithImageDecoder(context: Context, imageUri: Uri): Bitmap {
+    val source = ImageDecoder.createSource(context.contentResolver, imageUri)
+    return ImageDecoder.decodeBitmap(source)
+}
+
 private fun toGrayscale(bmpOriginal: Bitmap): Bitmap {
     val height: Int = bmpOriginal.height
     val width: Int = bmpOriginal.width
-    val bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    val bmpGrayscale = createBitmap(width, height)
     val c = Canvas(bmpGrayscale)
     val paint = Paint()
     val cm = ColorMatrix()
