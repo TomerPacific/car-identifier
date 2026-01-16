@@ -218,12 +218,19 @@ private fun toGrayscale(bmpOriginal: Bitmap): Bitmap {
 }
 
 private fun getLicensePlateNumberFromImageText(text: Text): String? {
+    val candidates = mutableListOf<String>()
+
     for (block in text.textBlocks) {
-        val blockText = block.text
-        if (isLicensePlateNumberValid(blockText)) {
-            return blockText.replace(":", "-")
+        for (line in block.lines) {
+            val sanitizedText = line.text
+                .replace(":", "-")
+                .replace(" ", "")
+
+            if (isLicensePlateNumberValid(sanitizedText)) {
+                candidates.add(sanitizedText)
+            }
         }
     }
 
-    return null
+    return candidates.maxByOrNull { it.length }
 }

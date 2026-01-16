@@ -34,24 +34,19 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.tomerpacific.caridentifier.EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES
 import com.tomerpacific.caridentifier.R
-import com.tomerpacific.caridentifier.SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES
 import com.tomerpacific.caridentifier.isLicensePlateNumberValid
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 
-private const val FIRST_DASH_INDEX = 2
-private const val SECOND_DASH_INDEX = 6
+private const val LICENSE_PLATE_NUMBER_MAX_LENGTH = 10
 
 @Composable
 fun LicensePlateNumberDialog(
@@ -60,30 +55,10 @@ fun LicensePlateNumberDialog(
 ) {
     mainViewModel.resetData()
 
-    val focusRequester =
-        remember {
-            FocusRequester()
-        }
+    val focusRequester = remember { FocusRequester() }
 
-    var licensePlateNumberState by remember {
-        mutableStateOf(
-            TextFieldValue(
-                text = "",
-            ),
-        )
-    }
-
-    val licensePlateInputPattern = Regex("^[0-9-]*\$")
-
-    val validLicensePlatePattern = Regex("^[0-9]{2,3}-[0-9]{2,3}-[0-9]{2,3}")
-
-    var isLicensePlateLengthLimitReached by remember {
-        mutableStateOf(false)
-    }
-
-    var didClickConfirmBtn by remember {
-        mutableStateOf(false)
-    }
+    var licensePlateNumber by remember { mutableStateOf("") }
+    var showError by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = {
@@ -105,46 +80,20 @@ fun LicensePlateNumberDialog(
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent,
                             ),
-                        value = licensePlateNumberState,
-                        onValueChange = { textFieldValue ->
-                            didClickConfirmBtn = false
-
-                            if (doesLicensePlateNumberExceedLimit(textFieldValue)) {
-                                isLicensePlateLengthLimitReached = true
-                                return@TextField
+                        value = licensePlateNumber,
+                        onValueChange = { input ->
+                            if (input.length <= LICENSE_PLATE_NUMBER_MAX_LENGTH) {
+                                licensePlateNumber = input
+                                showError = false
                             }
-
-                            if (wasCharacterDeleted(textFieldValue.text, licensePlateNumberState.text)) {
-                                isLicensePlateLengthLimitReached = false
-                                licensePlateNumberState = handleCharacterDeletion(textFieldValue)
-                                return@TextField
-                            }
-
-                            if (textFieldValue.text.isEmpty() || licensePlateInputPattern.matches(textFieldValue.text)) {
-                                licensePlateNumberState = textFieldValue
-                            }
-                            val formattedText = formatLicensePlateWithDashes(textFieldValue.text)
-
-                            licensePlateNumberState =
-                                TextFieldValue(
-                                    text = formattedText,
-                                    selection = TextRange(formattedText.length),
-                                )
                         },
                         placeholder = {
-                            Text(stringResource(R.string.license_plate_placeholder), maxLines = 1)
+                            Text("XX-XXX-XX", maxLines = 1)
                         },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        isError = isLicensePlateLengthLimitReached,
+                        isError = showError,
                         supportingText = {
-                            if (isLicensePlateLengthLimitReached) {
-                                Text(
-                                    stringResource(R.string.license_plate_input_limit_error),
-                                    modifier = Modifier.fillMaxWidth(),
-                                    color = Color.Red,
-                                )
-                            }
-                            if (didClickConfirmBtn) {
+                            if (showError) {
                                 Text(
                                     stringResource(R.string.license_plate_input_amount_of_digits_error),
                                     modifier = Modifier.fillMaxWidth(),
@@ -153,7 +102,7 @@ fun LicensePlateNumberDialog(
                             }
                         },
                         trailingIcon = {
-                            if (isLicensePlateLengthLimitReached) {
+                            if (showError) {
                                 Icon(Icons.Filled.Info, "error", tint = Color.Red)
                             }
                         },
@@ -193,17 +142,14 @@ fun LicensePlateNumberDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    didClickConfirmBtn = true
-                    if (isLicensePlateNumberValid(
-                            licensePlateNumberState.text,
-                            validLicensePlatePattern,
-                        )
-                    ) {
-                        mainViewModel.getCarDetails(licensePlateNumberState.text)
+                    if (isLicensePlateNumberValid(licensePlateNumber)) {
+                        mainViewModel.getCarDetails(licensePlateNumber)
                         navController.navigate(Screen.CarDetailsScreen.route)
+                    } else {
+                        showError = true
                     }
                 },
-                enabled = licensePlateNumberState.text.isNotEmpty(),
+                enabled = licensePlateNumber.isNotEmpty(),
             ) {
                 Text(stringResource(R.string.approve))
             }
@@ -218,51 +164,4 @@ fun LicensePlateNumberDialog(
             }
         },
     )
-}
-
-private fun doesLicensePlateNumberExceedLimit(textFieldValue: TextFieldValue): Boolean {
-    return textFieldValue.text.length > EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES
-}
-
-private fun handleCharacterDeletion(textFieldValue: TextFieldValue): TextFieldValue {
-    return if (textFieldValue.text.length == SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
-        val formattedText = "${textFieldValue.text.substring(0, FIRST_DASH_INDEX)}-${
-            textFieldValue.text.substring(
-                FIRST_DASH_INDEX,
-                3,
-            )
-        }${textFieldValue.text.substring(
-            4,
-            SECOND_DASH_INDEX,
-        )}-${textFieldValue.text.substring(7, SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES)}"
-        TextFieldValue(
-            text = formattedText,
-            selection = TextRange(formattedText.length),
-        )
-    } else {
-        textFieldValue
-    }
-}
-
-private fun wasCharacterDeleted(
-    currentText: String,
-    previousText: String,
-): Boolean {
-    return currentText.length < previousText.length
-}
-
-private fun formatLicensePlateWithDashes(input: String): String {
-    return when (input.length) {
-        FIRST_DASH_INDEX -> "${input.substring(0, FIRST_DASH_INDEX)}-"
-        SECOND_DASH_INDEX -> "${input.substring(0, FIRST_DASH_INDEX)}-${input.substring(
-            3,
-            SECOND_DASH_INDEX,
-        )}-"
-        in EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES + 1 ->
-            "${input.substring(
-                0,
-                FIRST_DASH_INDEX,
-            )}${input.substring(3,4)}-${input.substring(4, SECOND_DASH_INDEX)}-${input.substring(7, input.length)}"
-        else -> input
-    }
 }

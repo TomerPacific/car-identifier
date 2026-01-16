@@ -9,10 +9,13 @@ const val PROS_SECTION_ENGLISH = "Pros"
 const val CONS_SECTION_ENGLISH = "Cons"
 const val REVIEW_HEBREW = "ביקורת "
 const val REVIEW_ENGLISH = " review"
-const val SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES = 9
-const val EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES = 10
 
-val CAR_MANUFACTURER_NAME_TRANSLATION_TO_ENGLISH =
+private val licensePlateNumberPatterns = listOf(
+    Regex("\\d{2}-\\d{3}-\\d{2}"),
+    Regex("\\d{3}-\\d{2}-\\d{3}")
+)
+
+val CAR_MANUFACTURER_NAME_TRANSLATION_TO_ENGLISH = 
     mapOf(
         "אאודי" to "Audi",
         "אבארט" to "Abarth",
@@ -151,7 +154,7 @@ fun formatCarReviewResponse(
         }
     }
 
-    val carReviewLines =
+    val carReviewLines = 
         carReview
             .removePrefix("\"")
             .removeSuffix("\"")
@@ -180,24 +183,14 @@ fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
         commercialName = commercialName.substring(indexOfManufacturerName + manufacturerName.length).trim()
     }
 
-    return "$manufacturerName ${commercialName.lowercase().replaceFirstChar { it.titlecase() }
+    return "$manufacturerName ${commercialName.lowercase().replaceFirstChar { it.titlecase() } 
     } ${
         carDetails.trimLevel.lowercase().replaceFirstChar { it.titlecase() }
     } ${carDetails.yearOfProduction}"
 }
 
-fun isLicensePlateNumberValid(
-    licensePlateNumber: String,
-    pattern: Regex? = null,
-): Boolean {
-    return when (pattern) {
-        null ->
-            licensePlateNumber.length in SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES &&
-                licensePlateNumber.contains("-")
-        else ->
-            licensePlateNumber.length in SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES &&
-                pattern.matches(licensePlateNumber)
-    }
+fun isLicensePlateNumberValid(licensePlateNumber: String): Boolean {
+    return licensePlateNumberPatterns.any { pattern -> pattern.matches(licensePlateNumber) }
 }
 
 private fun doesManufacturerNameExistInCommercialName(
