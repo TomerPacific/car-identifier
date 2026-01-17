@@ -198,9 +198,8 @@ fun isLicensePlateNumberValid(licensePlateNumber: String): Boolean {
 fun getLicensePlateNumberFromImageText(text: Text): String? {
     return text.textBlocks
         .flatMap { it.lines }
-        .map { it.text.replace(":", "-").replace(" ", "") }
-        .filter { isLicensePlateNumberValid(it) }
-        .maxByOrNull { it.length }
+        .filter { isLicensePlateNumberValid(it.text.replace(":", "-").replace(" ", "")) }
+        .maxByOrNull { it.confidence }?.text?.replace(":", "-")?.replace(" ", "")
 }
 
 private fun doesManufacturerNameExistInCommercialName(
