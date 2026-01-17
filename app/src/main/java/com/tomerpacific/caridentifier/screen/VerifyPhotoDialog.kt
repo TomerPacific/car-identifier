@@ -56,9 +56,6 @@ import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import java.io.IOException
 
-val textRecognizer =
-    TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-
 @Composable
 fun VerifyPhotoDialog(
     imageUri: String,
@@ -149,6 +146,8 @@ private fun processImage(
     mainViewModel: MainViewModel,
     navController: NavController,
 ) {
+    val textRecognizer =
+        TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
     try {
         val bitmap = getBitmapFromUri(context, imageUri)
         val grayscaleBitmap = toGrayscale(bitmap)
@@ -197,16 +196,14 @@ private fun getBitmapWithImageDecoder(context: Context, imageUri: Uri): Bitmap {
 }
 
 private fun toGrayscale(bmpOriginal: Bitmap): Bitmap {
-    val bmpToProcess = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && bmpOriginal.config == Bitmap.Config.HARDWARE) {
+    val bmpToProcess = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+        bmpOriginal.config == Bitmap.Config.HARDWARE) {
         bmpOriginal.copy(Bitmap.Config.ARGB_8888, true)
     } else {
         bmpOriginal
     }
 
-    val height: Int = bmpToProcess.height
-    val width: Int = bmpToProcess.width
-
-    val bmpGrayscale = createBitmap(width, height)
+    val bmpGrayscale = createBitmap(bmpToProcess.width, bmpToProcess.height)
     val c = Canvas(bmpGrayscale)
     val paint = Paint()
     val cm = ColorMatrix()
@@ -218,19 +215,9 @@ private fun toGrayscale(bmpOriginal: Bitmap): Bitmap {
 }
 
 private fun getLicensePlateNumberFromImageText(text: Text): String? {
-    val candidates = mutableListOf<String>()
-
-    for (block in text.textBlocks) {
-        for (line in block.lines) {
-            val sanitizedText = line.text
-                .replace(":", "-")
-                .replace(" ", "")
-
-            if (isLicensePlateNumberValid(sanitizedText)) {
-                candidates.add(sanitizedText)
-            }
-        }
-    }
-
-    return candidates.maxByOrNull { it.length }
+    return text.textBlocks
+        .flatMap { it.lines }
+        .map { it.text.replace(":", "-").replace(" ", "") }
+        .filter { isLicensePlateNumberValid(it) }
+        .maxByOrNull { it.length }
 }
