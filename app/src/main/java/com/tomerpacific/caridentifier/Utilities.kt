@@ -154,7 +154,7 @@ fun formatCarReviewResponse(
         }
     }
 
-    val carReviewLines = 
+    val carReviewLines =
         carReview
             .removePrefix("\"")
             .removeSuffix("\"")
