@@ -51,8 +51,8 @@ class UtilitiesUnitTest {
     @Test
     fun `should return correct license plate when only one is present`() {
         val textBlocks = listOf(
-            createTextBlock("some text"),
-            createTextBlock(validSevenDigitLicensePlateNumber)
+            createTextBlock("some text", 0.5f),
+            createTextBlock(validSevenDigitLicensePlateNumber, 0.9f)
         )
         val mockText = mock(Text::class.java)
         `when`(mockText.textBlocks).thenReturn(textBlocks)
@@ -64,8 +64,8 @@ class UtilitiesUnitTest {
     @Test
     fun `should return correct license plate when multiple are present`() {
         val textBlocks = listOf(
-            createTextBlock(validSevenDigitLicensePlateNumber),
-            createTextBlock(validEightDigitLicensePlateNumber)
+            createTextBlock(validSevenDigitLicensePlateNumber, 0.8f),
+            createTextBlock(validEightDigitLicensePlateNumber, 0.9f)
         )
         val mockText = mock(Text::class.java)
         `when`(mockText.textBlocks).thenReturn(textBlocks)
@@ -75,10 +75,23 @@ class UtilitiesUnitTest {
     }
 
     @Test
+    fun `should return license plate with highest confidence`() {
+        val textBlocks = listOf(
+            createTextBlock(validSevenDigitLicensePlateNumber, 0.9f),
+            createTextBlock(validEightDigitLicensePlateNumber, 0.8f)
+        )
+        val mockText = mock(Text::class.java)
+        `when`(mockText.textBlocks).thenReturn(textBlocks)
+
+        val licensePlate = getLicensePlateNumberFromImageText(mockText)
+        assert(licensePlate == validSevenDigitLicensePlateNumber)
+    }
+
+    @Test
     fun `should return null when no license plate is present`() {
         val textBlocks = listOf(
-            createTextBlock("some text"),
-            createTextBlock("some other text")
+            createTextBlock("some text", 0.5f),
+            createTextBlock("some other text", 0.6f)
         )
         val mockText = mock(Text::class.java)
         `when`(mockText.textBlocks).thenReturn(textBlocks)
@@ -114,9 +127,10 @@ class UtilitiesUnitTest {
         assert(concatenatedCarMakeAndModel == "Ford Focus Sport 2013")
     }
 
-    private fun createTextBlock(text: String): Text.TextBlock {
+    private fun createTextBlock(text: String, confidence: Float): Text.TextBlock {
         val mockLine = mock(Text.Line::class.java)
         `when`(mockLine.text).thenReturn(text)
+        `when`(mockLine.confidence).thenReturn(confidence)
 
         val mockBlock = mock(Text.TextBlock::class.java)
         `when`(mockBlock.lines).thenReturn(listOf(mockLine))
