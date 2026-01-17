@@ -83,6 +83,8 @@ dependencies {
     implementation(libs.lottie.compose)
 
     testImplementation(libs.junit4)
+    testImplementation(libs.mlkit.text.recognition)
+    testImplementation("org.mockito:mockito-core:5.11.0")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(platform(libs.compose.bom))
