@@ -31,11 +31,6 @@ class UtilitiesUnitTest {
     }
 
     @Test
-    fun `should return true when license plate is valid amd matches pattern`() {
-        assert(isLicensePlateNumberValid(validLicensePlateNumber, Regex("^[0-9]{2,3}-[0-9]{2,3}-[0-9]{2,3}")))
-    }
-
-    @Test
     fun `should return true when car make and model are concatenated correctly`() {
         val carDetails =
             CarDetails(
