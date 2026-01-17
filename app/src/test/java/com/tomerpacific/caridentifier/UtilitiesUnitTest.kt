@@ -1,7 +1,10 @@
 package com.tomerpacific.caridentifier
 
+import com.google.mlkit.vision.text.Text
 import com.tomerpacific.caridentifier.model.CarDetails
 import org.junit.Test
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 
 class UtilitiesUnitTest {
     private val carManufacturerNissan = "ניסאן"
@@ -46,6 +49,45 @@ class UtilitiesUnitTest {
     }
 
     @Test
+    fun `should return correct license plate when only one is present`() {
+        val textBlocks = listOf(
+            createTextBlock("some text"),
+            createTextBlock(validSevenDigitLicensePlateNumber)
+        )
+        val mockText = mock(Text::class.java)
+        `when`(mockText.textBlocks).thenReturn(textBlocks)
+
+        val licensePlate = getLicensePlateNumberFromImageText(mockText)
+        assert(licensePlate == validSevenDigitLicensePlateNumber)
+    }
+
+    @Test
+    fun `should return correct license plate when multiple are present`() {
+        val textBlocks = listOf(
+            createTextBlock(validSevenDigitLicensePlateNumber),
+            createTextBlock(validEightDigitLicensePlateNumber)
+        )
+        val mockText = mock(Text::class.java)
+        `when`(mockText.textBlocks).thenReturn(textBlocks)
+
+        val licensePlate = getLicensePlateNumberFromImageText(mockText)
+        assert(licensePlate == validEightDigitLicensePlateNumber)
+    }
+
+    @Test
+    fun `should return null when no license plate is present`() {
+        val textBlocks = listOf(
+            createTextBlock("some text"),
+            createTextBlock("some other text")
+        )
+        val mockText = mock(Text::class.java)
+        `when`(mockText.textBlocks).thenReturn(textBlocks)
+
+        val licensePlate = getLicensePlateNumberFromImageText(mockText)
+        assert(licensePlate == null)
+    }
+
+    @Test
     fun `should return true when car make and model are concatenated correctly`() {
         val carDetails =
             CarDetails(
@@ -70,5 +112,14 @@ class UtilitiesUnitTest {
 
         val concatenatedCarMakeAndModel = concatenateCarMakeAndModel(carDetails)
         assert(concatenatedCarMakeAndModel == "Ford Focus Sport 2013")
+    }
+
+    private fun createTextBlock(text: String): Text.TextBlock {
+        val mockLine = mock(Text.Line::class.java)
+        `when`(mockLine.text).thenReturn(text)
+
+        val mockBlock = mock(Text.TextBlock::class.java)
+        `when`(mockBlock.lines).thenReturn(listOf(mockLine))
+        return mockBlock
     }
 }
