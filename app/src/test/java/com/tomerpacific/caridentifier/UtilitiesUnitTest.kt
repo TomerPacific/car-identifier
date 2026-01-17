@@ -6,7 +6,9 @@ import org.junit.Test
 class UtilitiesUnitTest {
     private val carManufacturerNissan = "ניסאן"
     private val carManufacturerUnknown = "משהו"
-    private val validLicensePlateNumber = "17-655-76"
+    private val validSevenDigitLicensePlateNumber = "17-655-76"
+    private val anotherValidSevenDigitLicensePlateNumber = "123-45-678"
+    private val validEightDigitLicensePlateNumber = "123-456-78"
 
     @Test
     fun `should return true when translated car manufacturer name is Nissan`() {
@@ -21,13 +23,26 @@ class UtilitiesUnitTest {
     }
 
     @Test
-    fun `should return true when license plate is valid`() {
-        assert(isLicensePlateNumberValid(validLicensePlateNumber))
+    fun `should return true when seven digit license plate is valid`() {
+        assert(isLicensePlateNumberValid(validSevenDigitLicensePlateNumber))
+    }
+
+    @Test
+    fun `should return true when another seven digit license plate is valid`() {
+        assert(isLicensePlateNumberValid(anotherValidSevenDigitLicensePlateNumber))
+    }
+
+    @Test
+    fun `should return true when eight digit license plate is valid`() {
+        assert(isLicensePlateNumberValid(validEightDigitLicensePlateNumber))
     }
 
     @Test
     fun `should return false when license plate is not valid`() {
         assert(!isLicensePlateNumberValid(""))
+        assert(!isLicensePlateNumberValid("12-345-6789"))
+        assert(!isLicensePlateNumberValid("1-23-45"))
+        assert(!isLicensePlateNumberValid("12-ABC-78"))
     }
 
     @Test
