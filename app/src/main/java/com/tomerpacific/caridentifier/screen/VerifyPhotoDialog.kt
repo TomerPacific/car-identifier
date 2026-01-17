@@ -210,5 +210,10 @@ private fun toGrayscale(bmpOriginal: Bitmap): Bitmap {
     val f = ColorMatrixColorFilter(cm)
     paint.colorFilter = f
     c.drawBitmap(bmpToProcess, 0f, 0f, paint)
+
+    if (bmpToProcess !== bmpOriginal) {
+        bmpToProcess.recycle()
+    }
+
     return bmpGrayscale
 }
