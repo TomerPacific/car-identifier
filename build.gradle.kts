@@ -13,10 +13,10 @@ detekt {
     parallel = true
     buildUponDefaultConfig = true
 
-    source = files(
+    source.setFrom(files(
         "$projectDir/app/src/main/java",
         "$projectDir/app/src/main/kotlin"
-    )
+    ))
 
     config.from(files("$projectDir/config/detekt/detekt.yml"))
     baseline = file("$projectDir/config/detekt/baseline.xml")
