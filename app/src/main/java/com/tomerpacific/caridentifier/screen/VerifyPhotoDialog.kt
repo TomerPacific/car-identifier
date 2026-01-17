@@ -47,11 +47,10 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.tomerpacific.caridentifier.R
-import com.tomerpacific.caridentifier.isLicensePlateNumberValid
+import com.tomerpacific.caridentifier.getLicensePlateNumberFromImageText
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import java.io.IOException
@@ -212,12 +211,4 @@ private fun toGrayscale(bmpOriginal: Bitmap): Bitmap {
     paint.colorFilter = f
     c.drawBitmap(bmpToProcess, 0f, 0f, paint)
     return bmpGrayscale
-}
-
-private fun getLicensePlateNumberFromImageText(text: Text): String? {
-    return text.textBlocks
-        .flatMap { it.lines }
-        .map { it.text.replace(":", "-").replace(" ", "") }
-        .filter { isLicensePlateNumberValid(it) }
-        .maxByOrNull { it.length }
 }

@@ -1,5 +1,6 @@
 package com.tomerpacific.caridentifier
 
+import com.google.mlkit.vision.text.Text
 import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.CarReview
 
@@ -192,6 +193,14 @@ fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
 
 fun isLicensePlateNumberValid(licensePlateNumber: String): Boolean {
     return licensePlateNumberPatterns.any { pattern -> pattern.matches(licensePlateNumber) }
+}
+
+fun getLicensePlateNumberFromImageText(text: Text): String? {
+    return text.textBlocks
+        .flatMap { it.lines }
+        .map { it.text.replace(":", "-").replace(" ", "") }
+        .filter { isLicensePlateNumberValid(it) }
+        .maxByOrNull { it.length }
 }
 
 private fun doesManufacturerNameExistInCommercialName(
