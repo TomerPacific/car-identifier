@@ -13,7 +13,7 @@ detekt {
     parallel = true
     buildUponDefaultConfig = true
 
-    input = files(
+    source = files(
         "$projectDir/app/src/main/java",
         "$projectDir/app/src/main/kotlin"
     )
