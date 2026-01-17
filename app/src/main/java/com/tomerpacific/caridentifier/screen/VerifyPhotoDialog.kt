@@ -31,6 +31,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,6 +49,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.tomerpacific.caridentifier.R
@@ -63,6 +66,15 @@ fun VerifyPhotoDialog(
 ) {
     val context = LocalContext.current
     val uri: Uri?
+    val textRecognizer = remember {
+        TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            textRecognizer.close()
+        }
+    }
 
     try {
         uri = imageUri.toUri()
@@ -124,7 +136,7 @@ fun VerifyPhotoDialog(
                         )
                     }
                     Button(
-                        onClick = { processImage(context, uri, mainViewModel, navController) },
+                        onClick = { processImage(context, uri, mainViewModel, navController, textRecognizer) },
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Green),
                         modifier = Modifier.padding(end = 6.dp),
                     ) {
@@ -144,9 +156,8 @@ private fun processImage(
     imageUri: Uri,
     mainViewModel: MainViewModel,
     navController: NavController,
+    textRecognizer: TextRecognizer,
 ) {
-    val textRecognizer =
-        TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
     try {
         val bitmap = getBitmapFromUri(context, imageUri)
         val grayscaleBitmap = toGrayscale(bitmap)
