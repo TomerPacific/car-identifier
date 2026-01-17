@@ -11,11 +11,12 @@ const val REVIEW_HEBREW = "ביקורת "
 const val REVIEW_ENGLISH = " review"
 
 private val licensePlateNumberPatterns = listOf(
-    Regex("\\d{2}-\\d{3}-\\d{2}"),
-    Regex("\\d{3}-\\d{2}-\\d{3}")
+    Regex("\\d{2}-\\d{3}-\\d{2}"), // XX-XXX-XX
+    Regex("\\d{3}-\\d{2}-\\d{3}"), // XXX-XX-XXX
+    Regex("\\d{3}-\\d{3}-\\d{2}")  // XXX-XXX-XX
 )
 
-val CAR_MANUFACTURER_NAME_TRANSLATION_TO_ENGLISH =
+val CAR_MANUFACTURER_NAME_TRANSLATION_TO_ENGLISH = 
     mapOf(
         "אאודי" to "Audi",
         "אבארט" to "Abarth",
@@ -154,7 +155,7 @@ fun formatCarReviewResponse(
         }
     }
 
-    val carReviewLines =
+    val carReviewLines = 
         carReview
             .removePrefix("\"")
             .removeSuffix("\"")
