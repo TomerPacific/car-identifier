@@ -15,7 +15,7 @@ private val licensePlateNumberPatterns = listOf(
     Regex("\\d{3}-\\d{2}-\\d{3}")
 )
 
-val CAR_MANUFACTURER_NAME_TRANSLATION_TO_ENGLISH = 
+val CAR_MANUFACTURER_NAME_TRANSLATION_TO_ENGLISH =
     mapOf(
         "אאודי" to "Audi",
         "אבארט" to "Abarth",
