@@ -13,7 +13,6 @@ const val REVIEW_ENGLISH = " review"
 
 private val licensePlateNumberPatterns = listOf(
     Regex("\\d{2}-\\d{3}-\\d{2}"), // XX-XXX-XX
-    Regex("\\d{3}-\\d{2}-\\d{3}"), // XXX-XX-XXX
     Regex("\\d{3}-\\d{3}-\\d{2}")  // XXX-XXX-XX
 )
 
@@ -208,8 +207,11 @@ fun isLicensePlateNumberValid(licensePlateNumber: String): Boolean {
 fun getLicensePlateNumberFromImageText(text: Text): String? {
     return text.textBlocks
         .flatMap { it.lines }
-        .filter { isLicensePlateNumberValid(it.text.replace(":", "-").replace(" ", "")) }
-        .maxByOrNull { it.confidence }?.text?.replace(":", "-")?.replace(" ", "")
+        .map { line ->
+            Pair(line.text.replace(":", "-").replace(" ", ""), line)
+        }
+        .filter { (sanitizedText, _) -> isLicensePlateNumberValid(sanitizedText) }
+        .maxByOrNull { (_, line) -> line.confidence }?.first
 }
 
 private fun doesManufacturerNameExistInCommercialName(
