@@ -10,7 +10,6 @@ class UtilitiesUnitTest {
     private val carManufacturerNissan = "ניסאן"
     private val carManufacturerUnknown = "משהו"
     private val validSevenDigitLicensePlateNumber = "17-655-76"
-    private val anotherValidSevenDigitLicensePlateNumber = "123-45-678"
     private val validEightDigitLicensePlateNumber = "123-456-78"
 
     @Test
@@ -31,11 +30,6 @@ class UtilitiesUnitTest {
     }
 
     @Test
-    fun `should return true when another seven digit license plate is valid`() {
-        assert(isLicensePlateNumberValid(anotherValidSevenDigitLicensePlateNumber))
-    }
-
-    @Test
     fun `should return true when eight digit license plate is valid`() {
         assert(isLicensePlateNumberValid(validEightDigitLicensePlateNumber))
     }
@@ -46,6 +40,7 @@ class UtilitiesUnitTest {
         assert(!isLicensePlateNumberValid("12-345-6789"))
         assert(!isLicensePlateNumberValid("1-23-45"))
         assert(!isLicensePlateNumberValid("12-ABC-78"))
+        assert(!isLicensePlateNumberValid("123-45-678"))
     }
 
     @Test
