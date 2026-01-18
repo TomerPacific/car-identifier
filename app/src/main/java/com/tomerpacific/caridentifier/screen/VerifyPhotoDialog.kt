@@ -49,8 +49,8 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.getLicensePlateNumberFromImageText
@@ -65,9 +65,10 @@ fun VerifyPhotoDialog(
 ) {
     val context = LocalContext.current
     val uri: Uri?
-    val textRecognizer = remember {
-        TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-    }
+    val textRecognizer =
+        remember {
+            TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+        }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -91,16 +92,17 @@ fun VerifyPhotoDialog(
     ) {
         Card(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(16.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -108,14 +110,15 @@ fun VerifyPhotoDialog(
                 Spacer(modifier = Modifier.size(20.dp))
                 AsyncImage(
                     model =
-                    ImageRequest.Builder(LocalContext.current)
-                        .data(uri)
-                        .build(),
+                        ImageRequest.Builder(LocalContext.current)
+                            .data(uri)
+                            .build(),
                     contentDescription = "icon",
                     contentScale = ContentScale.Inside,
-                    modifier = Modifier
-                        .heightIn(max = 300.dp)
-                        .fillMaxWidth(),
+                    modifier =
+                        Modifier
+                            .heightIn(max = 300.dp)
+                            .fillMaxWidth(),
                 )
                 Spacer(modifier = Modifier.size(20.dp))
                 Row(
@@ -157,9 +160,11 @@ private fun processImage(
     navController: NavController,
     textRecognizer: TextRecognizer,
 ) {
+    var bitmap: Bitmap? = null
+    var grayscaleBitmap: Bitmap? = null
     try {
-        val bitmap = getBitmapFromUri(context, imageUri)
-        val grayscaleBitmap = toGrayscale(bitmap)
+        bitmap = getBitmapFromUri(context, imageUri)
+        grayscaleBitmap = toGrayscale(bitmap)
         val image = InputImage.fromBitmap(grayscaleBitmap, 0)
 
         textRecognizer.process(image)
@@ -182,14 +187,22 @@ private fun processImage(
             .addOnFailureListener { _ ->
                 mainViewModel.triggerSnackBarEvent(context.getString(R.string.no_license_plate_error))
                 navController.popBackStack()
+            }.addOnCompleteListener {
+                grayscaleBitmap?.recycle()
+                bitmap?.recycle()
             }
     } catch (e: Exception) {
+        grayscaleBitmap?.recycle()
+        bitmap?.recycle()
         mainViewModel.triggerSnackBarEvent(e.message ?: context.getString(R.string.error_processing_image))
         navController.popBackStack()
     }
 }
 
-private fun getBitmapFromUri(context: Context, imageUri: Uri): Bitmap {
+private fun getBitmapFromUri(
+    context: Context,
+    imageUri: Uri,
+): Bitmap {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
         getBitmapWithImageDecoder(context, imageUri)
     } else {
@@ -199,18 +212,25 @@ private fun getBitmapFromUri(context: Context, imageUri: Uri): Bitmap {
 }
 
 @RequiresApi(Build.VERSION_CODES.P)
-private fun getBitmapWithImageDecoder(context: Context, imageUri: Uri): Bitmap {
+private fun getBitmapWithImageDecoder(
+    context: Context,
+    imageUri: Uri,
+): Bitmap {
     val source = ImageDecoder.createSource(context.contentResolver, imageUri)
-    return ImageDecoder.decodeBitmap(source)
+    return ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
+        decoder.isMutableRequired = false
+    }
 }
 
 private fun toGrayscale(bmpOriginal: Bitmap): Bitmap {
-    val bmpToProcess = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
-        bmpOriginal.config == Bitmap.Config.HARDWARE) {
-        bmpOriginal.copy(Bitmap.Config.ARGB_8888, true)
-    } else {
-        bmpOriginal
-    }
+    val bmpToProcess =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            bmpOriginal.config == Bitmap.Config.HARDWARE
+        ) {
+            bmpOriginal.copy(Bitmap.Config.ARGB_8888, false)
+        } else {
+            bmpOriginal
+        }
 
     val bmpGrayscale = createBitmap(bmpToProcess.width, bmpToProcess.height)
     val c = Canvas(bmpGrayscale)

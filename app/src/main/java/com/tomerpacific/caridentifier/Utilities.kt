@@ -11,10 +11,11 @@ const val CONS_SECTION_ENGLISH = "Cons"
 const val REVIEW_HEBREW = "ביקורת "
 const val REVIEW_ENGLISH = " review"
 
-private val licensePlateNumberPatterns = listOf(
-    Regex("\\d{2}-\\d{3}-\\d{2}"), // XX-XXX-XX
-    Regex("\\d{3}-\\d{3}-\\d{2}")  // XXX-XXX-XX
-)
+private val licensePlateNumberPatterns =
+    listOf(
+        Regex("\\d{2}-\\d{3}-\\d{2}"), // XX-XXX-XX
+        Regex("\\d{3}-\\d{3}-\\d{2}"), // XXX-XXX-XX
+    )
 
 val CAR_MANUFACTURER_NAME_TRANSLATION_TO_ENGLISH =
     mapOf(
