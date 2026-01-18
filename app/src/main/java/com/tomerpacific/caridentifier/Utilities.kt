@@ -197,7 +197,7 @@ fun isLicensePlateNumberValid(licensePlateNumber: String): Boolean {
 /**
  * Extracts a license plate number from the provided ML Kit Text object.
  *
- * This function sanitizes the text from each line by replacing colons with dashes and removing spaces.
+ * This function sanitizes the text from each line by replacing colons and spaces with dashes.
  * It then finds all lines that match the predefined license plate patterns and returns the one
  * with the highest OCR confidence score.
  *
@@ -208,7 +208,7 @@ fun getLicensePlateNumberFromImageText(text: Text): String? {
     return text.textBlocks
         .flatMap { it.lines }
         .map { line ->
-            Pair(line.text.replace(":", "-").replace(" ", ""), line)
+            Pair(line.text.replace(":", "-").replace(" ", "-"), line)
         }
         .filter { (sanitizedText, _) -> isLicensePlateNumberValid(sanitizedText) }
         .maxByOrNull { (_, line) -> line.confidence }?.first
