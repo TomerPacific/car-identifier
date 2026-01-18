@@ -44,6 +44,50 @@ class UtilitiesUnitTest {
     }
 
     @Test
+    fun `should return correct license plate when it contains colons`() {
+        val licensePlateWithColons = "12:345:67"
+        val textBlocks = listOf(createTextBlock(licensePlateWithColons, 0.9f))
+        val mockText = mock(Text::class.java)
+        `when`(mockText.textBlocks).thenReturn(textBlocks)
+
+        val licensePlate = getLicensePlateNumberFromImageText(mockText)
+        assert(licensePlate == "12-345-67")
+    }
+
+    @Test
+    fun `should return correct 8-digit license plate when it contains colons`() {
+        val licensePlateWithColons = "123:456:78"
+        val textBlocks = listOf(createTextBlock(licensePlateWithColons, 0.9f))
+        val mockText = mock(Text::class.java)
+        `when`(mockText.textBlocks).thenReturn(textBlocks)
+
+        val licensePlate = getLicensePlateNumberFromImageText(mockText)
+        assert(licensePlate == "123-456-78")
+    }
+
+    @Test
+    fun `should return correct license plate when it contains spaces`() {
+        val licensePlateWithSpaces = "12 345 67"
+        val textBlocks = listOf(createTextBlock(licensePlateWithSpaces, 0.9f))
+        val mockText = mock(Text::class.java)
+        `when`(mockText.textBlocks).thenReturn(textBlocks)
+
+        val licensePlate = getLicensePlateNumberFromImageText(mockText)
+        assert(licensePlate == "12-345-67")
+    }
+
+    @Test
+    fun `should return correct 8-digit license plate when it contains spaces`() {
+        val licensePlateWithSpaces = "123 456 78"
+        val textBlocks = listOf(createTextBlock(licensePlateWithSpaces, 0.9f))
+        val mockText = mock(Text::class.java)
+        `when`(mockText.textBlocks).thenReturn(textBlocks)
+
+        val licensePlate = getLicensePlateNumberFromImageText(mockText)
+        assert(licensePlate == "123-456-78")
+    }
+
+    @Test
     fun `should return correct license plate when only one is present`() {
         val textBlocks = listOf(
             createTextBlock("some text", 0.5f),
