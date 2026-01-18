@@ -22,7 +22,7 @@ coroutines-play-services = "1.7.3"
 coil-compose = "2.2.2"
 
 # ML Kit
-mlkit-text-recognition = "19.0.1"
+mlkit-text-recognition = "16.0.1"
 mlkit-translate = "17.0.3"
 
 # Lottie
@@ -79,7 +79,7 @@ coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil-compose" }
 
 # ML Kit
-mlkit-text-recognition = { module = "com.google.android.gms:play-services-mlkit-text-recognition", version.ref = "mlkit-text-recognition" }
+mlkit-text-recognition = { module = "com.google.mlkit:text-recognition", version.ref = "mlkit-text-recognition" }
 mlkit-translate = { module = "com.google.mlkit:translate", version.ref = "mlkit-translate" }
 
 # Lottie
