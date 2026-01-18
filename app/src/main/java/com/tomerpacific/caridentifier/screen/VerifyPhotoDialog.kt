@@ -56,7 +56,6 @@ import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.getLicensePlateNumberFromImageText
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
-import java.io.IOException
 
 @Composable
 fun VerifyPhotoDialog(
@@ -184,7 +183,7 @@ private fun processImage(
                 mainViewModel.triggerSnackBarEvent(context.getString(R.string.no_license_plate_error))
                 navController.popBackStack()
             }
-    } catch (e: IOException) {
+    } catch (e: Exception) {
         mainViewModel.triggerSnackBarEvent(e.message ?: context.getString(R.string.error_processing_image))
         navController.popBackStack()
     }
