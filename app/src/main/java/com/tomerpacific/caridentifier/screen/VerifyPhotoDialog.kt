@@ -221,8 +221,8 @@ private fun toGrayscale(bmpOriginal: Bitmap): Bitmap {
     paint.colorFilter = f
     c.drawBitmap(bmpToProcess, 0f, 0f, paint)
 
-    if (bmpToProcess !== bmpOriginal) {
-        bmpToProcess.recycle()
+    if (!bmpOriginal.isRecycled) {
+        bmpOriginal.recycle()
     }
 
     return bmpGrayscale
