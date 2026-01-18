@@ -16,7 +16,7 @@ private val licensePlateNumberPatterns = listOf(
     Regex("\\d{3}-\\d{3}-\\d{2}")  // XXX-XXX-XX
 )
 
-val CAR_MANUFACTURER_NAME_TRANSLATION_TO_ENGLISH = 
+val CAR_MANUFACTURER_NAME_TRANSLATION_TO_ENGLISH =
     mapOf(
         "אאודי" to "Audi",
         "אבארט" to "Abarth",
@@ -155,7 +155,7 @@ fun formatCarReviewResponse(
         }
     }
 
-    val carReviewLines = 
+    val carReviewLines =
         carReview
             .removePrefix("\"")
             .removeSuffix("\"")
@@ -184,7 +184,7 @@ fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
         commercialName = commercialName.substring(indexOfManufacturerName + manufacturerName.length).trim()
     }
 
-    return "$manufacturerName ${commercialName.lowercase().replaceFirstChar { it.titlecase() } 
+    return "$manufacturerName ${commercialName.lowercase().replaceFirstChar { it.titlecase() }
     } ${
         carDetails.trimLevel.lowercase().replaceFirstChar { it.titlecase() }
     } ${carDetails.yearOfProduction}"
