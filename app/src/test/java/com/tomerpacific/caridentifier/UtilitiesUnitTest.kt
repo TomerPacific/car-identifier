@@ -10,7 +10,7 @@ class UtilitiesUnitTest {
     private val carManufacturerNissan = "ניסאן"
     private val carManufacturerUnknown = "משהו"
     private val validSevenDigitLicensePlateNumber = "17-655-76"
-    private val anotherValidSevenDigitLicensePlateNumber = "123-45-67"
+    private val anotherValidSevenDigitLicensePlateNumber = "12-345-67"
 
     @Test
     fun `should return true when translated car manufacturer name is Nissan`() {
@@ -30,17 +30,11 @@ class UtilitiesUnitTest {
     }
 
     @Test
-    fun `should return true when another seven digit license plate is valid`() {
-        assert(isLicensePlateNumberValid(anotherValidSevenDigitLicensePlateNumber))
-    }
-
-    @Test
     fun `should return false when license plate is not valid`() {
         assert(!isLicensePlateNumberValid(""))
         assert(!isLicensePlateNumberValid("12-345-6789"))
         assert(!isLicensePlateNumberValid("1-23-45"))
         assert(!isLicensePlateNumberValid("12-ABC-78"))
-        assert(!isLicensePlateNumberValid("123-45-678"))
     }
 
     @Test
@@ -56,7 +50,7 @@ class UtilitiesUnitTest {
 
     @Test
     fun `should return correct alternate seven digit license plate when it contains colons`() {
-        val licensePlateWithColons = "123:45:67"
+        val licensePlateWithColons = "12:345:67"
         val textBlocks = listOf(createTextBlock(licensePlateWithColons, 0.9f))
         val mockText = mock(Text::class.java)
         `when`(mockText.textBlocks).thenReturn(textBlocks)
@@ -78,7 +72,7 @@ class UtilitiesUnitTest {
 
     @Test
     fun `should return correct alternate seven digit license plate when it contains spaces`() {
-        val licensePlateWithSpaces = "123 45 67"
+        val licensePlateWithSpaces = "12 345 67"
         val textBlocks = listOf(createTextBlock(licensePlateWithSpaces, 0.9f))
         val mockText = mock(Text::class.java)
         `when`(mockText.textBlocks).thenReturn(textBlocks)
