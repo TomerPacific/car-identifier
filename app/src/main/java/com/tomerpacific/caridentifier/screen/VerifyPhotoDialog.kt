@@ -184,7 +184,8 @@ private fun processImage(
                     }
                 }
             }
-            .addOnFailureListener { _ ->
+            .addOnFailureListener { exception ->
+                Log.e("VerifyPhotoDialog", "Text recognition failed", exception)
                 mainViewModel.triggerSnackBarEvent(context.getString(R.string.no_license_plate_error))
                 navController.popBackStack()
             }.addOnCompleteListener {
