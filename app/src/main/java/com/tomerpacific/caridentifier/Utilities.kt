@@ -14,7 +14,7 @@ const val REVIEW_ENGLISH = " review"
 private val licensePlateNumberPatterns =
     listOf(
         Regex("\\d{2}-\\d{3}-\\d{2}"),
-        Regex("\\d{3}-\\d{2}-\\d{2}"),
+        Regex("\\d{3}-\\d{2}-\\d{3}"),
     )
 
 val CAR_MANUFACTURER_NAME_TRANSLATION_TO_ENGLISH =
