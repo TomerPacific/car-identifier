@@ -12,6 +12,8 @@ class UtilitiesUnitTest {
     private val validSevenDigitLicensePlateNumber = "17-655-76"
     private val anotherValidSevenDigitLicensePlateNumber = "12-345-67"
 
+    private val validEightDigitLicensePlateNumber = "123-45-678"
+
     @Test
     fun `should return true when translated car manufacturer name is Nissan`() {
         val translatedCarManufacturer = getCarManufacturer(carManufacturerNissan)
@@ -57,6 +59,33 @@ class UtilitiesUnitTest {
 
         val licensePlate = getLicensePlateNumberFromImageText(mockText)
         assert(licensePlate == "12-345-67")
+    }
+
+    @Test
+    fun `should return correct license plate when it is eight digits`() {
+        assert(isLicensePlateNumberValid(validEightDigitLicensePlateNumber))
+    }
+
+    @Test
+    fun `should return correct license plate when it contains colons for eight digit license plate`() {
+        val licensePlateWithColons = "123:45:678"
+        val textBlocks = listOf(createTextBlock(licensePlateWithColons, 0.9f))
+        val mockText = mock(Text::class.java)
+        `when`(mockText.textBlocks).thenReturn(textBlocks)
+
+        val licensePlate = getLicensePlateNumberFromImageText(mockText)
+        assert(licensePlate == validEightDigitLicensePlateNumber)
+    }
+
+    @Test
+    fun `should return correct license plate when it contains spaces for eight digit license plate`() {
+        val licensePlateWithSpaces = "123 45 678"
+        val textBlocks = listOf(createTextBlock(licensePlateWithSpaces, 0.9f))
+        val mockText = mock(Text::class.java)
+        `when`(mockText.textBlocks).thenReturn(textBlocks)
+
+        val licensePlate = getLicensePlateNumberFromImageText(mockText)
+        assert(licensePlate == validEightDigitLicensePlateNumber)
     }
 
     @Test
