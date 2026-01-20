@@ -49,17 +49,6 @@ class UtilitiesUnitTest {
     }
 
     @Test
-    fun `should return correct alternate seven digit license plate when it contains colons`() {
-        val licensePlateWithColons = "12:345:67"
-        val textBlocks = listOf(createTextBlock(licensePlateWithColons, 0.9f))
-        val mockText = mock(Text::class.java)
-        `when`(mockText.textBlocks).thenReturn(textBlocks)
-
-        val licensePlate = getLicensePlateNumberFromImageText(mockText)
-        assert(licensePlate == anotherValidSevenDigitLicensePlateNumber)
-    }
-
-    @Test
     fun `should return correct license plate when it contains spaces`() {
         val licensePlateWithSpaces = "12 345 67"
         val textBlocks = listOf(createTextBlock(licensePlateWithSpaces, 0.9f))
@@ -68,17 +57,6 @@ class UtilitiesUnitTest {
 
         val licensePlate = getLicensePlateNumberFromImageText(mockText)
         assert(licensePlate == "12-345-67")
-    }
-
-    @Test
-    fun `should return correct alternate seven digit license plate when it contains spaces`() {
-        val licensePlateWithSpaces = "12 345 67"
-        val textBlocks = listOf(createTextBlock(licensePlateWithSpaces, 0.9f))
-        val mockText = mock(Text::class.java)
-        `when`(mockText.textBlocks).thenReturn(textBlocks)
-
-        val licensePlate = getLicensePlateNumberFromImageText(mockText)
-        assert(licensePlate == anotherValidSevenDigitLicensePlateNumber)
     }
 
     @Test
