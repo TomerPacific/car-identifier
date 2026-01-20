@@ -144,7 +144,7 @@ class UtilitiesUnitTest {
 
     private fun createTextBlock(
         text: String,
-        confidence: Float?,
+        confidence: Float = 0.0f,
     ): Text.TextBlock {
         val mockLine = mock(Text.Line::class.java)
         `when`(mockLine.text).thenReturn(text)
