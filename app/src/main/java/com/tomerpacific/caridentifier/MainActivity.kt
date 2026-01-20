@@ -16,11 +16,11 @@ import com.tomerpacific.caridentifier.data.network.ConnectivityObserver
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import com.tomerpacific.caridentifier.screen.CarDetailsScreen
+import com.tomerpacific.caridentifier.screen.HandleCameraPermission
+import com.tomerpacific.caridentifier.screen.HandleGalleryPicker
 import com.tomerpacific.caridentifier.screen.LicensePlateNumberDialog
 import com.tomerpacific.caridentifier.screen.MainScreen
 import com.tomerpacific.caridentifier.screen.VerifyPhotoDialog
-import com.tomerpacific.caridentifier.screen.HandleCameraPermission
-import com.tomerpacific.caridentifier.screen.HandleGalleryPicker
 
 const val IMAGE_URI_KEY = "imageUri"
 

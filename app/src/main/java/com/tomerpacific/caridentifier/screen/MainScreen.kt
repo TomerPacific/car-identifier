@@ -62,7 +62,8 @@ fun MainScreen(
                     contentWindowInsets = WindowInsets.safeContent,
                     snackbarHost = {
                         SnackbarHost(hostState = snackbarHostState)
-                    }) { innerPadding ->
+                    },
+                ) { innerPadding ->
 
                     LaunchedEffect(Unit, block = {
                         mainViewModel.snackbarEvent.collect { message ->
@@ -71,9 +72,10 @@ fun MainScreen(
                     })
 
                     Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding),
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(innerPadding),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Top,
                     ) {
@@ -82,7 +84,7 @@ fun MainScreen(
                         LicensePlateInputOptions(
                             navController,
                             shouldDisableButton,
-                            Modifier.weight(1f)
+                            Modifier.weight(1f),
                         )
                         AppVersion()
                     }

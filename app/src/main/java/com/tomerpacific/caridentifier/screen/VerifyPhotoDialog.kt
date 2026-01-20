@@ -1,8 +1,17 @@
 package com.tomerpacific.caridentifier.screen
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.ImageDecoder
+import android.graphics.Paint
 import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +31,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,22 +43,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.graphics.createBitmap
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.tomerpacific.caridentifier.R
-import com.tomerpacific.caridentifier.isLicensePlateNumberValid
+import com.tomerpacific.caridentifier.getLicensePlateNumberFromImageText
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
-import java.io.IOException
-
-val textRecognizer =
-    TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
 @Composable
 fun VerifyPhotoDialog(
@@ -57,6 +65,16 @@ fun VerifyPhotoDialog(
 ) {
     val context = LocalContext.current
     val uri: Uri?
+    val textRecognizer =
+        remember {
+            TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+        }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            textRecognizer.close()
+        }
+    }
 
     try {
         uri = imageUri.toUri()
@@ -81,7 +99,10 @@ fun VerifyPhotoDialog(
             shape = RoundedCornerShape(16.dp),
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -94,7 +115,10 @@ fun VerifyPhotoDialog(
                             .build(),
                     contentDescription = "icon",
                     contentScale = ContentScale.Inside,
-                    modifier = Modifier.heightIn(max = 300.dp).fillMaxWidth(),
+                    modifier =
+                        Modifier
+                            .heightIn(max = 300.dp)
+                            .fillMaxWidth(),
                 )
                 Spacer(modifier = Modifier.size(20.dp))
                 Row(
@@ -114,7 +138,7 @@ fun VerifyPhotoDialog(
                         )
                     }
                     Button(
-                        onClick = { processImage(context, uri, mainViewModel, navController) },
+                        onClick = { processImage(context, uri, mainViewModel, navController, textRecognizer) },
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Green),
                         modifier = Modifier.padding(end = 6.dp),
                     ) {
@@ -134,9 +158,15 @@ private fun processImage(
     imageUri: Uri,
     mainViewModel: MainViewModel,
     navController: NavController,
+    textRecognizer: TextRecognizer,
 ) {
+    var bitmap: Bitmap? = null
+    var grayscaleBitmap: Bitmap? = null
     try {
-        val image = InputImage.fromFilePath(context, imageUri)
+        bitmap = getBitmapFromUri(context, imageUri)
+        grayscaleBitmap = toGrayscale(bitmap)
+        val image = InputImage.fromBitmap(grayscaleBitmap, 0)
+
         textRecognizer.process(image)
             .addOnSuccessListener { visionText ->
                 val licensePlateNumber =
@@ -154,23 +184,67 @@ private fun processImage(
                     }
                 }
             }
-            .addOnFailureListener { _ ->
+            .addOnFailureListener { exception ->
+                Log.e("VerifyPhotoDialog", "Text recognition failed", exception)
                 mainViewModel.triggerSnackBarEvent(context.getString(R.string.no_license_plate_error))
                 navController.popBackStack()
+            }.addOnCompleteListener {
+                grayscaleBitmap?.recycle()
+                bitmap?.recycle()
             }
-    } catch (e: IOException) {
+    } catch (e: Exception) {
+        grayscaleBitmap?.recycle()
+        bitmap?.recycle()
         mainViewModel.triggerSnackBarEvent(e.message ?: context.getString(R.string.error_processing_image))
         navController.popBackStack()
     }
 }
 
-private fun getLicensePlateNumberFromImageText(text: Text): String? {
-    for (block in text.textBlocks) {
-        val blockText = block.text
-        if (isLicensePlateNumberValid(blockText)) {
-            return blockText.replace(":", "-")
+private fun getBitmapFromUri(
+    context: Context,
+    imageUri: Uri,
+): Bitmap {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+        getBitmapWithImageDecoder(context, imageUri)
+    } else {
+        @Suppress("DEPRECATION")
+        MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.P)
+private fun getBitmapWithImageDecoder(
+    context: Context,
+    imageUri: Uri,
+): Bitmap {
+    val source = ImageDecoder.createSource(context.contentResolver, imageUri)
+    return ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
+        decoder.isMutableRequired = false
+    }
+}
+
+private fun toGrayscale(bmpOriginal: Bitmap): Bitmap {
+    val bmpToProcess =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            bmpOriginal.config == Bitmap.Config.HARDWARE
+        ) {
+            bmpOriginal.copy(Bitmap.Config.ARGB_8888, false)
+        } else {
+            bmpOriginal
         }
+
+    val bmpGrayscale = createBitmap(bmpToProcess.width, bmpToProcess.height)
+    val c = Canvas(bmpGrayscale)
+    val paint = Paint()
+    val cm = ColorMatrix()
+    cm.setSaturation(0f)
+    val f = ColorMatrixColorFilter(cm)
+    paint.colorFilter = f
+    c.drawBitmap(bmpToProcess, 0f, 0f, paint)
+
+    if (bmpToProcess !== bmpOriginal) {
+        bmpToProcess.recycle()
     }
 
-    return null
+    return bmpGrayscale
 }

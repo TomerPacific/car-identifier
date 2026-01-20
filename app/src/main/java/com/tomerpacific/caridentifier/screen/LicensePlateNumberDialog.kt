@@ -73,9 +73,7 @@ fun LicensePlateNumberDialog(
         )
     }
 
-    val licensePlateInputPattern = Regex("^[0-9-]*\$")
-
-    val validLicensePlatePattern = Regex("^[0-9]{2,3}-[0-9]{2,3}-[0-9]{2,3}")
+    val licensePlateInputPattern = Regex("^[0-9-]*\\$")
 
     var isLicensePlateLengthLimitReached by remember {
         mutableStateOf(false)
@@ -195,8 +193,7 @@ fun LicensePlateNumberDialog(
                 onClick = {
                     didClickConfirmBtn = true
                     if (isLicensePlateNumberValid(
-                            licensePlateNumberState.text,
-                            validLicensePlatePattern,
+                            licensePlateNumberState.text
                         )
                     ) {
                         mainViewModel.getCarDetails(licensePlateNumberState.text)
