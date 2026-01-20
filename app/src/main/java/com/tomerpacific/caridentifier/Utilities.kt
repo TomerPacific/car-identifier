@@ -11,6 +11,10 @@ const val CONS_SECTION_ENGLISH = "Cons"
 const val REVIEW_HEBREW = "ביקורת "
 const val REVIEW_ENGLISH = " review"
 
+const val SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES = 9
+
+const val EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES = 10
+
 private val licensePlateNumberPatterns =
     listOf(
         Regex("\\d{2}-\\d{3}-\\d{2}"),
