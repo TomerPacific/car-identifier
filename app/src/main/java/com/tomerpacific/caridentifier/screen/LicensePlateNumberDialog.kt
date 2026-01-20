@@ -73,7 +73,7 @@ fun LicensePlateNumberDialog(
         )
     }
 
-    val licensePlateInputPattern = Regex("^[0-9-]*$")
+    val licensePlateInputPattern = Regex("^[0-9-]*\\$")
 
     var isLicensePlateLengthLimitReached by remember {
         mutableStateOf(false)
