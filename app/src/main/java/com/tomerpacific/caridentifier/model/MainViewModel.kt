@@ -194,6 +194,49 @@ class MainViewModel(
         }
     }
 
+    fun getTirePressure() {
+        if (!connectivityObserver.isConnectedToNetwork()) {
+            _mainUiState.update {
+                it.copy(
+                    isLoading = false,
+                    errorMessage = NO_INTERNET_CONNECTION_ERROR,
+                )
+            }
+            return
+        }
+
+        if (_mainUiState.value.tirePressure != null) {
+            return
+        }
+
+        val licensePlateNumberWithoutDashes = _licensePlateNumber.replace("-", "")
+        viewModelScope.launch(Dispatchers.IO) {
+            _mainUiState.update {
+                it.copy(isLoading = true)
+            }
+            carDetailsRepository.getTirePressure(licensePlateNumberWithoutDashes)
+                .onSuccess { tirePressure ->
+                    withContext(Dispatchers.Main) {
+                        _mainUiState.update {
+                            it.copy(
+                                isLoading = false,
+                                tirePressure = tirePressure,
+                            )
+                        }
+                    }
+                }.onFailure { error ->
+                    withContext(Dispatchers.Main) {
+                        _mainUiState.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = error.localizedMessage,
+                            )
+                        }
+                    }
+                }
+        }
+    }
+
     fun resetData() {
         _mainUiState.update {
             it.copy(
@@ -202,6 +245,7 @@ class MainViewModel(
                 carDetails = null,
                 carReview = null,
                 reviewUrl = null,
+                tirePressure = null,
             )
         }
     }
