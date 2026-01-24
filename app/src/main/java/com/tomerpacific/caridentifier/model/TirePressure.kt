@@ -10,3 +10,7 @@ data class TirePressure(
     val unit: String? = null,
     val note: String? = null
 )
+
+fun TirePressure.allPropertiesNull(): Boolean {
+    return this.frontPsi == null && this.rearPsi == null && this.note == null
+}
