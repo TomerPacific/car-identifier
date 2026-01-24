@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.model.MainViewModel
+import com.tomerpacific.caridentifier.model.allPropertiesNull
 
 @Composable
 fun TirePressure(viewModel: MainViewModel) {
@@ -45,15 +46,23 @@ fun TirePressure(viewModel: MainViewModel) {
                 }
             }
             tirePressure != null -> {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Text(text = "Front PSI: ${tirePressure.frontPsi}", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                    Text(text = "Rear PSI: ${tirePressure.rearPsi}", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                }
-                tirePressure.note?.let {
-                    Text(text = it, fontSize = 16.sp, modifier = Modifier.padding(top = 10.dp))
+                if (tirePressure.allPropertiesNull()) {
+                    Text(text = stringResource(id = R.string.no_tire_pressure_data_for_car_error_msg))
+                } else {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        tirePressure.frontPsi?.let {
+                            Text(text = "Front PSI: $it", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        }
+                        tirePressure.rearPsi?.let {
+                            Text(text = "Rear PSI: $it", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                    tirePressure.note?.let {
+                        Text(text = it, fontSize = 16.sp, modifier = Modifier.padding(top = 10.dp))
+                    }
                 }
             }
             mainUiState.errorMessage != null -> {
