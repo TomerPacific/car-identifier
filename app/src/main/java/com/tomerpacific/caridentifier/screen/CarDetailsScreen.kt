@@ -27,6 +27,7 @@ import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.composable.Advice
 import com.tomerpacific.caridentifier.composable.Details
 import com.tomerpacific.caridentifier.composable.Reviews
+import com.tomerpacific.caridentifier.composable.TirePressure
 import com.tomerpacific.caridentifier.model.MainViewModel
 
 @Composable
@@ -41,6 +42,7 @@ fun CarDetailsScreen(
             stringResource(R.string.tab_name_details),
             stringResource(R.string.tab_name_reviews),
             stringResource(R.string.tab_name_recommendations),
+            stringResource(R.string.tab_name_tire_pressure)
         )
 
     val mainUiState by mainViewModel.mainUiState.collectAsState()
@@ -65,6 +67,7 @@ fun CarDetailsScreen(
                                         contentDescription = "ai",
                                         modifier = Modifier.size(40.dp),
                                     )
+                                3 -> Icon(painterResource(id = R.drawable.ic_tire_pressure), contentDescription = "tire pressure")
                             }
                         },
                         enabled = mainUiState.errorMessage == null,
@@ -77,6 +80,10 @@ fun CarDetailsScreen(
                 2 -> {
                     mainViewModel.getCarReview()
                     Advice(mainViewModel)
+                }
+                3 -> {
+                    mainViewModel.getTirePressure()
+                    TirePressure(mainViewModel)
                 }
             }
         }
