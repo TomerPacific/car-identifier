@@ -41,7 +41,7 @@ fun TirePressure(viewModel: MainViewModel) {
         when {
             mainUiState.isLoading -> {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                    LoaderAnimation(R.raw.truck_loading_animation)
+                    LoaderAnimation(R.raw.wheel_rotation_animation)
                 }
             }
             tirePressure != null -> {
