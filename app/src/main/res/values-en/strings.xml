@@ -38,4 +38,5 @@
     <string name="car_color_tooltip_explanation">Displays the color of the car</string>
     <string name="first_time_on_road_tooltip_explanation">Displays the date when the car was first registered to be on the road</string>
     <string name="no_tire_pressure_data_for_car_error_msg">No tire pressure data available for this car.</string>
+    <string name="tire_pressure">Tire Pressure</string>
 </resources>
