@@ -81,13 +81,13 @@ fun TirePressure(viewModel: MainViewModel) {
                     }
                     Spacer(modifier = Modifier.height(20.dp))
                     Row(modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center) {
+                        horizontalArrangement = Arrangement.SpaceEvenly) {
 
                         mainUiState.tirePressure!!.frontPsi?.let {
-                            Text(text = "Front Tire PSI: $it", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                            Text(text = "${stringResource(id = R.string.front_tire_psi)} $it", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                         }
                         mainUiState.tirePressure!!.rearPsi?.let {
-                            Text(text = "Rear Tire PSI: $it", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                            Text(text = "${stringResource(id = R.string.rear_tire_psi)} $it", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }

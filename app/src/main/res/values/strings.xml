@@ -39,4 +39,6 @@
     <string name="first_time_on_road_tooltip_explanation">מציג את התאריך שבו הרכב נרשם לראשונה לעלות על הכביש</string>
     <string name="no_tire_pressure_data_for_car_error_msg">לא נמצא מידע על לחץ אוויר בצמיגים עבור רכב זה.</string>
     <string name="tire_pressure">לחץ אוויר בצמיגים</string>
+    <string name="front_tire_psi">לחץ אוויר בצמיג קדמי:</string>
+    <string name="rear_tire_psi">לחץ אוויר בצמיג אחורי:</string>
 </resources>
