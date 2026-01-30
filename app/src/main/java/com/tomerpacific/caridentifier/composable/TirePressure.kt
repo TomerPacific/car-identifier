@@ -1,5 +1,6 @@
 package com.tomerpacific.caridentifier.composable
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -37,8 +39,14 @@ fun TirePressure(viewModel: MainViewModel) {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
+        Text(
+            text = stringResource(id = R.string.tire_pressure),
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(top = 20.dp, bottom = 20.dp)
+        )
         when {
             mainUiState.isLoading -> {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -51,13 +59,26 @@ fun TirePressure(viewModel: MainViewModel) {
                 } else {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         tirePressure.frontPsi?.let {
-                            Text(text = "Front PSI: $it", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.tire_pressure),
+                                    contentDescription = "Front Tire"
+                                )
+                                Text(text = "Front PSI: $it", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                            }
                         }
                         tirePressure.rearPsi?.let {
-                            Text(text = "Rear PSI: $it", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_tire_pressure),
+                                    contentDescription = "Rear Tire"
+                                )
+                                Text(text = "Rear PSI: $it", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                            }
                         }
                     }
                     tirePressure.note?.let {
