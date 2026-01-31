@@ -41,26 +41,18 @@ class MainViewModel(
     val mainUiState: StateFlow<MainUiState> = _mainUiState.asStateFlow()
 
     private val _didRequestCameraPermission = MutableStateFlow(false)
-
-    val didRequestCameraPermission: StateFlow<Boolean>
-        get() = _didRequestCameraPermission
+    val didRequestCameraPermission: StateFlow<Boolean> get() = _didRequestCameraPermission
 
     private val _shouldShowRationale = MutableStateFlow(false)
-
-    val shouldShowRationale: StateFlow<Boolean>
-        get() = _shouldShowRationale
+    val shouldShowRationale: StateFlow<Boolean> get() = _shouldShowRationale
 
     private var searchTerm: String = ""
-
     private val _snackbarEvent = MutableSharedFlow<String>()
     val snackbarEvent = _snackbarEvent.asSharedFlow()
-
     private var _licensePlateNumber: String = ""
 
     fun triggerSnackBarEvent(message: String) {
-        viewModelScope.launch {
-            _snackbarEvent.emit(message)
-        }
+        viewModelScope.launch { _snackbarEvent.emit(message) }
     }
 
     init {
@@ -69,75 +61,54 @@ class MainViewModel(
     }
 
     fun getCarDetails(licensePlateNumber: String? = null) {
-        licensePlateNumber?.let {
-            _licensePlateNumber = it
-        }
+        licensePlateNumber?.let { _licensePlateNumber = it }
 
         if (!connectivityObserver.isConnectedToNetwork()) {
-            _mainUiState.update {
-                it.copy(
-                    isLoading = false,
-                    errorMessage = NO_INTERNET_CONNECTION_ERROR,
-                )
-            }
+            _mainUiState.update { it.copy(isLoading = false, errorMessage = NO_INTERNET_CONNECTION_ERROR) }
             return
         }
 
         val licensePlateNumberWithoutDashes = _licensePlateNumber.replace("-", "")
         viewModelScope.launch(Dispatchers.IO) {
-            _mainUiState.update {
-                it.copy(isLoading = true, errorMessage = null)
-            }
-            carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes).onSuccess { carDetails ->
-
-                when (languageTranslator.isHebrewLanguage()) {
-                    true -> {
+            _mainUiState.update { it.copy(isLoading = true, errorMessage = null) }
+            carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes)
+                .onSuccess { carDetails ->
+                    if (languageTranslator.isHebrewLanguage()) {
                         languageTranslator.translate(concatenateCarMakeAndModel(carDetails))
                             .onSuccess { translatedText ->
                                 searchTerm = "$REVIEW_HEBREW${translatedText.first()}"
-                            }.onFailure { error ->
-                                Log.e(TAG, error.localizedMessage ?: FAILED_TO_TRANSLATE_MSG)
+                            }.onFailure {
+                                Log.e(TAG, it.localizedMessage ?: FAILED_TO_TRANSLATE_MSG)
                                 searchTerm = concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH
                             }
+                    } else {
+                        carDetails.color = languageTranslator.translate(carDetails.color)
+                            .getOrDefault(FAILED_TO_TRANSLATE_MSG)
+                        carDetails.ownership = languageTranslator.translateOwnership(carDetails.ownership)
+                        carDetails.fuelType = languageTranslator.translateFuelType(carDetails.fuelType)
+                        searchTerm = concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH
                     }
-
-                    else -> {
-                        handleHebrewToEnglishTranslation(carDetails)
-                    }
-                }
-                withContext(Dispatchers.Main) {
-                    _mainUiState.update {
-                        it.copy(
-                            isLoading = false,
-                            carDetails = carDetails,
-                            reviewUrl = "${CAR_REVIEW_ENDPOINT}$searchTerm",
-                        )
-                    }
-                }
-            }.onFailure { exception ->
-                exception.localizedMessage?.let {
-                    val errorMessage =
-                        when (it.contains("[")) {
-                            true -> {
-                                it.subSequence(
-                                    0,
-                                    it.indexOf("["),
-                                ).toString().trim()
-                            }
-
-                            false -> exception.localizedMessage?.trim()
-                        }
-
                     withContext(Dispatchers.Main) {
                         _mainUiState.update {
                             it.copy(
                                 isLoading = false,
-                                errorMessage = errorMessage,
+                                carDetails = carDetails,
+                                reviewUrl = "${CAR_REVIEW_ENDPOINT}$searchTerm"
                             )
                         }
                     }
+                }.onFailure { exception ->
+                    val errorMessage = exception.localizedMessage?.let {
+                        if (it.contains("[")) {
+                            it.substring(0, it.indexOf("[")).trim()
+                        } else {
+                            it.trim()
+                        }
+                    }
+                    withContext(Dispatchers.Main) {
+                        _mainUiState.update { it.copy(isLoading = false, errorMessage = errorMessage) }
+                    }
                 }
-            }
         }
     }
 
@@ -154,41 +125,25 @@ class MainViewModel(
 
     fun getCarReview() {
         if (!connectivityObserver.isConnectedToNetwork()) {
-            _mainUiState.update {
-                it.copy(
-                    isLoading = false,
-                    errorMessage = NO_INTERNET_CONNECTION_ERROR,
-                )
-            }
+            _mainUiState.update { it.copy(isLoading = false, errorMessage = NO_INTERNET_CONNECTION_ERROR) }
             return
         }
-
-        if (_mainUiState.value.carReview != null) {
-            return
-        }
+        if (_mainUiState.value.carReview != null) return
 
         viewModelScope.launch(Dispatchers.IO) {
-            _mainUiState.update {
-                it.copy(isLoading = true)
-            }
+            _mainUiState.update { it.copy(isLoading = true) }
             carDetailsRepository.getCarReview(searchTerm, languageTranslator.currentLocale)
                 .onSuccess { carReview ->
                     withContext(Dispatchers.Main) {
+                        val formattedCarReview = formatCarReviewResponse(
+                            carReview, languageTranslator)
                         _mainUiState.update {
-                            it.copy(
-                                isLoading = false,
-                                carReview = formatCarReviewResponse(carReview, languageTranslator),
-                            )
+                            it.copy(isLoading = false, carReview = formattedCarReview)
                         }
                     }
                 }.onFailure { error ->
                     withContext(Dispatchers.Main) {
-                        _mainUiState.update {
-                            it.copy(
-                                isLoading = false,
-                                errorMessage = error.localizedMessage,
-                            )
-                        }
+                        _mainUiState.update { it.copy(isLoading = false, errorMessage = error.localizedMessage) }
                     }
                 }
         }
@@ -196,42 +151,22 @@ class MainViewModel(
 
     fun getTirePressure() {
         if (!connectivityObserver.isConnectedToNetwork()) {
-            _mainUiState.update {
-                it.copy(
-                    isLoading = false,
-                    errorMessage = NO_INTERNET_CONNECTION_ERROR,
-                )
-            }
+            _mainUiState.update { it.copy(isLoading = false, errorMessage = NO_INTERNET_CONNECTION_ERROR) }
             return
         }
-
-        if (_mainUiState.value.tirePressure != null) {
-            return
-        }
+        if (_mainUiState.value.tirePressure != null) return
 
         val licensePlateNumberWithoutDashes = _licensePlateNumber.replace("-", "")
         viewModelScope.launch(Dispatchers.IO) {
-            _mainUiState.update {
-                it.copy(isLoading = true)
-            }
+            _mainUiState.update { it.copy(isLoading = true) }
             carDetailsRepository.getTirePressure(licensePlateNumberWithoutDashes)
                 .onSuccess { tirePressure ->
                     withContext(Dispatchers.Main) {
-                        _mainUiState.update {
-                            it.copy(
-                                isLoading = false,
-                                tirePressure = tirePressure,
-                            )
-                        }
+                        _mainUiState.update { it.copy(isLoading = false, tirePressure = tirePressure) }
                     }
                 }.onFailure { error ->
                     withContext(Dispatchers.Main) {
-                        _mainUiState.update {
-                            it.copy(
-                                isLoading = false,
-                                errorMessage = error.localizedMessage,
-                            )
-                        }
+                        _mainUiState.update { it.copy(isLoading = false, errorMessage = error.localizedMessage) }
                     }
                 }
         }
@@ -245,44 +180,17 @@ class MainViewModel(
                 carDetails = null,
                 carReview = null,
                 reviewUrl = null,
-                tirePressure = null,
+                tirePressure = null
             )
         }
     }
 
-    fun shouldShowRetryRequestButton(): Boolean {
-        return _mainUiState.value.errorMessage == NO_INTERNET_CONNECTION_ERROR ||
-            _mainUiState.value.errorMessage == REQUEST_TIMEOUT_ERROR
-    }
+    fun shouldShowRetryRequestButton(): Boolean = _mainUiState.value.errorMessage in listOf(
+        NO_INTERNET_CONNECTION_ERROR, REQUEST_TIMEOUT_ERROR
+    )
 
-    fun getTranslatedSectionHeader(sectionHeader: SectionHeader): String {
-        return languageTranslator.getSectionHeaderTitle(sectionHeader)
-    }
-
-    private suspend fun handleHebrewToEnglishTranslation(carDetails: CarDetails) {
-        languageTranslator.translate(
-            carDetails.color,
-        ).onSuccess { translatedText ->
-            carDetails.color = translatedText.first()
-        }.onFailure {
-            carDetails.color = FAILED_TO_TRANSLATE_MSG
-        }
-
-        carDetails.apply {
-            ownership = languageTranslator.translateOwnership(carDetails.ownership)
-            fuelType = languageTranslator.translateFuelType(carDetails.fuelType)
-        }
-        searchTerm = concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH
-        withContext(Dispatchers.Main) {
-            _mainUiState.update {
-                it.copy(
-                    isLoading = false,
-                    carDetails = carDetails,
-                    reviewUrl = "${CAR_REVIEW_ENDPOINT}$searchTerm",
-                )
-            }
-        }
-    }
+    fun getTranslatedSectionHeader(sectionHeader: SectionHeader): String =
+        languageTranslator.getSectionHeaderTitle(sectionHeader)
 
     override fun onCleared() {
         super.onCleared()

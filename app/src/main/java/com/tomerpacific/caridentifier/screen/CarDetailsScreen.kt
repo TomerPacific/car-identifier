@@ -30,65 +30,78 @@ import com.tomerpacific.caridentifier.composable.Reviews
 import com.tomerpacific.caridentifier.composable.TirePressure
 import com.tomerpacific.caridentifier.model.MainViewModel
 
+private const val CHAT_GPT_ICON_SIZE = 40
+private const val TAB_DETAILS_INDEX = 0
+private const val TAB_REVIEWS_INDEX = 1
+private const val TAB_AI_INDEX = 2
+private const val TAB_TIRE_PRESSURE_INDEX = 3
+
 @Composable
 fun CarDetailsScreen(
     mainViewModel: MainViewModel,
     navController: NavController,
 ) {
     var tabIndex by remember { mutableIntStateOf(0) }
-
-    val tabs =
-        listOf(
-            stringResource(R.string.tab_name_details),
-            stringResource(R.string.tab_name_reviews),
-            stringResource(R.string.tab_name_recommendations),
-            stringResource(R.string.tab_name_tire_pressure)
-        )
-
-    val mainUiState by mainViewModel.mainUiState.collectAsState()
+    val tabs = listOf(
+        stringResource(R.string.tab_name_details),
+        stringResource(R.string.tab_name_reviews),
+        stringResource(R.string.tab_name_recommendations),
+        stringResource(R.string.tab_name_tire_pressure)
+    )
 
     Scaffold(contentWindowInsets = WindowInsets.safeContent) { innerPadding ->
-        Column(modifier = Modifier.fillMaxWidth().padding(innerPadding)) {
-            TabRow(selectedTabIndex = tabIndex) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
-                        text = { Text(title) },
-                        selected = tabIndex == index,
-                        onClick = { tabIndex = index },
-                        icon = {
-                            when (index) {
-                                0 -> Icon(painterResource(id = R.drawable.ic_fact_check), contentDescription = "list")
-                                1 -> Icon(painterResource(id = R.drawable.ic_reviews), contentDescription = "reviews")
-                                2 ->
-                                    Icon(
-                                        painterResource(
-                                            id = R.drawable.ic_chatgpt,
-                                        ),
-                                        contentDescription = "ai",
-                                        modifier = Modifier.size(40.dp),
-                                    )
-                                3 -> Icon(painterResource(id = R.drawable.ic_tire_pressure), contentDescription = "tire pressure")
-                            }
-                        },
-                        enabled = mainUiState.errorMessage == null,
-                    )
-                }
+        Column(modifier = Modifier.padding(innerPadding)) {
+            CarDetailsTabs(tabs, tabIndex) { newTabIndex ->
+                tabIndex = newTabIndex
             }
             when (tabIndex) {
-                0 -> Details(mainViewModel)
-                1 -> Reviews(mainViewModel)
-                2 -> {
+                TAB_DETAILS_INDEX -> Details(mainViewModel)
+                TAB_REVIEWS_INDEX -> Reviews(mainViewModel)
+                TAB_AI_INDEX -> {
                     mainViewModel.getCarReview()
                     Advice(mainViewModel)
                 }
-                3 -> {
+                TAB_TIRE_PRESSURE_INDEX -> {
                     mainViewModel.getTirePressure()
                     TirePressure(mainViewModel)
                 }
             }
         }
-        BackHandler {
-            navController.popBackStack()
+        BackHandler { navController.popBackStack() }
+    }
+}
+
+@Composable
+private fun CarDetailsTabs(
+    tabs: List<String>,
+    tabIndex: Int,
+    onTabClicked: (Int) -> Unit
+) {
+    val mainUiState by mainViewModel.mainUiState.collectAsState()
+
+    TabRow(selectedTabIndex = tabIndex) {
+        tabs.forEachIndexed { index, title ->
+            Tab(
+                text = { Text(title) },
+                selected = tabIndex == index,
+                onClick = { onTabClicked(index) },
+                icon = {
+                    when (index) {
+                        TAB_DETAILS_INDEX -> Icon(painterResource(id = R.drawable.ic_fact_check), "list")
+                        TAB_REVIEWS_INDEX -> Icon(painterResource(id = R.drawable.ic_reviews), "reviews")
+                        TAB_AI_INDEX -> Icon(
+                            painter = painterResource(id = R.drawable.ic_chatgpt),
+                            contentDescription = "ai",
+                            modifier = Modifier.size(CHAT_GPT_ICON_SIZE.dp)
+                        )
+                        TAB_TIRE_PRESSURE_INDEX -> Icon(
+                            painter = painterResource(id = R.drawable.ic_tire_pressure),
+                            contentDescription = "tire pressure"
+                        )
+                    }
+                },
+                enabled = mainUiState.errorMessage == null
+            )
         }
     }
 }
