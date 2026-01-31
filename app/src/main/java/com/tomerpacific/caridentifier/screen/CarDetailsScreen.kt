@@ -51,7 +51,7 @@ fun CarDetailsScreen(
 
     Scaffold(contentWindowInsets = WindowInsets.safeContent) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            CarDetailsTabs(tabs, tabIndex) { newTabIndex ->
+            CarDetailsTabs(tabs, tabIndex, mainViewModel) { newTabIndex ->
                 tabIndex = newTabIndex
             }
             when (tabIndex) {
@@ -75,6 +75,7 @@ fun CarDetailsScreen(
 private fun CarDetailsTabs(
     tabs: List<String>,
     tabIndex: Int,
+    mainViewModel: MainViewModel,
     onTabClicked: (Int) -> Unit
 ) {
     val mainUiState by mainViewModel.mainUiState.collectAsState()

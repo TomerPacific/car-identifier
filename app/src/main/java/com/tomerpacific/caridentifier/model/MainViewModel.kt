@@ -82,8 +82,12 @@ class MainViewModel(
                                 searchTerm = concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH
                             }
                     } else {
-                        carDetails.color = languageTranslator.translate(carDetails.color)
-                            .getOrDefault(FAILED_TO_TRANSLATE_MSG)
+                        languageTranslator.translate(carDetails.color)
+                            .onSuccess { translatedColor ->
+                                carDetails.color = translatedColor.first()
+                            }.onFailure { 
+                                carDetails.color = FAILED_TO_TRANSLATE_MSG
+                            }
                         carDetails.ownership = languageTranslator.translateOwnership(carDetails.ownership)
                         carDetails.fuelType = languageTranslator.translateFuelType(carDetails.fuelType)
                         searchTerm = concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH

@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.model.MainViewModel
-import com.tomerpacific.caridentifier.model.TirePressureData
+import com.tomerpacific.caridentifier.model.TirePressure
 import com.tomerpacific.caridentifier.model.allPropertiesNull
 
 @Composable
@@ -49,7 +49,7 @@ fun TirePressure(viewModel: MainViewModel) {
     ) {
         when {
             mainUiState.isLoading -> TirePressureLoading()
-            mainUiState.tirePressure != null -> TirePressureData(mainUiState.tirePressure)
+            mainUiState.tirePressure != null -> TirePressureContent(mainUiState.tirePressure)
             mainUiState.errorMessage != null -> TirePressureError(mainUiState.errorMessage)
         }
     }
@@ -63,7 +63,7 @@ private fun TirePressureLoading() {
 }
 
 @Composable
-private fun TirePressureData(tirePressure: TirePressureData?) {
+private fun TirePressureContent(tirePressure: TirePressure?) {
     if (tirePressure == null || tirePressure.allPropertiesNull()) {
         Text(text = stringResource(id = R.string.no_tire_pressure_data_for_car_error_msg))
     } else {
@@ -72,7 +72,7 @@ private fun TirePressureData(tirePressure: TirePressureData?) {
 }
 
 @Composable
-private fun TirePressureDetails(tirePressure: TirePressureData) {
+private fun TirePressureDetails(tirePressure: TirePressure) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center
@@ -137,4 +137,3 @@ private fun TirePressureError(errorMessage: String?) {
         )
     }
 }
-
