@@ -33,7 +33,7 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
 
         return when (httpResponse.status.value) {
             in HTTP_STATUS_OK_LOWER_LIMIT..HTTP_STATUS_OK_UPPER_LIMIT -> {
-                val carDetails = httpResponse.body() as CarDetails
+                val carDetails = httpResponse.body<CarDetails>()
                 Result.success(carDetails)
             }
             else -> {
@@ -56,7 +56,7 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
 
         return when (httpResponse.status.value) {
             in HTTP_STATUS_OK_LOWER_LIMIT..HTTP_STATUS_OK_UPPER_LIMIT -> {
-                val tirePressure = httpResponse.body() as TirePressure
+                val tirePressure = httpResponse.body<TirePressure>()
                 Result.success(tirePressure)
             }
             else -> {
