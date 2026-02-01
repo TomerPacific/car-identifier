@@ -22,11 +22,7 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
     private suspend fun HttpClient.getCarDetails(licensePlateNumber: String): Result<CarDetails> {
         val httpResponse: HttpResponse =
             try {
-                get(BuildConfig.BASE_URL) {
-                    url {
-                        encodedPath = "/vehicle/$licensePlateNumber"
-                    }
-                }
+                get("${BuildConfig.BASE_URL}/vehicle/$licensePlateNumber")
             } catch (e: Exception) {
                 return Result.failure(e)
             }
@@ -45,11 +41,7 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
     private suspend fun HttpClient.getTirePressure(licensePlateNumber: String): Result<TirePressure> {
         val httpResponse: HttpResponse =
             try {
-                get(BuildConfig.BASE_URL) {
-                    url {
-                        encodedPath = "/tire-pressure/$licensePlateNumber"
-                    }
-                }
+                get("${BuildConfig.BASE_URL}/tire-pressure/$licensePlateNumber")
             } catch (e: Exception) {
                 return Result.failure(e)
             }
@@ -72,10 +64,7 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
     ): Result<String> {
         val httpResponse: HttpResponse =
             try {
-                get(BuildConfig.BASE_URL) {
-                    url {
-                        encodedPath = "/review/$searchQuery"
-                    }
+                get("${BuildConfig.BASE_URL}/review/$searchQuery") {
                     header("Accept-Language", locale)
                 }
             } catch (e: Exception) {
