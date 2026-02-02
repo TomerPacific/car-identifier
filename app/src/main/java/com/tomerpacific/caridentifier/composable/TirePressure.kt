@@ -123,7 +123,7 @@ private fun TirePressureError(errorMessage: String?) {
     errorMessage?.let {
         Spacer(modifier = Modifier.size(20.dp))
         Text(
-            text = stringResource(R.string.car_details_not_obtained_error_msg),
+            text = stringResource(R.string.no_tire_pressure_data_for_car_error_msg),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
