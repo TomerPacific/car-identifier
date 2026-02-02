@@ -26,7 +26,6 @@ import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.composable.Advice
 import com.tomerpacific.caridentifier.composable.Details
 import com.tomerpacific.caridentifier.composable.Reviews
-import com.tomerpacific.caridentifier.composable.TirePressureScreen
 import com.tomerpacific.caridentifier.model.MainViewModel
 
 private const val CHAT_GPT_ICON_SIZE = 40
