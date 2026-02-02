@@ -12,5 +12,5 @@ data class TirePressure(
 )
 
 fun TirePressure.allPropertiesNull(): Boolean {
-    return this.frontPsi == null && this.rearPsi == null && this.note == null
+    return this.frontPsi == null && this.rearPsi == null && this.unit == null && this.note == null
 }
