@@ -37,7 +37,7 @@ import com.tomerpacific.caridentifier.model.TirePressure
 import com.tomerpacific.caridentifier.model.allPropertiesNull
 
 @Composable
-fun TirePressure(viewModel: MainViewModel) {
+fun TirePressureScreen(viewModel: MainViewModel) {
     val mainUiState by viewModel.mainUiState.collectAsState()
 
     Column(
