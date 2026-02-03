@@ -2,6 +2,7 @@ package com.tomerpacific.caridentifier.data
 
 import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.CarReview
+import com.tomerpacific.caridentifier.model.TirePressure
 
 data class MainUiState(
     val isLoading: Boolean = false,
@@ -9,4 +10,5 @@ data class MainUiState(
     val carDetails: CarDetails? = null,
     val carReview: CarReview? = null,
     val reviewUrl: String? = null,
+    val tirePressure: TirePressure? = null
 )

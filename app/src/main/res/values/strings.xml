@@ -3,6 +3,7 @@
     <string name="tab_name_details">פרטים</string>
     <string name="tab_name_reviews">ביקורות</string>
     <string name="tab_name_recommendations">המלצות</string>
+    <string name="tab_name_tire_pressure">לחץ אוויר בצמיגים</string>
     <string name="main_screen_header">בחר/י באפשרות לחפש פרטים בנוגע לרכב</string>
     <string name="main_screen_search_by_image">חפש/י לפי תמונה</string>
     <string name="main_screen_search_by_gallery">חפש/י מהגלריה</string>
@@ -36,4 +37,8 @@
     <string name="air_pollution_rating_tooltip_explanation">מציג את דירוג זיהום האוויר של הרכב, שזהו מספר עד 15</string>
     <string name="car_color_tooltip_explanation">מציג את צבע הרכב</string>
     <string name="first_time_on_road_tooltip_explanation">מציג את התאריך שבו הרכב נרשם לראשונה לעלות על הכביש</string>
+    <string name="no_tire_pressure_data_for_car_error_msg">לא נמצא מידע על לחץ אוויר בצמיגים עבור רכב זה.</string>
+    <string name="tire_pressure">לחץ אוויר בצמיגים</string>
+    <string name="front_tire_psi">לחץ אוויר בצמיג קדמי:</string>
+    <string name="rear_tire_psi">לחץ אוויר בצמיג אחורי:</string>
 </resources>

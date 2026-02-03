@@ -4,8 +4,10 @@
     <string name="tab_name_details">Details</string>
     <string name="tab_name_reviews">Reviews</string>
     <string name="tab_name_recommendations">Advice</string>
+    <string name="tab_name_tire_pressure">Tire Pressure</string>
     <string name="main_screen_header">Choose an option to search for details about a car</string>
     <string name="main_screen_search_by_image">Search By Image</string>
+    <string name="main_screen_search_by_gallery">Search From Gallery</string>
     <string name="main_screen_search_by_license_plate">Search By License Plate</string>
     <string name="no_license_plate_error">There was no license plate found. Please take a photo with one.</string>
     <string name="verify_photo_msg">Continue with this photo?</string>
@@ -36,4 +38,8 @@
     <string name="air_pollution_rating_tooltip_explanation">Displays the air pollution rating of the car, which is a score out of 15</string>
     <string name="car_color_tooltip_explanation">Displays the color of the car</string>
     <string name="first_time_on_road_tooltip_explanation">Displays the date when the car was first registered to be on the road</string>
+    <string name="no_tire_pressure_data_for_car_error_msg">No tire pressure data available for this car.</string>
+    <string name="tire_pressure">Tire Pressure</string>
+    <string name="front_tire_psi">Front Tire PSI:</string>
+    <string name="rear_tire_psi">Rear Tire PSI:</string>
 </resources>
