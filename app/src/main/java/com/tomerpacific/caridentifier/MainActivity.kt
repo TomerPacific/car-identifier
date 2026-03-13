@@ -13,7 +13,6 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tomerpacific.caridentifier.composable.CameraPreview
-import com.tomerpacific.caridentifier.data.network.ConnectivityObserver
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import com.tomerpacific.caridentifier.screen.CarDetailsScreen
