@@ -1,5 +1,6 @@
 package com.tomerpacific.caridentifier.model
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.content.edit
@@ -205,10 +206,11 @@ class MainViewModel(
 
     class Factory(
         private val sharedPreferences: SharedPreferences,
-        private val connectivityObserver: ConnectivityObserver
+        private val context: Context
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+                val connectivityObserver = ConnectivityObserver(context)
                 @Suppress("UNCHECKED_CAST")
                 return MainViewModel(sharedPreferences, connectivityObserver) as T
             }
