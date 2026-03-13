@@ -210,7 +210,7 @@ class MainViewModel(
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass == MainViewModel::class.java) {
-                val connectivityObserver = ConnectivityObserver(context)
+                val connectivityObserver = ConnectivityObserver(context.applicationContext)
                 @Suppress("UNCHECKED_CAST")
                 return MainViewModel(sharedPreferences, connectivityObserver) as T
             }
