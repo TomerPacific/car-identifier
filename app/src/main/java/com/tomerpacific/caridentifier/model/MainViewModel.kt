@@ -209,7 +209,7 @@ class MainViewModel(
         private val context: Context
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass == MainViewModel::class.java) {
+            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
                 val connectivityObserver = ConnectivityObserver(context.applicationContext)
                 @Suppress("UNCHECKED_CAST")
                 return MainViewModel(sharedPreferences, connectivityObserver) as T
