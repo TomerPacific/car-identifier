@@ -1,9 +1,11 @@
 package com.tomerpacific.caridentifier.model
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.tomerpacific.caridentifier.FAILED_TO_TRANSLATE_MSG
 import com.tomerpacific.caridentifier.LanguageTranslator
@@ -200,5 +202,19 @@ class MainViewModel(
         super.onCleared()
         connectivityObserver.unregisterNetworkCallback()
         languageTranslator.clear()
+    }
+
+    class Factory(
+        private val sharedPreferences: SharedPreferences,
+        private val context: Context
+    ) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+                val connectivityObserver = ConnectivityObserver(context.applicationContext)
+                @Suppress("UNCHECKED_CAST")
+                return MainViewModel(sharedPreferences, connectivityObserver) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+        }
     }
 }

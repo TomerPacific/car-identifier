@@ -3,6 +3,7 @@ package com.tomerpacific.caridentifier
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -12,7 +13,6 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tomerpacific.caridentifier.composable.CameraPreview
-import com.tomerpacific.caridentifier.data.network.ConnectivityObserver
 import com.tomerpacific.caridentifier.model.MainViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import com.tomerpacific.caridentifier.screen.CarDetailsScreen
@@ -25,15 +25,16 @@ import com.tomerpacific.caridentifier.screen.VerifyPhotoDialog
 const val IMAGE_URI_KEY = "imageUri"
 
 class MainActivity : ComponentActivity() {
-    private lateinit var mainViewModel: MainViewModel
+
+    private val mainViewModel: MainViewModel by viewModels {
+        MainViewModel.Factory(
+            getPreferences(MODE_PRIVATE),
+            applicationContext
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val sharedPreferences = getPreferences(MODE_PRIVATE)
-        val connectivityObserver = ConnectivityObserver(applicationContext)
-
-        mainViewModel = MainViewModel(sharedPreferences, connectivityObserver)
 
         setContent {
             val navController = rememberNavController()
