@@ -202,17 +202,17 @@ class MainViewModel(
         connectivityObserver.unregisterNetworkCallback()
         languageTranslator.clear()
     }
-}
 
-class MainViewModelFactory(
-    private val sharedPreferences: SharedPreferences,
-    private val connectivityObserver: ConnectivityObserver
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return MainViewModel(sharedPreferences, connectivityObserver) as T
+    class Factory(
+        private val sharedPreferences: SharedPreferences,
+        private val connectivityObserver: ConnectivityObserver
+    ) : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>): T {
+            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+                @Suppress("UNCHECKED_CAST")
+                return MainViewModel(sharedPreferences, connectivityObserver) as T
+            }
+            throw IllegalArgumentException("Unknown ViewModel class")
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

@@ -15,7 +15,6 @@ import androidx.navigation.navArgument
 import com.tomerpacific.caridentifier.composable.CameraPreview
 import com.tomerpacific.caridentifier.data.network.ConnectivityObserver
 import com.tomerpacific.caridentifier.model.MainViewModel
-import com.tomerpacific.caridentifier.model.MainViewModelFactory
 import com.tomerpacific.caridentifier.model.Screen
 import com.tomerpacific.caridentifier.screen.CarDetailsScreen
 import com.tomerpacific.caridentifier.screen.HandleCameraPermission
@@ -29,7 +28,7 @@ const val IMAGE_URI_KEY = "imageUri"
 class MainActivity : ComponentActivity() {
 
     private val mainViewModel: MainViewModel by viewModels {
-        MainViewModelFactory(
+        MainViewModel.Factory(
             getPreferences(MODE_PRIVATE),
             ConnectivityObserver(applicationContext)
         )
