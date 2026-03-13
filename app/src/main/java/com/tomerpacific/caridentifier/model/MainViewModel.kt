@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.tomerpacific.caridentifier.FAILED_TO_TRANSLATE_MSG
 import com.tomerpacific.caridentifier.LanguageTranslator
@@ -200,5 +201,18 @@ class MainViewModel(
         super.onCleared()
         connectivityObserver.unregisterNetworkCallback()
         languageTranslator.clear()
+    }
+}
+
+class MainViewModelFactory(
+    private val sharedPreferences: SharedPreferences,
+    private val connectivityObserver: ConnectivityObserver
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return MainViewModel(sharedPreferences, connectivityObserver) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
