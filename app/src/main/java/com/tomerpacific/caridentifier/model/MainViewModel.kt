@@ -212,7 +212,7 @@ class MainViewModel(
                 @Suppress("UNCHECKED_CAST")
                 return MainViewModel(sharedPreferences, connectivityObserver) as T
             }
-            throw IllegalArgumentException("Unknown ViewModel class")
+            throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     }
 }
