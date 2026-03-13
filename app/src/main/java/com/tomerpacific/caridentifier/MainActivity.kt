@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModels {
         MainViewModel.Factory(
             getPreferences(MODE_PRIVATE),
-            ConnectivityObserver(applicationContext)
+            applicationContext
         )
     }
 
