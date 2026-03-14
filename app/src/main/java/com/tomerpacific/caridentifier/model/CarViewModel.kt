@@ -1,7 +1,6 @@
 package com.tomerpacific.caridentifier.model
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -29,7 +28,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private const val CAR_REVIEW_ENDPOINT = "https://www.youtube.com/results?search_query="
-private val TAG = CarViewModel::class.simpleName
 
 class CarViewModel(
     private val connectivityObserver: ConnectivityObserver,

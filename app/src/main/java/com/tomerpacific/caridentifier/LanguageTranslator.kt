@@ -17,7 +17,7 @@ const val HEBREW_LANGUAGE_CODE = "iw"
 
 const val FAILED_TO_TRANSLATE_MSG = "Failed to translate"
 
-private val TAG = LanguageTranslator::class.simpleName
+private val tag = LanguageTranslator::class.simpleName
 
 class LanguageTranslator {
     private val translator: Translator
@@ -39,7 +39,7 @@ class LanguageTranslator {
                 isLanguageModelDownloaded = true
             }
             .addOnFailureListener { error ->
-                Log.e(TAG, "Failed to download language model: ${error.message}")
+                Log.e(tag, "Failed to download language model: ${error.message}")
                 isLanguageModelDownloaded = false
             }
     }
@@ -56,7 +56,7 @@ class LanguageTranslator {
                         try {
                             translator.translate(t).await()
                         } catch (e: Exception) {
-                            Log.e(TAG, "Translation failed: ${e.message}")
+                            Log.e(tag, "Translation failed: ${e.message}")
                             null
                         }
                     }
