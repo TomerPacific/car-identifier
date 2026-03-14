@@ -5,6 +5,7 @@ import com.tomerpacific.caridentifier.model.DID_REQUEST_CAMERA_PERMISSION_KEY
 import com.tomerpacific.caridentifier.model.PermissionViewModel
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers.anyBoolean
@@ -17,6 +18,8 @@ import org.mockito.MockitoAnnotations
 
 class PermissionViewModelTest {
 
+    private lateinit var closeable: AutoCloseable
+
     @Mock
     private lateinit var sharedPreferences: SharedPreferences
 
@@ -27,12 +30,17 @@ class PermissionViewModelTest {
 
     @Before
     fun setup() {
-        MockitoAnnotations.openMocks(this)
+        closeable = MockitoAnnotations.openMocks(this)
         `when`(sharedPreferences.edit()).thenReturn(editor)
         `when`(editor.putBoolean(anyString(), anyBoolean())).thenReturn(editor)
         `when`(sharedPreferences.getBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, false)).thenReturn(false)
-        
+
         viewModel = PermissionViewModel(sharedPreferences)
+    }
+
+    @After
+    fun tearDown() {
+        closeable.close()
     }
 
     @Test
