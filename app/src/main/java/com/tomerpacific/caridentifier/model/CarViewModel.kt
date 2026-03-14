@@ -1,9 +1,7 @@
 package com.tomerpacific.caridentifier.model
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.util.Log
-import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -29,24 +27,16 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-const val DID_REQUEST_CAMERA_PERMISSION_KEY = "didRequestCameraPermission"
 private const val CAR_REVIEW_ENDPOINT = "https://www.youtube.com/results?search_query="
-private val TAG = MainViewModel::class.simpleName
+private val TAG = CarViewModel::class.simpleName
 
-class MainViewModel(
-    private val sharedPreferences: SharedPreferences,
+class CarViewModel(
     private val connectivityObserver: ConnectivityObserver,
     private val carDetailsRepository: CarDetailsRepository = CarDetailsRepository(),
     private val languageTranslator: LanguageTranslator = LanguageTranslator(),
 ) : ViewModel() {
     private val _mainUiState = MutableStateFlow(MainUiState())
     val mainUiState: StateFlow<MainUiState> = _mainUiState.asStateFlow()
-
-    private val _didRequestCameraPermission = MutableStateFlow(false)
-    val didRequestCameraPermission: StateFlow<Boolean> get() = _didRequestCameraPermission
-
-    private val _shouldShowRationale = MutableStateFlow(false)
-    val shouldShowRationale: StateFlow<Boolean> get() = _shouldShowRationale
 
     private var searchTerm: String = ""
     private val _snackbarEvent = MutableSharedFlow<String>()
@@ -55,11 +45,6 @@ class MainViewModel(
 
     fun triggerSnackBarEvent(message: String) {
         viewModelScope.launch { _snackbarEvent.emit(message) }
-    }
-
-    init {
-        _didRequestCameraPermission.value =
-            sharedPreferences.getBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, false)
     }
 
     fun getCarDetails(licensePlateNumber: String? = null) {
@@ -116,17 +101,6 @@ class MainViewModel(
                     }
                 }
         }
-    }
-
-    fun setDidRequestCameraPermission(didRequest: Boolean) {
-        if (!_didRequestCameraPermission.value) {
-            _didRequestCameraPermission.value = didRequest
-            sharedPreferences.edit { putBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, didRequest) }
-        }
-    }
-
-    fun setShouldShowRationale(shouldShow: Boolean) {
-        _shouldShowRationale.value = shouldShow
     }
 
     fun getCarReview() {
@@ -205,14 +179,13 @@ class MainViewModel(
     }
 
     class Factory(
-        private val sharedPreferences: SharedPreferences,
         private val context: Context
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+            if (modelClass.isAssignableFrom(CarViewModel::class.java)) {
                 val connectivityObserver = ConnectivityObserver(context.applicationContext)
                 @Suppress("UNCHECKED_CAST")
-                return MainViewModel(sharedPreferences, connectivityObserver) as T
+                return CarViewModel(connectivityObserver) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
