@@ -64,11 +64,9 @@ fun VerifyPhotoDialog(
     carViewModel: CarViewModel,
 ) {
     val context = LocalContext.current
-    val uri: Uri?
-    val textRecognizer =
-        remember {
-            TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-        }
+    val textRecognizer = remember {
+        TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+    }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -76,8 +74,8 @@ fun VerifyPhotoDialog(
         }
     }
 
-    try {
-        uri = imageUri.toUri()
+    val uri: Uri = try {
+        imageUri.toUri()
     } catch (e: Exception) {
         Log.e("VerifyPhotoDialog", "Invalid URI: $imageUri", e)
         carViewModel.triggerSnackBarEvent(stringResource(R.string.invalid_image_uri_error))
@@ -85,70 +83,89 @@ fun VerifyPhotoDialog(
         return
     }
 
-    Dialog(
-        onDismissRequest = {
-            navController.popBackStack()
-        },
-    ) {
-        Card(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
-        ) {
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(text = stringResource(R.string.verify_photo_msg), fontSize = 22.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.size(20.dp))
-                AsyncImage(
-                    model =
-                        ImageRequest.Builder(LocalContext.current)
-                            .data(uri)
-                            .build(),
-                    contentDescription = "icon",
-                    contentScale = ContentScale.Inside,
-                    modifier =
-                        Modifier
-                            .heightIn(max = 300.dp)
-                            .fillMaxWidth(),
-                )
-                Spacer(modifier = Modifier.size(20.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Button(
-                        onClick = {
-                            navController.popBackStack()
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                        modifier = Modifier.padding(start = 6.dp),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "No",
-                        )
-                    }
-                    Button(
-                        onClick = { processImage(context, uri, carViewModel, navController, textRecognizer) },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Green),
-                        modifier = Modifier.padding(end = 6.dp),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Done,
-                            contentDescription = "Yes",
-                        )
-                    }
-                }
+    Dialog(onDismissRequest = { navController.popBackStack() }) {
+        VerifyPhotoCard(
+            uri = uri,
+            onCancel = { navController.popBackStack() },
+            onConfirm = {
+                processImage(context, uri, carViewModel, navController, textRecognizer)
             }
+        )
+    }
+}
+
+@Composable
+private fun VerifyPhotoCard(
+    uri: Uri,
+    onCancel: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(16.dp),
+        shape = RoundedCornerShape(16.dp),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(bottom = 16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = stringResource(R.string.verify_photo_msg),
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(top = 16.dp)
+            )
+            Spacer(modifier = Modifier.size(20.dp))
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(uri)
+                    .build(),
+                contentDescription = "captured image",
+                contentScale = ContentScale.Inside,
+                modifier = Modifier
+                    .heightIn(max = 300.dp)
+                    .fillMaxWidth(),
+            )
+            Spacer(modifier = Modifier.size(20.dp))
+            VerifyPhotoButtons(onCancel = onCancel, onConfirm = onConfirm)
+        }
+    }
+}
+
+@Composable
+private fun VerifyPhotoButtons(
+    onCancel: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Button(
+            onClick = onCancel,
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+            modifier = Modifier.padding(start = 16.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "No",
+            )
+        }
+        Button(
+            onClick = onConfirm,
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Green),
+            modifier = Modifier.padding(end = 16.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Done,
+                contentDescription = "Yes",
+            )
         }
     }
 }
@@ -169,19 +186,13 @@ private fun processImage(
 
         textRecognizer.process(image)
             .addOnSuccessListener { visionText ->
-                val licensePlateNumber =
-                    getLicensePlateNumberFromImageText(visionText)
-                when (licensePlateNumber) {
-                    null -> {
-                        carViewModel.triggerSnackBarEvent(context.getString(R.string.no_license_plate_error))
-                        navController.popBackStack()
-                        return@addOnSuccessListener
-                    }
-                    else -> {
-                        carViewModel.getCarDetails(licensePlateNumber)
-                        navController.navigate(Screen.CarDetailsScreen.route)
-                        return@addOnSuccessListener
-                    }
+                val licensePlateNumber = getLicensePlateNumberFromImageText(visionText)
+                if (licensePlateNumber == null) {
+                    carViewModel.triggerSnackBarEvent(context.getString(R.string.no_license_plate_error))
+                    navController.popBackStack()
+                } else {
+                    carViewModel.getCarDetails(licensePlateNumber)
+                    navController.navigate(Screen.CarDetailsScreen.route)
                 }
             }
             .addOnFailureListener { exception ->
