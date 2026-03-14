@@ -47,7 +47,7 @@ import com.tomerpacific.caridentifier.EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DAS
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES
 import com.tomerpacific.caridentifier.isLicensePlateNumberValid
-import com.tomerpacific.caridentifier.model.MainViewModel
+import com.tomerpacific.caridentifier.model.CarViewModel
 import com.tomerpacific.caridentifier.model.Screen
 
 private const val FIRST_DASH_INDEX = 2
@@ -56,9 +56,9 @@ private const val SECOND_DASH_INDEX = 6
 @Composable
 fun LicensePlateNumberDialog(
     navController: NavController,
-    mainViewModel: MainViewModel,
+    carViewModel: CarViewModel,
 ) {
-    mainViewModel.resetData()
+    carViewModel.resetData()
 
     val focusRequester =
         remember {
@@ -196,7 +196,7 @@ fun LicensePlateNumberDialog(
                             licensePlateNumberState.text
                         )
                     ) {
-                        mainViewModel.getCarDetails(licensePlateNumberState.text)
+                        carViewModel.getCarDetails(licensePlateNumberState.text)
                         navController.navigate(Screen.CarDetailsScreen.route)
                     }
                 },

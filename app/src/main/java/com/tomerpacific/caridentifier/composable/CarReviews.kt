@@ -20,11 +20,11 @@ import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.tomerpacific.caridentifier.R
-import com.tomerpacific.caridentifier.model.MainViewModel
+import com.tomerpacific.caridentifier.model.CarViewModel
 
 @Composable
-fun Reviews(mainViewModel: MainViewModel) {
-    val mainUiState by mainViewModel.mainUiState.collectAsState()
+fun Reviews(carViewModel: CarViewModel) {
+    val mainUiState by carViewModel.mainUiState.collectAsState()
 
     val context = LocalContext.current
 

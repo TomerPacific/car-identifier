@@ -54,14 +54,14 @@ import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.getLicensePlateNumberFromImageText
-import com.tomerpacific.caridentifier.model.MainViewModel
+import com.tomerpacific.caridentifier.model.CarViewModel
 import com.tomerpacific.caridentifier.model.Screen
 
 @Composable
 fun VerifyPhotoDialog(
     imageUri: String,
     navController: NavController,
-    mainViewModel: MainViewModel,
+    carViewModel: CarViewModel,
 ) {
     val context = LocalContext.current
     val uri: Uri?
@@ -80,7 +80,7 @@ fun VerifyPhotoDialog(
         uri = imageUri.toUri()
     } catch (e: Exception) {
         Log.e("VerifyPhotoDialog", "Invalid URI: $imageUri", e)
-        mainViewModel.triggerSnackBarEvent(stringResource(R.string.invalid_image_uri_error))
+        carViewModel.triggerSnackBarEvent(stringResource(R.string.invalid_image_uri_error))
         navController.popBackStack()
         return
     }
@@ -138,7 +138,7 @@ fun VerifyPhotoDialog(
                         )
                     }
                     Button(
-                        onClick = { processImage(context, uri, mainViewModel, navController, textRecognizer) },
+                        onClick = { processImage(context, uri, carViewModel, navController, textRecognizer) },
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Green),
                         modifier = Modifier.padding(end = 6.dp),
                     ) {
@@ -156,7 +156,7 @@ fun VerifyPhotoDialog(
 private fun processImage(
     context: Context,
     imageUri: Uri,
-    mainViewModel: MainViewModel,
+    carViewModel: CarViewModel,
     navController: NavController,
     textRecognizer: TextRecognizer,
 ) {
@@ -173,12 +173,12 @@ private fun processImage(
                     getLicensePlateNumberFromImageText(visionText)
                 when (licensePlateNumber) {
                     null -> {
-                        mainViewModel.triggerSnackBarEvent(context.getString(R.string.no_license_plate_error))
+                        carViewModel.triggerSnackBarEvent(context.getString(R.string.no_license_plate_error))
                         navController.popBackStack()
                         return@addOnSuccessListener
                     }
                     else -> {
-                        mainViewModel.getCarDetails(licensePlateNumber)
+                        carViewModel.getCarDetails(licensePlateNumber)
                         navController.navigate(Screen.CarDetailsScreen.route)
                         return@addOnSuccessListener
                     }
@@ -186,7 +186,7 @@ private fun processImage(
             }
             .addOnFailureListener { exception ->
                 Log.e("VerifyPhotoDialog", "Text recognition failed", exception)
-                mainViewModel.triggerSnackBarEvent(context.getString(R.string.no_license_plate_error))
+                carViewModel.triggerSnackBarEvent(context.getString(R.string.no_license_plate_error))
                 navController.popBackStack()
             }.addOnCompleteListener {
                 grayscaleBitmap?.recycle()
@@ -195,7 +195,7 @@ private fun processImage(
     } catch (e: Exception) {
         grayscaleBitmap?.recycle()
         bitmap?.recycle()
-        mainViewModel.triggerSnackBarEvent(e.message ?: context.getString(R.string.error_processing_image))
+        carViewModel.triggerSnackBarEvent(e.message ?: context.getString(R.string.error_processing_image))
         navController.popBackStack()
     }
 }

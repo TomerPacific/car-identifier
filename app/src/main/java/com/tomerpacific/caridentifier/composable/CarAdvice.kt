@@ -33,11 +33,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.SectionHeader
-import com.tomerpacific.caridentifier.model.MainViewModel
+import com.tomerpacific.caridentifier.model.CarViewModel
 
 @Composable
-fun Advice(mainViewModel: MainViewModel) {
-    val mainUiState by mainViewModel.mainUiState.collectAsState()
+fun Advice(carViewModel: CarViewModel) {
+    val mainUiState by carViewModel.mainUiState.collectAsState()
 
     val columnVerticalArrangement: Arrangement.Vertical =
         when (mainUiState.carReview) {
@@ -92,12 +92,12 @@ fun Advice(mainViewModel: MainViewModel) {
                 }
 
                 AdviceList(
-                    title = mainViewModel.getTranslatedSectionHeader(SectionHeader.PROS),
+                    title = carViewModel.getTranslatedSectionHeader(SectionHeader.PROS),
                     adviceList = mainUiState.carReview!!.prosList,
                     Modifier.align(Alignment.Start),
                 )
                 AdviceList(
-                    title = mainViewModel.getTranslatedSectionHeader(SectionHeader.CONS),
+                    title = carViewModel.getTranslatedSectionHeader(SectionHeader.CONS),
                     adviceList = mainUiState.carReview!!.consList,
                     Modifier.align(Alignment.Start),
                 )
