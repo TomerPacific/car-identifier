@@ -26,7 +26,7 @@ class PermissionViewModel(
     }
 
     fun setDidRequestCameraPermission(didRequest: Boolean) {
-        if (!_didRequestCameraPermission.value) {
+        if (_didRequestCameraPermission.value != didRequest) {
             _didRequestCameraPermission.value = didRequest
             sharedPreferences.edit { putBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, didRequest) }
         }
