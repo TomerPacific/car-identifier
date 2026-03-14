@@ -17,6 +17,7 @@ import com.tomerpacific.caridentifier.data.network.NO_INTERNET_CONNECTION_ERROR
 import com.tomerpacific.caridentifier.data.network.REQUEST_TIMEOUT_ERROR
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import com.tomerpacific.caridentifier.formatCarReviewResponse
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,6 +35,8 @@ class CarViewModel(
     private val connectivityObserver: ConnectivityObserver,
     private val carDetailsRepository: CarDetailsRepository = CarDetailsRepository(),
     private val languageTranslator: LanguageTranslator = LanguageTranslator(),
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : ViewModel() {
     private val _mainUiState = MutableStateFlow(MainUiState())
     val mainUiState: StateFlow<MainUiState> = _mainUiState.asStateFlow()
@@ -56,30 +59,32 @@ class CarViewModel(
         }
 
         val licensePlateNumberWithoutDashes = _licensePlateNumber.replace("-", "")
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             _mainUiState.update { it.copy(isLoading = true, errorMessage = null) }
             carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes)
                 .onSuccess { carDetails ->
                     if (languageTranslator.isHebrewLanguage()) {
-                        languageTranslator.translate(concatenateCarMakeAndModel(carDetails))
-                            .onSuccess { translatedText ->
-                                searchTerm = "$REVIEW_HEBREW${translatedText.first()}"
-                            }.onFailure {
-                                Log.e(TAG, it.localizedMessage ?: FAILED_TO_TRANSLATE_MSG)
-                                searchTerm = concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH
-                            }
+                        val translationResult = languageTranslator.translate(concatenateCarMakeAndModel(carDetails))
+                        val translatedText = translationResult.getOrNull()
+                        searchTerm = if (translationResult.isSuccess && !translatedText.isNullOrEmpty()) {
+                            "$REVIEW_HEBREW${translatedText.first()}"
+                        } else {
+                            concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH
+                        }
                     } else {
-                        languageTranslator.translate(carDetails.color)
-                            .onSuccess { translatedColor ->
-                                carDetails.color = translatedColor.first()
-                            }.onFailure { 
-                                carDetails.color = FAILED_TO_TRANSLATE_MSG
-                            }
+                        val translationResult = languageTranslator.translate(carDetails.color)
+                        val translatedColor = translationResult.getOrNull()
+                        if (translationResult.isSuccess && !translatedColor.isNullOrEmpty()) {
+                            carDetails.color = translatedColor.first()
+                        } else if (translationResult.isFailure) {
+                            carDetails.color = FAILED_TO_TRANSLATE_MSG
+                        }
+                        
                         carDetails.ownership = languageTranslator.translateOwnership(carDetails.ownership)
                         carDetails.fuelType = languageTranslator.translateFuelType(carDetails.fuelType)
                         searchTerm = concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH
                     }
-                    withContext(Dispatchers.Main) {
+                    withContext(mainDispatcher) {
                         _mainUiState.update {
                             it.copy(
                                 isLoading = false,
@@ -96,7 +101,7 @@ class CarViewModel(
                             it.trim()
                         }
                     }
-                    withContext(Dispatchers.Main) {
+                    withContext(mainDispatcher) {
                         _mainUiState.update { it.copy(isLoading = false, errorMessage = errorMessage) }
                     }
                 }
@@ -110,11 +115,11 @@ class CarViewModel(
         }
         if (_mainUiState.value.carReview != null) return
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             _mainUiState.update { it.copy(isLoading = true) }
             carDetailsRepository.getCarReview(searchTerm, languageTranslator.currentLocale)
                 .onSuccess { carReview ->
-                    withContext(Dispatchers.Main) {
+                    withContext(mainDispatcher) {
                         val formattedCarReview = formatCarReviewResponse(
                             carReview, languageTranslator)
                         _mainUiState.update {
@@ -122,7 +127,7 @@ class CarViewModel(
                         }
                     }
                 }.onFailure { error ->
-                    withContext(Dispatchers.Main) {
+                    withContext(mainDispatcher) {
                         _mainUiState.update { it.copy(isLoading = false, errorMessage = error.localizedMessage) }
                     }
                 }
@@ -137,15 +142,15 @@ class CarViewModel(
         if (_mainUiState.value.tirePressure != null) return
 
         val licensePlateNumberWithoutDashes = _licensePlateNumber.replace("-", "")
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             _mainUiState.update { it.copy(isLoading = true) }
             carDetailsRepository.getTirePressure(licensePlateNumberWithoutDashes)
                 .onSuccess { tirePressure ->
-                    withContext(Dispatchers.Main) {
+                    withContext(mainDispatcher) {
                         _mainUiState.update { it.copy(isLoading = false, tirePressure = tirePressure) }
                     }
                 }.onFailure { error ->
-                    withContext(Dispatchers.Main) {
+                    withContext(mainDispatcher) {
                         _mainUiState.update { it.copy(isLoading = false, errorMessage = error.localizedMessage) }
                     }
                 }
