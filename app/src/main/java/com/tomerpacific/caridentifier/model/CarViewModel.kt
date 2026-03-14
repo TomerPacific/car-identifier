@@ -98,7 +98,8 @@ class CarViewModel(
                         } else {
                             it.trim()
                         }
-                    }
+                    } ?: (exception.message ?: exception.toString())
+
                     withContext(mainDispatcher) {
                         _mainUiState.update { it.copy(isLoading = false, errorMessage = errorMessage) }
                     }

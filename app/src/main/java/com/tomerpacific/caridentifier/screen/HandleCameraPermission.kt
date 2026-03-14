@@ -45,8 +45,10 @@ fun HandleCameraPermission(
             handleCameraPermissionResult(context, navController, permissionViewModel, isGranted)
         }
 
-    LaunchedEffect(cameraPermissionStatus) {
-        cameraPermissionRequestLauncher.launch(android.Manifest.permission.CAMERA)
+    LaunchedEffect(Unit) {
+        if (cameraPermissionStatus != PackageManager.PERMISSION_GRANTED) {
+            cameraPermissionRequestLauncher.launch(android.Manifest.permission.CAMERA)
+        }
     }
 }
 

@@ -41,7 +41,9 @@ fun CameraPreview(
     navController: NavController,
     carViewModel: CarViewModel,
 ) {
-    carViewModel.resetData()
+    LaunchedEffect(Unit) {
+        carViewModel.resetData()
+    }
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
