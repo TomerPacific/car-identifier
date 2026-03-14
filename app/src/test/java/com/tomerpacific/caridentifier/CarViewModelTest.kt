@@ -8,7 +8,6 @@ import com.tomerpacific.caridentifier.model.CarViewModel
 import com.tomerpacific.caridentifier.model.TirePressure
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -19,7 +18,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -41,10 +39,11 @@ class CarViewModelTest {
 
     private lateinit var viewModel: CarViewModel
     private val testDispatcher = UnconfinedTestDispatcher()
+    private var closeable: AutoCloseable? = null
 
     @Before
     fun setup() {
-        MockitoAnnotations.openMocks(this)
+        closeable = MockitoAnnotations.openMocks(this)
         Dispatchers.setMain(testDispatcher)
         whenever(languageTranslator.currentLocale).thenReturn("en")
         whenever(languageTranslator.isHebrewLanguage(any())).thenReturn(false)
@@ -61,6 +60,7 @@ class CarViewModelTest {
 
     @After
     fun tearDown() {
+        closeable?.close()
         Dispatchers.resetMain()
     }
 
