@@ -37,13 +37,13 @@ console-reports:
      - 'ProjectStatisticsReport'
      - 'ComplexityReport'
      - 'NotificationReport'
-     - 'FindingsReport'
-     - 'FileBasedFindingsReport'
+  #  - 'FindingsReport'
+  #  - 'FileBasedFindingsReport'
   #  - 'LiteFindingsReport'
 
 output-reports:
   active: true
-  exclude:
+  exclude: []
   # - 'TxtOutputReport'
   # - 'XmlOutputReport'
   # - 'HtmlOutputReport'
@@ -364,9 +364,9 @@ naming:
     packagePattern: '[a-z]+(\.[a-z][A-Za-z0-9]*)*'
   TopLevelPropertyNaming:
     active: true
-    constantPattern: '[A-Z][_A-Z0-9]*'
+    constantPattern: '[A-Z][_A-Za-z0-9]*'
     propertyPattern: '[A-Za-z][_A-Za-z0-9]*'
-    privatePropertyPattern: '_?[A-Za-z][_A-Za-z0-9]*'
+    privatePropertyPattern: _?[A-Za-z][_A-Za-z0-9]*
   VariableMaxLength:
     active: false
     maximumVariableNameLength: 64
@@ -502,7 +502,6 @@ potential-bugs:
     active: true
 
 style:
-  active: true
   AlsoCouldBeApply:
     active: false
   BracesOnIfStatements:
