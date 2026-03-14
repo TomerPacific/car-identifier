@@ -12,6 +12,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -52,15 +53,21 @@ fun CarDetailsScreen(
             CarDetailsTabs(tabs, tabIndex, carViewModel) { newTabIndex ->
                 tabIndex = newTabIndex
             }
+
+            LaunchedEffect(tabIndex) {
+                when (tabIndex) {
+                    TAB_AI_INDEX -> carViewModel.getCarReview()
+                    TAB_TIRE_PRESSURE_INDEX -> carViewModel.getTirePressure()
+                }
+            }
+
             when (tabIndex) {
                 TAB_DETAILS_INDEX -> Details(carViewModel)
                 TAB_REVIEWS_INDEX -> Reviews(carViewModel)
                 TAB_AI_INDEX -> {
-                    carViewModel.getCarReview()
                     Advice(carViewModel)
                 }
                 TAB_TIRE_PRESSURE_INDEX -> {
-                    carViewModel.getTirePressure()
                     TirePressureScreen(carViewModel)
                 }
             }
