@@ -33,13 +33,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.composable.LoaderAnimation
-import com.tomerpacific.caridentifier.model.MainViewModel
+import com.tomerpacific.caridentifier.model.CarViewModel
 import com.tomerpacific.caridentifier.model.TirePressure
 import com.tomerpacific.caridentifier.model.allPropertiesNull
 
 @Composable
-fun TirePressureScreen(viewModel: MainViewModel) {
-    val mainUiState by viewModel.mainUiState.collectAsState()
+fun TirePressureScreen(carViewModel: CarViewModel) {
+    val mainUiState by carViewModel.mainUiState.collectAsState()
 
     Column(
         modifier = Modifier

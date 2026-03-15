@@ -12,6 +12,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -26,7 +27,7 @@ import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.composable.Advice
 import com.tomerpacific.caridentifier.composable.Details
 import com.tomerpacific.caridentifier.composable.Reviews
-import com.tomerpacific.caridentifier.model.MainViewModel
+import com.tomerpacific.caridentifier.model.CarViewModel
 
 private const val CHAT_GPT_ICON_SIZE = 40
 private const val TAB_DETAILS_INDEX = 0
@@ -36,7 +37,7 @@ private const val TAB_TIRE_PRESSURE_INDEX = 3
 
 @Composable
 fun CarDetailsScreen(
-    mainViewModel: MainViewModel,
+    carViewModel: CarViewModel,
     navController: NavController,
 ) {
     var tabIndex by remember { mutableIntStateOf(0) }
@@ -49,19 +50,25 @@ fun CarDetailsScreen(
 
     Scaffold(contentWindowInsets = WindowInsets.safeContent) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            CarDetailsTabs(tabs, tabIndex, mainViewModel) { newTabIndex ->
+            CarDetailsTabs(tabs, tabIndex, carViewModel) { newTabIndex ->
                 tabIndex = newTabIndex
             }
+
+            LaunchedEffect(tabIndex) {
+                when (tabIndex) {
+                    TAB_AI_INDEX -> carViewModel.getCarReview()
+                    TAB_TIRE_PRESSURE_INDEX -> carViewModel.getTirePressure()
+                }
+            }
+
             when (tabIndex) {
-                TAB_DETAILS_INDEX -> Details(mainViewModel)
-                TAB_REVIEWS_INDEX -> Reviews(mainViewModel)
+                TAB_DETAILS_INDEX -> Details(carViewModel)
+                TAB_REVIEWS_INDEX -> Reviews(carViewModel)
                 TAB_AI_INDEX -> {
-                    mainViewModel.getCarReview()
-                    Advice(mainViewModel)
+                    Advice(carViewModel)
                 }
                 TAB_TIRE_PRESSURE_INDEX -> {
-                    mainViewModel.getTirePressure()
-                    TirePressureScreen(mainViewModel)
+                    TirePressureScreen(carViewModel)
                 }
             }
         }
@@ -73,10 +80,10 @@ fun CarDetailsScreen(
 private fun CarDetailsTabs(
     tabs: List<String>,
     tabIndex: Int,
-    mainViewModel: MainViewModel,
+    carViewModel: CarViewModel,
     onTabClicked: (Int) -> Unit
 ) {
-    val mainUiState by mainViewModel.mainUiState.collectAsState()
+    val mainUiState by carViewModel.mainUiState.collectAsState()
 
     TabRow(selectedTabIndex = tabIndex) {
         tabs.forEachIndexed { index, title ->

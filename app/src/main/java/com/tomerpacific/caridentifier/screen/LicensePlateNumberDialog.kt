@@ -47,7 +47,7 @@ import com.tomerpacific.caridentifier.EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DAS
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES
 import com.tomerpacific.caridentifier.isLicensePlateNumberValid
-import com.tomerpacific.caridentifier.model.MainViewModel
+import com.tomerpacific.caridentifier.model.CarViewModel
 import com.tomerpacific.caridentifier.model.Screen
 
 private const val FIRST_DASH_INDEX = 2
@@ -56,130 +56,40 @@ private const val SECOND_DASH_INDEX = 6
 @Composable
 fun LicensePlateNumberDialog(
     navController: NavController,
-    mainViewModel: MainViewModel,
+    carViewModel: CarViewModel,
 ) {
-    mainViewModel.resetData()
+    carViewModel.resetData()
 
-    val focusRequester =
-        remember {
-            FocusRequester()
-        }
+    val focusRequester = remember { FocusRequester() }
 
     var licensePlateNumberState by remember {
-        mutableStateOf(
-            TextFieldValue(
-                text = "",
-            ),
-        )
+        mutableStateOf(TextFieldValue(text = ""))
     }
 
-    val licensePlateInputPattern = Regex("^[0-9-]*\\$")
+    var isLicensePlateLengthLimitReached by remember { mutableStateOf(false) }
 
-    var isLicensePlateLengthLimitReached by remember {
-        mutableStateOf(false)
-    }
-
-    var didClickConfirmBtn by remember {
-        mutableStateOf(false)
-    }
+    var didClickConfirmBtn by remember { mutableStateOf(false) }
 
     AlertDialog(
-        onDismissRequest = {
-            navController.popBackStack()
-        },
+        onDismissRequest = { navController.popBackStack() },
         text = {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                 Column {
                     Text(stringResource(R.string.amount_of_digits_in_license_plate), fontWeight = FontWeight.Bold)
                     Spacer(Modifier.height(10.dp))
-                    TextField(
-                        modifier = Modifier.focusRequester(focusRequester),
-                        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
-                        singleLine = true,
-                        colors =
-                            TextFieldDefaults.colors().copy(
-                                unfocusedContainerColor = colorResource(R.color.gold),
-                                focusedContainerColor = colorResource(R.color.gold),
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent,
-                            ),
+                    LicensePlateTextField(
                         value = licensePlateNumberState,
-                        onValueChange = { textFieldValue ->
+                        onValueChange = { newValue ->
                             didClickConfirmBtn = false
-
-                            if (doesLicensePlateNumberExceedLimit(textFieldValue)) {
-                                isLicensePlateLengthLimitReached = true
-                                return@TextField
-                            }
-
-                            if (wasCharacterDeleted(textFieldValue.text, licensePlateNumberState.text)) {
-                                isLicensePlateLengthLimitReached = false
-                                licensePlateNumberState = handleCharacterDeletion(textFieldValue)
-                                return@TextField
-                            }
-
-                            if (textFieldValue.text.isEmpty() || licensePlateInputPattern.matches(textFieldValue.text)) {
-                                licensePlateNumberState = textFieldValue
-                            }
-                            val formattedText = formatLicensePlateWithDashes(textFieldValue.text)
-
-                            licensePlateNumberState =
-                                TextFieldValue(
-                                    text = formattedText,
-                                    selection = TextRange(formattedText.length),
-                                )
+                            licensePlateNumberState = handleValueChange(
+                                newValue,
+                                licensePlateNumberState.text,
+                                onLimitReached = { isLicensePlateLengthLimitReached = it }
+                            )
                         },
-                        placeholder = {
-                            Text(stringResource(R.string.license_plate_placeholder), maxLines = 1)
-                        },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        focusRequester = focusRequester,
                         isError = isLicensePlateLengthLimitReached,
-                        supportingText = {
-                            if (isLicensePlateLengthLimitReached) {
-                                Text(
-                                    stringResource(R.string.license_plate_input_limit_error),
-                                    modifier = Modifier.fillMaxWidth(),
-                                    color = Color.Red,
-                                )
-                            }
-                            if (didClickConfirmBtn) {
-                                Text(
-                                    stringResource(R.string.license_plate_input_amount_of_digits_error),
-                                    modifier = Modifier.fillMaxWidth(),
-                                    color = Color.Red,
-                                )
-                            }
-                        },
-                        trailingIcon = {
-                            if (isLicensePlateLengthLimitReached) {
-                                Icon(Icons.Filled.Info, "error", tint = Color.Red)
-                            }
-                        },
-                        leadingIcon = {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.offset(x = (-9).dp).background(Color.Blue),
-                            ) {
-                                Image(
-                                    painterResource(id = R.drawable.israel_flag),
-                                    "flag",
-                                    modifier = Modifier.width(20.dp).height(20.dp),
-                                )
-                                Text(
-                                    "IL",
-                                    textAlign = TextAlign.Center,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White,
-                                    fontSize = 12.sp,
-                                )
-                                Text(
-                                    "ישראל",
-                                    textAlign = TextAlign.Center,
-                                    color = Color.White,
-                                    fontSize = 10.sp,
-                                )
-                            }
-                        },
+                        didClickConfirmBtn = didClickConfirmBtn
                     )
                 }
 
@@ -192,11 +102,8 @@ fun LicensePlateNumberDialog(
             TextButton(
                 onClick = {
                     didClickConfirmBtn = true
-                    if (isLicensePlateNumberValid(
-                            licensePlateNumberState.text
-                        )
-                    ) {
-                        mainViewModel.getCarDetails(licensePlateNumberState.text)
+                    if (isLicensePlateNumberValid(licensePlateNumberState.text)) {
+                        carViewModel.getCarDetails(licensePlateNumberState.text)
                         navController.navigate(Screen.CarDetailsScreen.route)
                     }
                 },
@@ -206,15 +113,119 @@ fun LicensePlateNumberDialog(
             }
         },
         dismissButton = {
-            TextButton(
-                onClick = {
-                    navController.popBackStack()
-                },
-            ) {
+            TextButton(onClick = { navController.popBackStack() }) {
                 Text(stringResource(R.string.cancel))
             }
         },
     )
+}
+
+@Composable
+private fun LicensePlateTextField(
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+    focusRequester: FocusRequester,
+    isError: Boolean,
+    didClickConfirmBtn: Boolean
+) {
+    TextField(
+        modifier = Modifier.focusRequester(focusRequester),
+        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+        singleLine = true,
+        colors = TextFieldDefaults.colors().copy(
+            unfocusedContainerColor = colorResource(R.color.gold),
+            focusedContainerColor = colorResource(R.color.gold),
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+        ),
+        value = value,
+        onValueChange = onValueChange,
+        placeholder = {
+            Text(stringResource(R.string.license_plate_placeholder), maxLines = 1)
+        },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        isError = isError,
+        supportingText = {
+            LicensePlateSupportingText(isError, didClickConfirmBtn)
+        },
+        trailingIcon = {
+            if (isError) {
+                Icon(Icons.Filled.Info, "error", tint = Color.Red)
+            }
+        },
+        leadingIcon = { IsraelFlagIcon() },
+    )
+}
+
+@Composable
+private fun IsraelFlagIcon() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.offset(x = (-9).dp).background(Color.Blue),
+    ) {
+        Image(
+            painterResource(id = R.drawable.israel_flag),
+            "flag",
+            modifier = Modifier.width(20.dp).height(20.dp),
+        )
+        Text(
+            "IL",
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            fontSize = 12.sp,
+        )
+        Text(
+            "ישראל",
+            textAlign = TextAlign.Center,
+            color = Color.White,
+            fontSize = 10.sp,
+        )
+    }
+}
+
+@Composable
+private fun LicensePlateSupportingText(isLimitReached: Boolean, didClickConfirmBtn: Boolean) {
+    if (isLimitReached) {
+        Text(
+            stringResource(R.string.license_plate_input_limit_error),
+            modifier = Modifier.fillMaxWidth(),
+            color = Color.Red,
+        )
+    }
+    if (didClickConfirmBtn) {
+        Text(
+            stringResource(R.string.license_plate_input_amount_of_digits_error),
+            modifier = Modifier.fillMaxWidth(),
+            color = Color.Red,
+        )
+    }
+}
+
+private fun handleValueChange(
+    newValue: TextFieldValue,
+    oldText: String,
+    onLimitReached: (Boolean) -> Unit
+): TextFieldValue {
+    val licensePlateInputPattern = Regex("^[0-9-]*$")
+
+    return when {
+        doesLicensePlateNumberExceedLimit(newValue) -> {
+            onLimitReached(true)
+            TextFieldValue(text = oldText, selection = TextRange(oldText.length))
+        }
+        wasCharacterDeleted(newValue.text, oldText) -> {
+            onLimitReached(false)
+            handleCharacterDeletion(newValue)
+        }
+        newValue.text.isNotEmpty() && !licensePlateInputPattern.matches(newValue.text) -> {
+            TextFieldValue(text = oldText, selection = TextRange(oldText.length))
+        }
+        else -> {
+            val formattedText = formatLicensePlateWithDashes(newValue.text)
+            TextFieldValue(text = formattedText, selection = TextRange(formattedText.length))
+        }
+    }
 }
 
 private fun doesLicensePlateNumberExceedLimit(textFieldValue: TextFieldValue): Boolean {
@@ -259,7 +270,7 @@ private fun formatLicensePlateWithDashes(input: String): String {
             "${input.substring(
                 0,
                 FIRST_DASH_INDEX,
-            )}${input.substring(3,4)}-${input.substring(4, SECOND_DASH_INDEX)}-${input.substring(7, input.length)}"
+            )}${input.substring(3, 4)}-${input.substring(4, SECOND_DASH_INDEX)}-${input.substring(7, input.length)}"
         else -> input
     }
 }

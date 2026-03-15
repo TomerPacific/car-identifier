@@ -1,9 +1,6 @@
 package com.tomerpacific.caridentifier.model
 
 import android.content.Context
-import android.content.SharedPreferences
-import android.util.Log
-import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -19,6 +16,7 @@ import com.tomerpacific.caridentifier.data.network.NO_INTERNET_CONNECTION_ERROR
 import com.tomerpacific.caridentifier.data.network.REQUEST_TIMEOUT_ERROR
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import com.tomerpacific.caridentifier.formatCarReviewResponse
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,24 +27,17 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-const val DID_REQUEST_CAMERA_PERMISSION_KEY = "didRequestCameraPermission"
 private const val CAR_REVIEW_ENDPOINT = "https://www.youtube.com/results?search_query="
-private val TAG = MainViewModel::class.simpleName
 
-class MainViewModel(
-    private val sharedPreferences: SharedPreferences,
+class CarViewModel(
     private val connectivityObserver: ConnectivityObserver,
     private val carDetailsRepository: CarDetailsRepository = CarDetailsRepository(),
     private val languageTranslator: LanguageTranslator = LanguageTranslator(),
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : ViewModel() {
     private val _mainUiState = MutableStateFlow(MainUiState())
     val mainUiState: StateFlow<MainUiState> = _mainUiState.asStateFlow()
-
-    private val _didRequestCameraPermission = MutableStateFlow(false)
-    val didRequestCameraPermission: StateFlow<Boolean> get() = _didRequestCameraPermission
-
-    private val _shouldShowRationale = MutableStateFlow(false)
-    val shouldShowRationale: StateFlow<Boolean> get() = _shouldShowRationale
 
     private var searchTerm: String = ""
     private val _snackbarEvent = MutableSharedFlow<String>()
@@ -55,11 +46,6 @@ class MainViewModel(
 
     fun triggerSnackBarEvent(message: String) {
         viewModelScope.launch { _snackbarEvent.emit(message) }
-    }
-
-    init {
-        _didRequestCameraPermission.value =
-            sharedPreferences.getBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, false)
     }
 
     fun getCarDetails(licensePlateNumber: String? = null) {
@@ -71,30 +57,32 @@ class MainViewModel(
         }
 
         val licensePlateNumberWithoutDashes = _licensePlateNumber.replace("-", "")
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             _mainUiState.update { it.copy(isLoading = true, errorMessage = null) }
             carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes)
                 .onSuccess { carDetails ->
                     if (languageTranslator.isHebrewLanguage()) {
-                        languageTranslator.translate(concatenateCarMakeAndModel(carDetails))
-                            .onSuccess { translatedText ->
-                                searchTerm = "$REVIEW_HEBREW${translatedText.first()}"
-                            }.onFailure {
-                                Log.e(TAG, it.localizedMessage ?: FAILED_TO_TRANSLATE_MSG)
-                                searchTerm = concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH
-                            }
+                        val translationResult = languageTranslator.translate(concatenateCarMakeAndModel(carDetails))
+                        val translatedText = translationResult.getOrNull()
+                        searchTerm = if (translationResult.isSuccess && !translatedText.isNullOrEmpty()) {
+                            "$REVIEW_HEBREW${translatedText.first()}"
+                        } else {
+                            concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH
+                        }
                     } else {
-                        languageTranslator.translate(carDetails.color)
-                            .onSuccess { translatedColor ->
-                                carDetails.color = translatedColor.first()
-                            }.onFailure { 
-                                carDetails.color = FAILED_TO_TRANSLATE_MSG
-                            }
+                        val translationResult = languageTranslator.translate(carDetails.color)
+                        val translatedColor = translationResult.getOrNull()
+                        if (translationResult.isSuccess && !translatedColor.isNullOrEmpty()) {
+                            carDetails.color = translatedColor.first()
+                        } else if (translationResult.isFailure) {
+                            carDetails.color = FAILED_TO_TRANSLATE_MSG
+                        }
+                        
                         carDetails.ownership = languageTranslator.translateOwnership(carDetails.ownership)
                         carDetails.fuelType = languageTranslator.translateFuelType(carDetails.fuelType)
                         searchTerm = concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH
                     }
-                    withContext(Dispatchers.Main) {
+                    withContext(mainDispatcher) {
                         _mainUiState.update {
                             it.copy(
                                 isLoading = false,
@@ -110,23 +98,13 @@ class MainViewModel(
                         } else {
                             it.trim()
                         }
-                    }
-                    withContext(Dispatchers.Main) {
+                    } ?: (exception.message ?: exception.toString())
+
+                    withContext(mainDispatcher) {
                         _mainUiState.update { it.copy(isLoading = false, errorMessage = errorMessage) }
                     }
                 }
         }
-    }
-
-    fun setDidRequestCameraPermission(didRequest: Boolean) {
-        if (!_didRequestCameraPermission.value) {
-            _didRequestCameraPermission.value = didRequest
-            sharedPreferences.edit { putBoolean(DID_REQUEST_CAMERA_PERMISSION_KEY, didRequest) }
-        }
-    }
-
-    fun setShouldShowRationale(shouldShow: Boolean) {
-        _shouldShowRationale.value = shouldShow
     }
 
     fun getCarReview() {
@@ -136,11 +114,11 @@ class MainViewModel(
         }
         if (_mainUiState.value.carReview != null) return
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             _mainUiState.update { it.copy(isLoading = true) }
             carDetailsRepository.getCarReview(searchTerm, languageTranslator.currentLocale)
                 .onSuccess { carReview ->
-                    withContext(Dispatchers.Main) {
+                    withContext(mainDispatcher) {
                         val formattedCarReview = formatCarReviewResponse(
                             carReview, languageTranslator)
                         _mainUiState.update {
@@ -148,8 +126,15 @@ class MainViewModel(
                         }
                     }
                 }.onFailure { error ->
-                    withContext(Dispatchers.Main) {
-                        _mainUiState.update { it.copy(isLoading = false, errorMessage = error.localizedMessage) }
+                    val errorMessage = error.localizedMessage?.let {
+                        if (it.contains("[")) {
+                            it.substring(0, it.indexOf("[")).trim()
+                        } else {
+                            it.trim()
+                        }
+                    } ?: (error.message ?: error.toString())
+                    withContext(mainDispatcher) {
+                        _mainUiState.update { it.copy(isLoading = false, errorMessage = errorMessage) }
                     }
                 }
         }
@@ -163,16 +148,23 @@ class MainViewModel(
         if (_mainUiState.value.tirePressure != null) return
 
         val licensePlateNumberWithoutDashes = _licensePlateNumber.replace("-", "")
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             _mainUiState.update { it.copy(isLoading = true) }
             carDetailsRepository.getTirePressure(licensePlateNumberWithoutDashes)
                 .onSuccess { tirePressure ->
-                    withContext(Dispatchers.Main) {
+                    withContext(mainDispatcher) {
                         _mainUiState.update { it.copy(isLoading = false, tirePressure = tirePressure) }
                     }
                 }.onFailure { error ->
-                    withContext(Dispatchers.Main) {
-                        _mainUiState.update { it.copy(isLoading = false, errorMessage = error.localizedMessage) }
+                    val errorMessage = error.localizedMessage?.let {
+                        if (it.contains("[")) {
+                            it.substring(0, it.indexOf("[")).trim()
+                        } else {
+                            it.trim()
+                        }
+                    } ?: (error.message ?: error.toString())
+                    withContext(mainDispatcher) {
+                        _mainUiState.update { it.copy(isLoading = false, errorMessage = errorMessage) }
                     }
                 }
         }
@@ -205,14 +197,13 @@ class MainViewModel(
     }
 
     class Factory(
-        private val sharedPreferences: SharedPreferences,
         private val context: Context
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
+            if (modelClass.isAssignableFrom(CarViewModel::class.java)) {
                 val connectivityObserver = ConnectivityObserver(context.applicationContext)
                 @Suppress("UNCHECKED_CAST")
-                return MainViewModel(sharedPreferences, connectivityObserver) as T
+                return CarViewModel(connectivityObserver) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }

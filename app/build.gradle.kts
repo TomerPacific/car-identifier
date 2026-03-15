@@ -89,6 +89,8 @@ dependencies {
     testImplementation(libs.junit4)
     testImplementation(libs.mlkit.text.recognition)
     testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.coroutines.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(platform(libs.compose.bom))

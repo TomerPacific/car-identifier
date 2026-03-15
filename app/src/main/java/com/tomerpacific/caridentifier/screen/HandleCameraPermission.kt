@@ -15,13 +15,13 @@ import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.R
-import com.tomerpacific.caridentifier.model.MainViewModel
+import com.tomerpacific.caridentifier.model.PermissionViewModel
 import com.tomerpacific.caridentifier.model.Screen
 
 @Composable
 fun HandleCameraPermission(
     navController: NavController,
-    mainViewModel: MainViewModel,
+    permissionViewModel: PermissionViewModel,
 ) {
     val context = LocalContext.current
 
@@ -42,18 +42,22 @@ fun HandleCameraPermission(
                     true -> PackageManager.PERMISSION_GRANTED
                     false -> PackageManager.PERMISSION_DENIED
                 }
-            handleCameraPermissionResult(context, navController, mainViewModel, isGranted)
+            handleCameraPermissionResult(context, navController, permissionViewModel, isGranted)
         }
 
-    LaunchedEffect(cameraPermissionStatus) {
-        cameraPermissionRequestLauncher.launch(android.Manifest.permission.CAMERA)
+    LaunchedEffect(Unit) {
+        if (cameraPermissionStatus == PackageManager.PERMISSION_GRANTED) {
+            navController.navigate(Screen.CameraPreview.route)
+        } else {
+            cameraPermissionRequestLauncher.launch(android.Manifest.permission.CAMERA)
+        }
     }
 }
 
 private fun handleCameraPermissionResult(
     context: Context,
     navController: NavController,
-    mainViewModel: MainViewModel,
+    permissionViewModel: PermissionViewModel,
     isGranted: Boolean,
 ) {
     when (isGranted) {
@@ -64,7 +68,7 @@ private fun handleCameraPermissionResult(
             val activity = context.getActivityOrNull()
             activity?.let {
                 val shouldShowRationale = shouldShowRequestPermissionRationale(it, android.Manifest.permission.CAMERA)
-                mainViewModel.setShouldShowRationale(shouldShowRationale)
+                permissionViewModel.setShouldShowRationale(shouldShowRationale)
                 if (shouldShowRationale) {
                     Toast.makeText(
                         context,
@@ -74,7 +78,7 @@ private fun handleCameraPermissionResult(
                         .show()
                 }
             }
-            mainViewModel.setDidRequestCameraPermission(true)
+            permissionViewModel.setDidRequestCameraPermission(true)
             navController.popBackStack()
         }
     }

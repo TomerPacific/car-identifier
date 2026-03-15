@@ -54,21 +54,19 @@ import com.google.mlkit.vision.text.TextRecognizer
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.getLicensePlateNumberFromImageText
-import com.tomerpacific.caridentifier.model.MainViewModel
+import com.tomerpacific.caridentifier.model.CarViewModel
 import com.tomerpacific.caridentifier.model.Screen
 
 @Composable
 fun VerifyPhotoDialog(
     imageUri: String,
     navController: NavController,
-    mainViewModel: MainViewModel,
+    carViewModel: CarViewModel,
 ) {
     val context = LocalContext.current
-    val uri: Uri?
-    val textRecognizer =
-        remember {
-            TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-        }
+    val textRecognizer = remember {
+        TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+    }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -76,79 +74,98 @@ fun VerifyPhotoDialog(
         }
     }
 
-    try {
-        uri = imageUri.toUri()
+    val uri: Uri = try {
+        imageUri.toUri()
     } catch (e: Exception) {
         Log.e("VerifyPhotoDialog", "Invalid URI: $imageUri", e)
-        mainViewModel.triggerSnackBarEvent(stringResource(R.string.invalid_image_uri_error))
+        carViewModel.triggerSnackBarEvent(stringResource(R.string.invalid_image_uri_error))
         navController.popBackStack()
         return
     }
 
-    Dialog(
-        onDismissRequest = {
-            navController.popBackStack()
-        },
-    ) {
-        Card(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
-        ) {
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(text = stringResource(R.string.verify_photo_msg), fontSize = 22.sp, fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.size(20.dp))
-                AsyncImage(
-                    model =
-                        ImageRequest.Builder(LocalContext.current)
-                            .data(uri)
-                            .build(),
-                    contentDescription = "icon",
-                    contentScale = ContentScale.Inside,
-                    modifier =
-                        Modifier
-                            .heightIn(max = 300.dp)
-                            .fillMaxWidth(),
-                )
-                Spacer(modifier = Modifier.size(20.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Button(
-                        onClick = {
-                            navController.popBackStack()
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
-                        modifier = Modifier.padding(start = 6.dp),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "No",
-                        )
-                    }
-                    Button(
-                        onClick = { processImage(context, uri, mainViewModel, navController, textRecognizer) },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.Green),
-                        modifier = Modifier.padding(end = 6.dp),
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Done,
-                            contentDescription = "Yes",
-                        )
-                    }
-                }
+    Dialog(onDismissRequest = { navController.popBackStack() }) {
+        VerifyPhotoCard(
+            uri = uri,
+            onCancel = { navController.popBackStack() },
+            onConfirm = {
+                processImage(context, uri, carViewModel, navController, textRecognizer)
             }
+        )
+    }
+}
+
+@Composable
+private fun VerifyPhotoCard(
+    uri: Uri,
+    onCancel: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(16.dp),
+        shape = RoundedCornerShape(16.dp),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(bottom = 16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = stringResource(R.string.verify_photo_msg),
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(top = 16.dp)
+            )
+            Spacer(modifier = Modifier.size(20.dp))
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(uri)
+                    .build(),
+                contentDescription = "captured image",
+                contentScale = ContentScale.Inside,
+                modifier = Modifier
+                    .heightIn(max = 300.dp)
+                    .fillMaxWidth(),
+            )
+            Spacer(modifier = Modifier.size(20.dp))
+            VerifyPhotoButtons(onCancel = onCancel, onConfirm = onConfirm)
+        }
+    }
+}
+
+@Composable
+private fun VerifyPhotoButtons(
+    onCancel: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Button(
+            onClick = onCancel,
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+            modifier = Modifier.padding(start = 16.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "No",
+            )
+        }
+        Button(
+            onClick = onConfirm,
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Green),
+            modifier = Modifier.padding(end = 16.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Done,
+                contentDescription = "Yes",
+            )
         }
     }
 }
@@ -156,7 +173,7 @@ fun VerifyPhotoDialog(
 private fun processImage(
     context: Context,
     imageUri: Uri,
-    mainViewModel: MainViewModel,
+    carViewModel: CarViewModel,
     navController: NavController,
     textRecognizer: TextRecognizer,
 ) {
@@ -169,24 +186,18 @@ private fun processImage(
 
         textRecognizer.process(image)
             .addOnSuccessListener { visionText ->
-                val licensePlateNumber =
-                    getLicensePlateNumberFromImageText(visionText)
-                when (licensePlateNumber) {
-                    null -> {
-                        mainViewModel.triggerSnackBarEvent(context.getString(R.string.no_license_plate_error))
-                        navController.popBackStack()
-                        return@addOnSuccessListener
-                    }
-                    else -> {
-                        mainViewModel.getCarDetails(licensePlateNumber)
-                        navController.navigate(Screen.CarDetailsScreen.route)
-                        return@addOnSuccessListener
-                    }
+                val licensePlateNumber = getLicensePlateNumberFromImageText(visionText)
+                if (licensePlateNumber == null) {
+                    carViewModel.triggerSnackBarEvent(context.getString(R.string.no_license_plate_error))
+                    navController.popBackStack()
+                } else {
+                    carViewModel.getCarDetails(licensePlateNumber)
+                    navController.navigate(Screen.CarDetailsScreen.route)
                 }
             }
             .addOnFailureListener { exception ->
                 Log.e("VerifyPhotoDialog", "Text recognition failed", exception)
-                mainViewModel.triggerSnackBarEvent(context.getString(R.string.no_license_plate_error))
+                carViewModel.triggerSnackBarEvent(context.getString(R.string.no_license_plate_error))
                 navController.popBackStack()
             }.addOnCompleteListener {
                 grayscaleBitmap?.recycle()
@@ -195,7 +206,7 @@ private fun processImage(
     } catch (e: Exception) {
         grayscaleBitmap?.recycle()
         bitmap?.recycle()
-        mainViewModel.triggerSnackBarEvent(e.message ?: context.getString(R.string.error_processing_image))
+        carViewModel.triggerSnackBarEvent(e.message ?: context.getString(R.string.error_processing_image))
         navController.popBackStack()
     }
 }

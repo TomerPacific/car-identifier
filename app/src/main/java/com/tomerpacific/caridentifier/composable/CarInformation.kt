@@ -38,11 +38,11 @@ import androidx.compose.ui.unit.sp
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.concatenateCarMakeAndModel
 import com.tomerpacific.caridentifier.model.CarDetails
-import com.tomerpacific.caridentifier.model.MainViewModel
+import com.tomerpacific.caridentifier.model.CarViewModel
 
 @Composable
-fun Details(mainViewModel: MainViewModel) {
-    val uiState by mainViewModel.mainUiState.collectAsState()
+fun Details(carViewModel: CarViewModel) {
+    val uiState by carViewModel.mainUiState.collectAsState()
 
     val columnVerticalArrangement: Arrangement.Vertical =
         when (uiState.carDetails) {
@@ -88,9 +88,9 @@ fun Details(mainViewModel: MainViewModel) {
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                 )
-                if (mainViewModel.shouldShowRetryRequestButton()) {
+                if (carViewModel.shouldShowRetryRequestButton()) {
                     IconButton(onClick = {
-                        mainViewModel.getCarDetails()
+                        carViewModel.getCarDetails()
                     }) {
                         Icon(imageVector = Icons.Default.Refresh, contentDescription = "Retry")
                     }

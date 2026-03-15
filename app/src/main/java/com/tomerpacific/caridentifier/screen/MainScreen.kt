@@ -36,17 +36,19 @@ import androidx.navigation.NavController
 import com.tomerpacific.caridentifier.BuildConfig
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.composable.CarLicensePlateSearchOptionButton
-import com.tomerpacific.caridentifier.model.MainViewModel
+import com.tomerpacific.caridentifier.model.CarViewModel
+import com.tomerpacific.caridentifier.model.PermissionViewModel
 import com.tomerpacific.caridentifier.ui.theme.CarIdentifierTheme
 
 @Composable
 fun MainScreen(
     navController: NavController,
-    mainViewModel: MainViewModel,
+    permissionViewModel: PermissionViewModel,
+    carViewModel: CarViewModel,
 ) {
-    val shouldShowRationale = mainViewModel.shouldShowRationale.collectAsState()
+    val shouldShowRationale = permissionViewModel.shouldShowRationale.collectAsState()
 
-    val didRequestPermission = mainViewModel.didRequestCameraPermission.collectAsState()
+    val didRequestPermission = permissionViewModel.didRequestCameraPermission.collectAsState()
 
     val shouldDisableButton = didRequestPermission.value && !shouldShowRationale.value
 
@@ -66,7 +68,7 @@ fun MainScreen(
                 ) { innerPadding ->
 
                     LaunchedEffect(Unit, block = {
-                        mainViewModel.snackbarEvent.collect { message ->
+                        carViewModel.snackbarEvent.collect { message ->
                             snackbarHostState.showSnackbar(message)
                         }
                     })
