@@ -126,8 +126,15 @@ class CarViewModel(
                         }
                     }
                 }.onFailure { error ->
+                    val errorMessage = error.localizedMessage?.let {
+                        if (it.contains("[")) {
+                            it.substring(0, it.indexOf("[")).trim()
+                        } else {
+                            it.trim()
+                        }
+                    } ?: (error.message ?: error.toString())
                     withContext(mainDispatcher) {
-                        _mainUiState.update { it.copy(isLoading = false, errorMessage = error.localizedMessage) }
+                        _mainUiState.update { it.copy(isLoading = false, errorMessage = errorMessage) }
                     }
                 }
         }
@@ -149,8 +156,15 @@ class CarViewModel(
                         _mainUiState.update { it.copy(isLoading = false, tirePressure = tirePressure) }
                     }
                 }.onFailure { error ->
+                    val errorMessage = error.localizedMessage?.let {
+                        if (it.contains("[")) {
+                            it.substring(0, it.indexOf("[")).trim()
+                        } else {
+                            it.trim()
+                        }
+                    } ?: (error.message ?: error.toString())
                     withContext(mainDispatcher) {
-                        _mainUiState.update { it.copy(isLoading = false, errorMessage = error.localizedMessage) }
+                        _mainUiState.update { it.copy(isLoading = false, errorMessage = errorMessage) }
                     }
                 }
         }
