@@ -46,7 +46,9 @@ fun HandleCameraPermission(
         }
 
     LaunchedEffect(Unit) {
-        if (cameraPermissionStatus != PackageManager.PERMISSION_GRANTED) {
+        if (cameraPermissionStatus == PackageManager.PERMISSION_GRANTED) {
+            navController.navigate(Screen.CameraPreview.route)
+        } else {
             cameraPermissionRequestLauncher.launch(android.Manifest.permission.CAMERA)
         }
     }
