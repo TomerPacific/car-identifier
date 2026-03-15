@@ -54,20 +54,19 @@ fun CarDetailsScreen(
                 tabIndex = newTabIndex
             }
 
-            LaunchedEffect(tabIndex) {
-                when (tabIndex) {
-                    TAB_AI_INDEX -> carViewModel.getCarReview()
-                    TAB_TIRE_PRESSURE_INDEX -> carViewModel.getTirePressure()
-                }
-            }
-
             when (tabIndex) {
                 TAB_DETAILS_INDEX -> Details(carViewModel)
                 TAB_REVIEWS_INDEX -> Reviews(carViewModel)
                 TAB_AI_INDEX -> {
+                    LaunchedEffect(tabIndex) {
+                        carViewModel.getCarReview()
+                    }
                     Advice(carViewModel)
                 }
                 TAB_TIRE_PRESSURE_INDEX -> {
+                    LaunchedEffect(tabIndex) {
+                        carViewModel.getTirePressure()
+                    }
                     TirePressureScreen(carViewModel)
                 }
             }
