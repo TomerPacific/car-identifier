@@ -7,6 +7,7 @@ import com.google.mlkit.nl.translate.TranslateLanguage
 import com.google.mlkit.nl.translate.Translation
 import com.google.mlkit.nl.translate.Translator
 import com.google.mlkit.nl.translate.TranslatorOptions
+import com.tomerpacific.caridentifier.model.CarDetails
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -69,6 +70,37 @@ class LanguageTranslator {
                 else -> Result.success(results)
             }
         }
+
+    suspend fun translateCarDetails(carDetails: CarDetails): Pair<CarDetails, String> {
+        return if (isHebrewLanguage()) {
+            val carMakeAndModel = concatenateCarMakeAndModel(carDetails)
+            val translationResult = translate(carMakeAndModel)
+            val translatedText = translationResult.getOrNull()
+            val searchTerm = if (translationResult.isSuccess && !translatedText.isNullOrEmpty()) {
+                "$REVIEW_HEBREW${translatedText.first()}"
+            } else {
+                carMakeAndModel + REVIEW_ENGLISH
+            }
+            Pair(carDetails, searchTerm)
+        } else {
+            val translationResult = translate(carDetails.color)
+            val translatedColor = translationResult.getOrNull()
+            val color = when {
+                translationResult.isSuccess && !translatedColor.isNullOrEmpty() ->
+                    translatedColor.first()
+                translationResult.isFailure -> FAILED_TO_TRANSLATE_MSG
+                else -> carDetails.color
+            }
+
+            val updatedCarDetails = carDetails.copy(
+                color = color,
+                ownership = translateOwnership(carDetails.ownership),
+                fuelType = translateFuelType(carDetails.fuelType)
+            )
+            val searchTerm = concatenateCarMakeAndModel(updatedCarDetails) + REVIEW_ENGLISH
+            Pair(updatedCarDetails, searchTerm)
+        }
+    }
 
     fun translateOwnership(ownership: String): String {
         return when (ownership) {
