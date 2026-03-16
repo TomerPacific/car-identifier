@@ -2,6 +2,7 @@ package com.tomerpacific.caridentifier
 
 import com.google.mlkit.vision.text.Text
 import com.tomerpacific.caridentifier.model.CarDetails
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
@@ -169,6 +170,31 @@ class UtilitiesUnitTest {
 
         val concatenatedCarMakeAndModel = concatenateCarMakeAndModel(carDetails)
         assert(concatenatedCarMakeAndModel == "Ford Focus Sport 2013")
+    }
+
+    @Test
+    fun `handleErrorMessage should truncate message containing square brackets`() {
+        val exception = Exception("Network Error [404] Not Found")
+        val result = handleErrorMessage(exception)
+        assertEquals("Network Error", result)
+    }
+
+    @Test
+    fun `handleErrorMessage should return full message when no square brackets present`() {
+        val exception = Exception("Simple Error Message")
+        val result = handleErrorMessage(exception)
+        assertEquals("Simple Error Message", result)
+    }
+
+    @Test
+    fun `handleErrorMessage should return exception string when localizedMessage and message are null`() {
+        val exception = object : Exception() {
+            override fun getLocalizedMessage(): String? = null
+            override val message: String? = null
+            override fun toString(): String = "CustomException"
+        }
+        val result = handleErrorMessage(exception)
+        assertEquals("CustomException", result)
     }
 
     private fun createTextBlock(
