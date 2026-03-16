@@ -81,9 +81,7 @@ class CarViewModelTest {
 
         whenever(connectivityObserver.isConnectedToNetwork()).thenReturn(true)
         whenever(carDetailsRepository.getCarDetails(any())).thenReturn(Result.success(carDetails))
-        whenever(languageTranslator.translate(any())).thenReturn(Result.success(listOf("White")))
-        whenever(languageTranslator.translateOwnership(any())).thenReturn("Private")
-        whenever(languageTranslator.translateFuelType(any())).thenReturn("Gasoline")
+        whenever(languageTranslator.translateCarDetails(any())).thenReturn(Pair(carDetails, "Toyota Corolla GLX 2020"))
 
         viewModel.getCarDetails(licensePlate)
 
