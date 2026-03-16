@@ -62,12 +62,12 @@ class CarViewModel(
             carDetailsRepository.getCarDetails(licensePlateWithoutDashes)
                 .onSuccess { carDetails ->
                     val result = languageTranslator.translateCarDetails(carDetails)
-                    searchTerm = result.second
+                    searchTerm = result.searchTerm
                     withContext(mainDispatcher) {
                         _mainUiState.update {
                             it.copy(
                                 isLoading = false,
-                                carDetails = result.first,
+                                carDetails = result.carDetails,
                                 reviewUrl = "${CAR_REVIEW_ENDPOINT}$searchTerm"
                             )
                         }
