@@ -61,31 +61,35 @@ class CarViewModel(
             _mainUiState.update { it.copy(isLoading = true, errorMessage = null) }
             carDetailsRepository.getCarDetails(licensePlateNumberWithoutDashes)
                 .onSuccess { carDetails ->
-                    var finalCarDetails = carDetails
-                    if (languageTranslator.isHebrewLanguage()) {
-                        val translationResult = languageTranslator.translate(concatenateCarMakeAndModel(carDetails))
-                        val translatedText = translationResult.getOrNull()
-                        searchTerm = if (translationResult.isSuccess && !translatedText.isNullOrEmpty()) {
-                            "$REVIEW_HEBREW${translatedText.first()}"
+                    val finalCarDetails =
+                        if (languageTranslator.isHebrewLanguage()) {
+                            val translationResult = languageTranslator.translate(
+                                concatenateCarMakeAndModel(carDetails)
+                            )
+                            val translatedText = translationResult.getOrNull()
+                            searchTerm = if (translationResult.isSuccess && !translatedText.isNullOrEmpty()) {
+                                "$REVIEW_HEBREW${translatedText.first()}"
+                            } else {
+                                concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH
+                            }
+                            carDetails
                         } else {
-                            concatenateCarMakeAndModel(carDetails) + REVIEW_ENGLISH
+                            val translationResult = languageTranslator.translate(carDetails.color)
+                            val translatedColor = translationResult.getOrNull()
+                            val color = when {
+                                translationResult.isSuccess && !translatedColor.isNullOrEmpty() -> translatedColor.first()
+                                translationResult.isFailure -> FAILED_TO_TRANSLATE_MSG
+                                else -> carDetails.color
+                            }
+
+                            val updatedCarDetails = carDetails.copy(
+                                color = color,
+                                ownership = languageTranslator.translateOwnership(carDetails.ownership),
+                                fuelType = languageTranslator.translateFuelType(carDetails.fuelType)
+                            )
+                            searchTerm = concatenateCarMakeAndModel(updatedCarDetails) + REVIEW_ENGLISH
+                            updatedCarDetails
                         }
-                    } else {
-                        val translationResult = languageTranslator.translate(carDetails.color)
-                        val translatedColor = translationResult.getOrNull()
-                        val color = when {
-                            translationResult.isSuccess && !translatedColor.isNullOrEmpty() -> translatedColor.first()
-                            translationResult.isFailure -> FAILED_TO_TRANSLATE_MSG
-                            else -> carDetails.color
-                        }
-                        
-                        finalCarDetails = carDetails.copy(
-                            color = color,
-                            ownership = languageTranslator.translateOwnership(carDetails.ownership),
-                            fuelType = languageTranslator.translateFuelType(carDetails.fuelType)
-                        )
-                        searchTerm = concatenateCarMakeAndModel(finalCarDetails) + REVIEW_ENGLISH
-                    }
                     withContext(mainDispatcher) {
                         _mainUiState.update {
                             it.copy(
