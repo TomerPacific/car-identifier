@@ -78,10 +78,13 @@ class CarViewModelTest {
     fun `getCarDetails should update state on success`() = runTest {
         val licensePlate = "1234567"
         val carDetails = createCarDetails(1234567)
+        val searchTerm = "Toyota Corolla GLX 2020"
 
         whenever(connectivityObserver.isConnectedToNetwork()).thenReturn(true)
         whenever(carDetailsRepository.getCarDetails(any())).thenReturn(Result.success(carDetails))
-        whenever(languageTranslator.translateCarDetails(any())).thenReturn(Pair(carDetails, "Toyota Corolla GLX 2020"))
+        whenever(languageTranslator.translateCarDetails(any())).thenReturn(
+            TranslationResult(carDetails, searchTerm)
+        )
 
         viewModel.getCarDetails(licensePlate)
 
