@@ -225,3 +225,13 @@ private fun doesManufacturerNameExistInCommercialName(
 ): Boolean {
     return commercialName.contains(manufacturerName, ignoreCase = true)
 }
+
+fun handleErrorMessage(exception: Throwable): String {
+    return exception.localizedMessage?.let {
+        if (it.contains("[")) {
+            it.substring(0, it.indexOf("[")).trim()
+        } else {
+            it.trim()
+        }
+    } ?: (exception.message ?: exception.toString())
+}
