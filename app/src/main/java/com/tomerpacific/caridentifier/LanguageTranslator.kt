@@ -20,6 +20,11 @@ const val FAILED_TO_TRANSLATE_MSG = "Failed to translate"
 
 private val tag = LanguageTranslator::class.simpleName
 
+data class TranslationResult(
+    val carDetails: CarDetails,
+    val searchTerm: String
+)
+
 class LanguageTranslator {
     private val translator: Translator
 
@@ -71,7 +76,7 @@ class LanguageTranslator {
             }
         }
 
-    suspend fun translateCarDetails(carDetails: CarDetails): Pair<CarDetails, String> {
+    suspend fun translateCarDetails(carDetails: CarDetails): TranslationResult {
         return if (isHebrewLanguage()) {
             val carMakeAndModel = concatenateCarMakeAndModel(carDetails)
             val translationResult = translate(carMakeAndModel)
@@ -81,7 +86,7 @@ class LanguageTranslator {
             } else {
                 carMakeAndModel + REVIEW_ENGLISH
             }
-            Pair(carDetails, searchTerm)
+            TranslationResult(carDetails, searchTerm)
         } else {
             val translationResult = translate(carDetails.color)
             val translatedColor = translationResult.getOrNull()
@@ -98,7 +103,7 @@ class LanguageTranslator {
                 fuelType = translateFuelType(carDetails.fuelType)
             )
             val searchTerm = concatenateCarMakeAndModel(updatedCarDetails) + REVIEW_ENGLISH
-            Pair(updatedCarDetails, searchTerm)
+            TranslationResult(updatedCarDetails, searchTerm)
         }
     }
 
