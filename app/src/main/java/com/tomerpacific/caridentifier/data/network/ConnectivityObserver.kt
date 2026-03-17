@@ -19,6 +19,14 @@ class ConnectivityObserver(context: Context) {
     val isConnected: StateFlow<Boolean> = _isConnected.asStateFlow()
 
     private val callback = object : ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(network: Network) {
+            super.onAvailable(network)
+            val capabilities = connectivityManager?.getNetworkCapabilities(network)
+            _isConnected.value = capabilities?.hasCapability(
+                NetworkCapabilities.NET_CAPABILITY_VALIDATED,
+            ) ?: false
+        }
+
         override fun onLost(network: Network) {
             super.onLost(network)
             _isConnected.value = false
@@ -34,10 +42,9 @@ class ConnectivityObserver(context: Context) {
             networkCapabilities: NetworkCapabilities,
         ) {
             super.onCapabilitiesChanged(network, networkCapabilities)
-            val connected = networkCapabilities.hasCapability(
+            _isConnected.value = networkCapabilities.hasCapability(
                 NetworkCapabilities.NET_CAPABILITY_VALIDATED,
             )
-            _isConnected.value = connected
         }
     }
 
