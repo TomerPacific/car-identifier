@@ -23,7 +23,9 @@ class ConnectivityObserver(
     private val callback =
         object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
-                _isConnected.value = true
+                // We don't set isConnected to true here because the network
+                // might not have internet access yet (e.g. captive portal).
+                // We wait for onCapabilitiesChanged to verify NET_CAPABILITY_VALIDATED.
             }
 
             override fun onLost(network: Network) {
