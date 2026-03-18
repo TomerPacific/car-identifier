@@ -43,6 +43,7 @@ import com.tomerpacific.caridentifier.model.CarViewModel
 @Composable
 fun Details(carViewModel: CarViewModel) {
     val uiState by carViewModel.mainUiState.collectAsState()
+    val shouldShowRetryButton by carViewModel.shouldShowRetryRequestButton.collectAsState()
 
     val columnVerticalArrangement: Arrangement.Vertical =
         when (uiState.carDetails) {
@@ -88,7 +89,7 @@ fun Details(carViewModel: CarViewModel) {
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                 )
-                if (carViewModel.shouldShowRetryRequestButton()) {
+                if (shouldShowRetryButton) {
                     IconButton(onClick = {
                         carViewModel.getCarDetails()
                     }) {
