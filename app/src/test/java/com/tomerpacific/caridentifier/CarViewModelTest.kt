@@ -160,6 +160,8 @@ class CarViewModelTest {
     fun `shouldShowRetryRequestButton should be true when no internet connection error`() = runTest {
         whenever(connectivityObserver.isConnectedToNetwork()).thenReturn(false)
         viewModel.getCarDetails("1234567")
+        advanceUntilIdle()
+
         assertTrue(viewModel.shouldShowRetryRequestButton.value)
     }
 
