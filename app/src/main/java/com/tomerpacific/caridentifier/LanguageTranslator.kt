@@ -2,6 +2,7 @@ package com.tomerpacific.caridentifier
 
 import android.util.Log
 import androidx.compose.ui.text.intl.Locale
+import com.google.android.gms.tasks.Task
 import com.google.mlkit.common.model.DownloadConditions
 import com.google.mlkit.nl.translate.TranslateLanguage
 import com.google.mlkit.nl.translate.Translation
@@ -27,8 +28,7 @@ data class TranslationResult(
 
 class LanguageTranslator {
     private val translator: Translator
-
-    private var isLanguageModelDownloaded = false
+    private val modelDownloadTask: Task<Void>
 
     val currentLocale = Locale.current.language
 
@@ -40,20 +40,16 @@ class LanguageTranslator {
             DownloadConditions.Builder()
                 .requireWifi()
                 .build()
-        translator.downloadModelIfNeeded(downloadConditions)
-            .addOnSuccessListener {
-                isLanguageModelDownloaded = true
-            }
-            .addOnFailureListener { error ->
-                Log.e(tag, "Failed to download language model: ${error.message}")
-                isLanguageModelDownloaded = false
-            }
+        modelDownloadTask = translator.downloadModelIfNeeded(downloadConditions)
     }
 
     suspend fun translate(vararg text: String): Result<List<String>> =
         coroutineScope {
-            if (!isLanguageModelDownloaded) {
-                return@coroutineScope Result.failure(Exception("Failed to download language model"))
+            try {
+                modelDownloadTask.await()
+            } catch (e: Exception) {
+                Log.e(tag, "Failed to download language model: ${e.message}")
+                return@coroutineScope Result.failure(e)
             }
 
             val deferredTranslations =
