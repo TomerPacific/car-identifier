@@ -2,6 +2,7 @@ package com.tomerpacific.caridentifier
 
 import com.tomerpacific.caridentifier.data.network.ConnectivityObserver
 import com.tomerpacific.caridentifier.data.network.NO_INTERNET_CONNECTION_ERROR
+import com.tomerpacific.caridentifier.data.network.REQUEST_TIMEOUT_ERROR
 import com.tomerpacific.caridentifier.data.repository.CarDetailsRepository
 import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.CarViewModel
@@ -18,6 +19,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
@@ -152,6 +154,35 @@ class CarViewModelTest {
         assertNull(viewModel.mainUiState.value.carDetails)
         assertNull(viewModel.mainUiState.value.errorMessage)
         assertFalse(viewModel.mainUiState.value.isLoading)
+    }
+
+    @Test
+    fun `shouldShowRetryRequestButton should be true when no internet connection error`() = runTest {
+        whenever(connectivityObserver.isConnectedToNetwork()).thenReturn(false)
+        viewModel.getCarDetails("1234567")
+        assertTrue(viewModel.shouldShowRetryRequestButton.value)
+    }
+
+    @Test
+    fun `shouldShowRetryRequestButton should be true when request timeout error`() = runTest {
+        whenever(connectivityObserver.isConnectedToNetwork()).thenReturn(true)
+        whenever(carDetailsRepository.getCarDetails(any())).thenReturn(Result.failure(Exception(REQUEST_TIMEOUT_ERROR)))
+        
+        viewModel.getCarDetails("1234567")
+        advanceUntilIdle()
+        
+        assertTrue(viewModel.shouldShowRetryRequestButton.value)
+    }
+
+    @Test
+    fun `shouldShowRetryRequestButton should be false when other error`() = runTest {
+        whenever(connectivityObserver.isConnectedToNetwork()).thenReturn(true)
+        whenever(carDetailsRepository.getCarDetails(any())).thenReturn(Result.failure(Exception("Other error")))
+        
+        viewModel.getCarDetails("1234567")
+        advanceUntilIdle()
+        
+        assertFalse(viewModel.shouldShowRetryRequestButton.value)
     }
 
     private fun createCarDetails(licensePlate: Int) = CarDetails(
