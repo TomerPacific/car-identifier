@@ -17,15 +17,24 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private const val CAR_REVIEW_ENDPOINT =
     "https://www.youtube.com/results?search_query="
+
+private val RETRY_REQUEST_ERRORS = setOf(
+    NO_INTERNET_CONNECTION_ERROR,
+    REQUEST_TIMEOUT_ERROR
+)
 
 class CarViewModel(
     private val connectivityObserver: ConnectivityObserver,
@@ -36,6 +45,11 @@ class CarViewModel(
 ) : ViewModel() {
     private val _mainUiState = MutableStateFlow(MainUiState())
     val mainUiState: StateFlow<MainUiState> = _mainUiState.asStateFlow()
+
+    val shouldShowRetryRequestButton: StateFlow<Boolean> = mainUiState
+        .map { it.errorMessage in RETRY_REQUEST_ERRORS }
+        .distinctUntilChanged()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     private var searchTerm: String = ""
     private val _snackbarEvent = MutableSharedFlow<String>()
@@ -157,11 +171,6 @@ class CarViewModel(
             )
         }
     }
-
-    fun shouldShowRetryRequestButton(): Boolean =
-        _mainUiState.value.errorMessage in listOf(
-            NO_INTERNET_CONNECTION_ERROR, REQUEST_TIMEOUT_ERROR
-        )
 
     fun getTranslatedSectionHeader(sectionHeader: SectionHeader): String =
         languageTranslator.getSectionHeaderTitle(sectionHeader)
