@@ -20,6 +20,7 @@ import kotlinx.serialization.json.Json
 private const val HTTP_STATUS_OK_LOWER_LIMIT = 200
 private const val HTTP_STATUS_OK_UPPER_LIMIT = 299
 
+private val errorJson = Json { ignoreUnknownKeys = true }
 
 class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
     private suspend fun HttpClient.getCarDetails(licensePlateNumber: String): Result<CarDetails> {
@@ -92,7 +93,7 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
         return try {
             val bodyText = this.bodyAsText()
             try {
-                val serverError = Json { ignoreUnknownKeys = true }.decodeFromString<ServerError>(bodyText)
+                val serverError = errorJson.decodeFromString<ServerError>(bodyText)
                 serverError.errorMsg
             } catch (_: Exception) {
                 bodyText
