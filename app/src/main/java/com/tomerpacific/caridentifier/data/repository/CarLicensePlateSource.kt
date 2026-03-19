@@ -4,6 +4,7 @@ import com.tomerpacific.caridentifier.BuildConfig
 import com.tomerpacific.caridentifier.HEBREW_LANGUAGE_CODE
 import com.tomerpacific.caridentifier.data.network.AppHttpClient
 import com.tomerpacific.caridentifier.model.CarDetails
+import com.tomerpacific.caridentifier.model.ServerError
 import com.tomerpacific.caridentifier.model.TirePressure
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -19,40 +20,38 @@ private const val HTTP_STATUS_OK_UPPER_LIMIT = 299
 
 class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
     private suspend fun HttpClient.getCarDetails(licensePlateNumber: String): Result<CarDetails> {
-        val httpResponse: HttpResponse =
-            try {
-                get("${BuildConfig.BASE_URL}/vehicle/$licensePlateNumber")
-            } catch (e: Exception) {
-                return Result.failure(e)
-            }
+        return try {
+            val httpResponse: HttpResponse = get("${BuildConfig.BASE_URL}/vehicle/$licensePlateNumber")
 
-        return when (httpResponse.status.value) {
-            in HTTP_STATUS_OK_LOWER_LIMIT..HTTP_STATUS_OK_UPPER_LIMIT -> {
-                val carDetails = httpResponse.body<CarDetails>()
-                Result.success(carDetails)
+            when (httpResponse.status.value) {
+                in HTTP_STATUS_OK_LOWER_LIMIT..HTTP_STATUS_OK_UPPER_LIMIT -> {
+                    val carDetails = httpResponse.body<CarDetails>()
+                    Result.success(carDetails)
+                }
+                else -> {
+                    Result.failure(Exception(httpResponse.getErrorMessage()))
+                }
             }
-            else -> {
-                Result.failure(Exception(httpResponse.bodyAsText()))
-            }
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 
     private suspend fun HttpClient.getTirePressure(licensePlateNumber: String): Result<TirePressure> {
-        val httpResponse: HttpResponse =
-            try {
-                get("${BuildConfig.BASE_URL}/tire-pressure/$licensePlateNumber")
-            } catch (e: Exception) {
-                return Result.failure(e)
-            }
+        return try {
+            val httpResponse: HttpResponse = get("${BuildConfig.BASE_URL}/tire-pressure/$licensePlateNumber")
 
-        return when (httpResponse.status.value) {
-            in HTTP_STATUS_OK_LOWER_LIMIT..HTTP_STATUS_OK_UPPER_LIMIT -> {
-                val tirePressure = httpResponse.body<TirePressure>()
-                Result.success(tirePressure)
+            when (httpResponse.status.value) {
+                in HTTP_STATUS_OK_LOWER_LIMIT..HTTP_STATUS_OK_UPPER_LIMIT -> {
+                    val tirePressure = httpResponse.body<TirePressure>()
+                    Result.success(tirePressure)
+                }
+                else -> {
+                    Result.failure(Exception(httpResponse.getErrorMessage()))
+                }
             }
-            else -> {
-                Result.failure(Exception(httpResponse.bodyAsText()))
-            }
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 
@@ -61,23 +60,30 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
         searchQuery: String,
         locale: String = HEBREW_LANGUAGE_CODE,
     ): Result<String> {
-        val httpResponse: HttpResponse =
-            try {
-                get("${BuildConfig.BASE_URL}/review/$searchQuery") {
-                    header("Accept-Language", locale)
+        return try {
+            val httpResponse: HttpResponse = get("${BuildConfig.BASE_URL}/review/$searchQuery") {
+                header("Accept-Language", locale)
+            }
+
+            when (httpResponse.status.value) {
+                in HTTP_STATUS_OK_LOWER_LIMIT..HTTP_STATUS_OK_UPPER_LIMIT -> {
+                    Result.success(httpResponse.bodyAsText())
                 }
-            } catch (e: Exception) {
-                return Result.failure(e)
-            }
 
-        return when (httpResponse.status.value) {
-            in HTTP_STATUS_OK_LOWER_LIMIT..HTTP_STATUS_OK_UPPER_LIMIT -> {
-                Result.success(httpResponse.bodyAsText())
+                else -> {
+                    Result.failure(Exception(httpResponse.getErrorMessage()))
+                }
             }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
-            else -> {
-                Result.failure(Exception(httpResponse.bodyAsText()))
-            }
+    private suspend fun HttpResponse.getErrorMessage(): String {
+        return try {
+            this.body<ServerError>().errorMsg
+        } catch (_: Exception) {
+            this.bodyAsText()
         }
     }
 
