@@ -19,7 +19,7 @@ import kotlinx.serialization.json.Json
 
 private const val HTTP_STATUS_OK_LOWER_LIMIT = 200
 private const val HTTP_STATUS_OK_UPPER_LIMIT = 299
-private const val HTTP_STATUS_OK_UPPER_LIMIT = 299
+
 
 class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
     private suspend fun HttpClient.getCarDetails(licensePlateNumber: String): Result<CarDetails> {
