@@ -18,6 +18,7 @@ import kotlinx.coroutines.withContext
 
 private const val HTTP_STATUS_OK_LOWER_LIMIT = 200
 private const val HTTP_STATUS_OK_UPPER_LIMIT = 299
+private const val HTTP_STATUS_OK_UPPER_LIMIT = 299
 
 class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
     private suspend fun HttpClient.getCarDetails(licensePlateNumber: String): Result<CarDetails> {
@@ -36,9 +37,6 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            if (e is CancellationException) {
-                throw e
-            }
             Result.failure(e)
         }
     }
@@ -59,9 +57,6 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            if (e is CancellationException) {
-                throw e
-            }
             Result.failure(e)
         }
     }
@@ -88,9 +83,6 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            if (e is CancellationException) {
-                throw e
-            }
             Result.failure(e)
         }
     }
@@ -98,10 +90,9 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
     private suspend fun HttpResponse.getErrorMessage(): String {
         return try {
             this.body<ServerError>().errorMsg
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
-            if (e is CancellationException) {
-                throw e
-            }
             this.bodyAsText()
         }
     }
