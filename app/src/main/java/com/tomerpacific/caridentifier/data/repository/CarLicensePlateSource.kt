@@ -100,7 +100,8 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            e.message ?: ""
+            val defaultMessage = "HTTP ${status.value} ${status.description}: Unknown server error"
+            e.message?.takeIf { it.isNotBlank() } ?: defaultMessage
         }
     }
 
