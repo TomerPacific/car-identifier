@@ -14,6 +14,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.CancellationException
 
 private const val HTTP_STATUS_OK_LOWER_LIMIT = 200
 private const val HTTP_STATUS_OK_UPPER_LIMIT = 299
@@ -33,6 +34,9 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
                 }
             }
         } catch (e: Exception) {
+            if (e is CancellationException) {
+                throw e
+            }
             Result.failure(e)
         }
     }
@@ -51,6 +55,9 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
                 }
             }
         } catch (e: Exception) {
+            if (e is CancellationException) {
+                throw e
+            }
             Result.failure(e)
         }
     }
@@ -75,6 +82,9 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
                 }
             }
         } catch (e: Exception) {
+            if (e is CancellationException) {
+                throw e
+            }
             Result.failure(e)
         }
     }
@@ -82,7 +92,10 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
     private suspend fun HttpResponse.getErrorMessage(): String {
         return try {
             this.body<ServerError>().errorMsg
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            if (e is CancellationException) {
+                throw e
+            }
             this.bodyAsText()
         }
     }
