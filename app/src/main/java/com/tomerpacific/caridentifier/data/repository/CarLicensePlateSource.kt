@@ -3,6 +3,7 @@ package com.tomerpacific.caridentifier.data.repository
 import com.tomerpacific.caridentifier.BuildConfig
 import com.tomerpacific.caridentifier.HEBREW_LANGUAGE_CODE
 import com.tomerpacific.caridentifier.data.network.AppHttpClient
+import com.tomerpacific.caridentifier.data.network.AppJson
 import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.ServerError
 import com.tomerpacific.caridentifier.model.TirePressure
@@ -16,12 +17,9 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 
 private const val HTTP_STATUS_OK_LOWER_LIMIT = 200
 private const val HTTP_STATUS_OK_UPPER_LIMIT = 299
-
-private val errorJson = Json { ignoreUnknownKeys = true }
 
 class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
     private suspend fun HttpClient.getCarDetails(licensePlateNumber: String): Result<CarDetails> {
@@ -94,7 +92,7 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
         return try {
             val bodyText = this.bodyAsText()
             try {
-                val serverError = errorJson.decodeFromString<ServerError>(bodyText)
+                val serverError = AppJson.decodeFromString<ServerError>(bodyText)
                 serverError.errorMsg
             } catch (_: Exception) {
                 bodyText
