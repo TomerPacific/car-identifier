@@ -12,6 +12,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.CancellationException
@@ -33,6 +34,8 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
                     Result.failure(Exception(httpResponse.getErrorMessage()))
                 }
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             if (e is CancellationException) {
                 throw e
@@ -54,6 +57,8 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
                     Result.failure(Exception(httpResponse.getErrorMessage()))
                 }
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             if (e is CancellationException) {
                 throw e
@@ -81,6 +86,8 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
                     Result.failure(Exception(httpResponse.getErrorMessage()))
                 }
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             if (e is CancellationException) {
                 throw e
