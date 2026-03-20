@@ -9,17 +9,17 @@ import kotlinx.serialization.json.Json
 
 private const val REQUEST_TIMEOUT_DURATION = 10000L
 
+internal val AppJson = Json {
+    ignoreUnknownKeys = true
+}
+
 val AppHttpClient: HttpClient by lazy {
     HttpClient(Android) {
         install(HttpTimeout) {
             requestTimeoutMillis = REQUEST_TIMEOUT_DURATION
         }
         install(ContentNegotiation) {
-            json(
-                Json {
-                    ignoreUnknownKeys = true
-                },
-            )
+            json(AppJson)
         }
     }
 }
