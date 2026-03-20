@@ -1,31 +1,14 @@
 package com.tomerpacific.caridentifier
 
 import com.google.mlkit.vision.text.Text
-import com.tomerpacific.caridentifier.model.CarDetails
-import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 
-class UtilitiesUnitTest {
-    private val carManufacturerNissan = "ניסאן"
-    private val carManufacturerUnknown = "משהו"
+class LicensePlateUtilsUnitTest {
     private val validSevenDigitLicensePlateNumber = "17-655-76"
     private val anotherValidSevenDigitLicensePlateNumber = "12-345-67"
-
     private val validEightDigitLicensePlateNumber = "123-45-678"
-
-    @Test
-    fun `should return true when translated car manufacturer name is Nissan`() {
-        val translatedCarManufacturer = getCarManufacturer(carManufacturerNissan)
-        assert(translatedCarManufacturer == "Nissan")
-    }
-
-    @Test
-    fun `should return true when translated car manufacturer name is Unknown`() {
-        val translatedCarManufacturer = getCarManufacturer(carManufacturerUnknown)
-        assert(translatedCarManufacturer == "Unknown Manufacturer")
-    }
 
     @Test
     fun `should return true when seven digit license plate is valid`() {
@@ -143,58 +126,6 @@ class UtilitiesUnitTest {
 
         val licensePlate = getLicensePlateNumberFromImageText(mockText)
         assert(licensePlate == null)
-    }
-
-    @Test
-    fun `should return true when car make and model are concatenated correctly`() {
-        val carDetails =
-            CarDetails(
-                1765576,
-                "גרמניה",
-                "SPORT",
-                0,
-                15,
-                2013,
-                "2024-03-21",
-                "2025-04-30",
-                "פרטי",
-                "WF0KXXGCBKDU75517",
-                "כחול מטלי",
-                "215/55R16",
-                "215/55R16",
-                "בנזין",
-                "2013-5",
-                "FOCUS",
-                "פורד",
-            )
-
-        val concatenatedCarMakeAndModel = concatenateCarMakeAndModel(carDetails)
-        assert(concatenatedCarMakeAndModel == "Ford Focus Sport 2013")
-    }
-
-    @Test
-    fun `handleErrorMessage should truncate message containing square brackets`() {
-        val exception = Exception("Network Error [404] Not Found")
-        val result = handleErrorMessage(exception)
-        assertEquals("Network Error", result)
-    }
-
-    @Test
-    fun `handleErrorMessage should return full message when no square brackets present`() {
-        val exception = Exception("Simple Error Message")
-        val result = handleErrorMessage(exception)
-        assertEquals("Simple Error Message", result)
-    }
-
-    @Test
-    fun `handleErrorMessage should return exception string when localizedMessage and message are null`() {
-        val exception = object : Exception() {
-            override fun getLocalizedMessage(): String? = null
-            override val message: String? = null
-            override fun toString(): String = "CustomException"
-        }
-        val result = handleErrorMessage(exception)
-        assertEquals("CustomException", result)
     }
 
     private fun createTextBlock(
