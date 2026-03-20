@@ -1,6 +1,5 @@
 package com.tomerpacific.caridentifier.screen
 
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,8 +15,7 @@ fun HandleGalleryPicker(navController: NavController) {
             contract = ActivityResultContracts.PickVisualMedia(),
             onResult = { uri ->
                 if (uri != null) {
-                    val encodedUri = Uri.encode(uri.toString())
-                    navController.navigate(Screen.VerifyPhoto.route + "/$encodedUri") {
+                    navController.navigate(Screen.VerifyPhoto.createRoute(uri)) {
                         popUpTo(Screen.GalleryPicker.route) { inclusive = true }
                     }
                 } else {

@@ -1,6 +1,10 @@
 package com.tomerpacific.caridentifier.model
 
-sealed class Screen(val route: String) {
+import android.net.Uri
+
+sealed class Screen(route: String) {
+    open val route: String = route
+
     object MainScreen : Screen("main")
 
     object LicensePlateNumberInput : Screen("license_plate_number_input")
@@ -13,5 +17,10 @@ sealed class Screen(val route: String) {
 
     object GalleryPicker : Screen("gallery_picker")
 
-    object VerifyPhoto : Screen("verify_photo")
+    object VerifyPhoto : Screen("") {
+        const val IMAGE_URI_KEY = "imageUri"
+        private const val BASE_ROUTE = "verify_photo"
+        override val route = "$BASE_ROUTE/{$IMAGE_URI_KEY}"
+        fun createRoute(uri: Uri) = "$BASE_ROUTE/${Uri.encode(uri.toString())}"
+    }
 }

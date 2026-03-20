@@ -23,8 +23,6 @@ import com.tomerpacific.caridentifier.screen.LicensePlateNumberDialog
 import com.tomerpacific.caridentifier.screen.MainScreen
 import com.tomerpacific.caridentifier.screen.VerifyPhotoDialog
 
-const val IMAGE_URI_KEY = "imageUri"
-
 class MainActivity : ComponentActivity() {
 
     private val permissionViewModel: PermissionViewModel by viewModels {
@@ -66,16 +64,16 @@ class MainActivity : ComponentActivity() {
                 HandleGalleryPicker(navController)
             }
             dialog(
-                route = Screen.VerifyPhoto.route + "/{imageUri}",
+                route = Screen.VerifyPhoto.route,
                 arguments =
                     listOf(
-                        navArgument(IMAGE_URI_KEY) {
+                        navArgument(Screen.VerifyPhoto.IMAGE_URI_KEY) {
                             type = NavType.StringType
                         },
                     ),
             ) {
                 it.arguments?.let { bundle ->
-                    bundle.getString(IMAGE_URI_KEY)?.let { uri ->
+                    bundle.getString(Screen.VerifyPhoto.IMAGE_URI_KEY)?.let { uri ->
                         VerifyPhotoDialog(uri, navController, carViewModel)
                     }
                 }
