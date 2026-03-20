@@ -50,8 +50,16 @@ import com.tomerpacific.caridentifier.isLicensePlateNumberValid
 import com.tomerpacific.caridentifier.model.CarViewModel
 import com.tomerpacific.caridentifier.model.Screen
 
-private const val FIRST_DASH_INDEX = 2
-private const val SECOND_DASH_INDEX = 6
+/**
+ * Israeli license plates come in two formats:
+ * 1. 7 digits: XX-XXX-XX
+ * 2. 8 digits: XXX-XX-XXX
+ */
+private const val SEVEN_DIGIT_FIRST_DASH_INDEX = 2
+private const val SEVEN_DIGIT_SECOND_DASH_INDEX = 6
+private const val SEVEN_DIGIT_SECOND_GROUP_START = 3
+private const val SEVEN_DIGIT_THIRD_GROUP_START = 7
+private const val EIGHT_DIGIT_SECOND_GROUP_START = 4
 
 @Composable
 fun LicensePlateNumberDialog(
@@ -234,15 +242,15 @@ private fun doesLicensePlateNumberExceedLimit(textFieldValue: TextFieldValue): B
 
 private fun handleCharacterDeletion(textFieldValue: TextFieldValue): TextFieldValue {
     return if (textFieldValue.text.length == SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
-        val formattedText = "${textFieldValue.text.substring(0, FIRST_DASH_INDEX)}-${
+        val formattedText = "${textFieldValue.text.substring(0, SEVEN_DIGIT_FIRST_DASH_INDEX)}-${
             textFieldValue.text.substring(
-                FIRST_DASH_INDEX,
-                3,
+                SEVEN_DIGIT_FIRST_DASH_INDEX,
+                SEVEN_DIGIT_SECOND_GROUP_START,
             )
         }${textFieldValue.text.substring(
-            4,
-            SECOND_DASH_INDEX,
-        )}-${textFieldValue.text.substring(7, SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES)}"
+            EIGHT_DIGIT_SECOND_GROUP_START,
+            SEVEN_DIGIT_SECOND_DASH_INDEX,
+        )}-${textFieldValue.text.substring(SEVEN_DIGIT_THIRD_GROUP_START, SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES)}"
         TextFieldValue(
             text = formattedText,
             selection = TextRange(formattedText.length),
@@ -261,16 +269,19 @@ private fun wasCharacterDeleted(
 
 private fun formatLicensePlateWithDashes(input: String): String {
     return when (input.length) {
-        FIRST_DASH_INDEX -> "${input.substring(0, FIRST_DASH_INDEX)}-"
-        SECOND_DASH_INDEX -> "${input.substring(0, FIRST_DASH_INDEX)}-${input.substring(
-            3,
-            SECOND_DASH_INDEX,
+        SEVEN_DIGIT_FIRST_DASH_INDEX -> "${input.substring(0, SEVEN_DIGIT_FIRST_DASH_INDEX)}-"
+        SEVEN_DIGIT_SECOND_DASH_INDEX -> "${input.substring(0, SEVEN_DIGIT_FIRST_DASH_INDEX)}-${input.substring(
+            SEVEN_DIGIT_SECOND_GROUP_START,
+            SEVEN_DIGIT_SECOND_DASH_INDEX,
         )}-"
         in EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES + 1 ->
             "${input.substring(
                 0,
-                FIRST_DASH_INDEX,
-            )}${input.substring(3, 4)}-${input.substring(4, SECOND_DASH_INDEX)}-${input.substring(7, input.length)}"
+                SEVEN_DIGIT_FIRST_DASH_INDEX,
+            )}${input.substring(SEVEN_DIGIT_SECOND_GROUP_START, EIGHT_DIGIT_SECOND_GROUP_START)}-${input.substring(
+                EIGHT_DIGIT_SECOND_GROUP_START,
+                SEVEN_DIGIT_SECOND_DASH_INDEX,
+            )}-${input.substring(SEVEN_DIGIT_THIRD_GROUP_START, input.length)}"
         else -> input
     }
 }
