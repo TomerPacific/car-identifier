@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tomerpacific.caridentifier.composable.CameraPreview
 import com.tomerpacific.caridentifier.model.CarViewModel
+import com.tomerpacific.caridentifier.model.IMAGE_URI_KEY
 import com.tomerpacific.caridentifier.model.PermissionViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import com.tomerpacific.caridentifier.screen.CarDetailsScreen
@@ -22,8 +23,6 @@ import com.tomerpacific.caridentifier.screen.HandleGalleryPicker
 import com.tomerpacific.caridentifier.screen.LicensePlateNumberDialog
 import com.tomerpacific.caridentifier.screen.MainScreen
 import com.tomerpacific.caridentifier.screen.VerifyPhotoDialog
-
-const val IMAGE_URI_KEY = "imageUri"
 
 class MainActivity : ComponentActivity() {
 
@@ -66,7 +65,7 @@ class MainActivity : ComponentActivity() {
                 HandleGalleryPicker(navController)
             }
             dialog(
-                route = Screen.VerifyPhoto.route + "/{imageUri}",
+                route = Screen.VerifyPhoto.route,
                 arguments =
                     listOf(
                         navArgument(IMAGE_URI_KEY) {
