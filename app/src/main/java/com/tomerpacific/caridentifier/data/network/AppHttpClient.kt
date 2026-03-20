@@ -9,7 +9,7 @@ import kotlinx.serialization.json.Json
 
 private const val REQUEST_TIMEOUT_DURATION = 10000L
 
-val AppJson = Json {
+internal val AppJson = Json {
     ignoreUnknownKeys = true
 }
 
