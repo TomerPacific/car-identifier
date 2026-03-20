@@ -52,14 +52,21 @@ import com.tomerpacific.caridentifier.model.Screen
 
 /**
  * Israeli license plates come in two formats:
- * 1. 7 digits: XX-XXX-XX
- * 2. 8 digits: XXX-XX-XXX
+ * 1. 7 digits: XX-XXX-XX (9 characters total with dashes)
+ * 2. 8 digits: XXX-XX-XXX (10 characters total with dashes)
  */
-private const val SEVEN_DIGIT_FIRST_DASH_INDEX = 2
-private const val SEVEN_DIGIT_SECOND_DASH_INDEX = 6
-private const val SEVEN_DIGIT_SECOND_GROUP_START = 3
-private const val SEVEN_DIGIT_THIRD_GROUP_START = 7
-private const val EIGHT_DIGIT_SECOND_GROUP_START = 4
+
+// Digit positions in a raw (numeric) 7-digit license plate: XX (0-1), XXX (2-4), XX (5-6)
+private const val RAW_7_DIGIT_G2_START = 2
+private const val RAW_7_DIGIT_G3_START = 5
+
+// Digit positions in a raw (numeric) 8-digit license plate: XXX (0-2), XX (3-4), XXX (5-7)
+private const val RAW_8_DIGIT_G2_START = 3
+private const val RAW_8_DIGIT_G3_START = 5
+
+// Character positions for dashes during input formatting
+private const val FORMAT_7_DIGIT_FIRST_DASH_INDEX = 2
+private const val FORMAT_7_DIGIT_SECOND_DASH_INDEX = 6
 
 @Composable
 fun LicensePlateNumberDialog(
@@ -193,8 +200,8 @@ private fun IsraelFlagIcon() {
 }
 
 @Composable
-private fun LicensePlateSupportingText(isLimitReached: Boolean, didClickConfirmBtn: Boolean) {
-    if (isLimitReached) {
+private fun LicensePlateSupportingText(isError: Boolean, didClickConfirmBtn: Boolean) {
+    if (isError) {
         Text(
             stringResource(R.string.license_plate_input_limit_error),
             modifier = Modifier.fillMaxWidth(),
@@ -240,27 +247,24 @@ private fun doesLicensePlateNumberExceedLimit(textFieldValue: TextFieldValue): B
     return textFieldValue.text.length > EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES
 }
 
+/**
+ * Handles character deletion.
+ * If we just reduced an 8-digit number back to 7 digits, it might be in a broken format (XXX-XX-XX),
+ * so we force it back to the 7-digit format (XX-XXX-XX).
+ */
 private fun handleCharacterDeletion(textFieldValue: TextFieldValue): TextFieldValue {
-    return if (textFieldValue.text.length == SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
-        val formattedText = "${textFieldValue.text.substring(0, SEVEN_DIGIT_FIRST_DASH_INDEX)}-${
-            textFieldValue.text.substring(
-                SEVEN_DIGIT_FIRST_DASH_INDEX,
-                SEVEN_DIGIT_SECOND_GROUP_START,
-            )
-        }${textFieldValue.text.substring(
-            EIGHT_DIGIT_SECOND_GROUP_START,
-            SEVEN_DIGIT_SECOND_DASH_INDEX,
-        )}-${textFieldValue.text.substring(
-            SEVEN_DIGIT_THIRD_GROUP_START,
-            SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES
-        )}"
-        TextFieldValue(
-            text = formattedText,
-            selection = TextRange(formattedText.length),
-        )
-    } else {
-        textFieldValue
+    val input = textFieldValue.text
+    if (input.length == SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
+        val digits = input.filter { it.isDigit() }
+        if (digits.length == 7) {
+            val g1 = digits.substring(0, RAW_7_DIGIT_G2_START)
+            val g2 = digits.substring(RAW_7_DIGIT_G2_START, RAW_7_DIGIT_G3_START)
+            val g3 = digits.substring(RAW_7_DIGIT_G3_START)
+            val formattedText = "$g1-$g2-$g3"
+            return TextFieldValue(text = formattedText, selection = TextRange(formattedText.length))
+        }
     }
+    return textFieldValue
 }
 
 private fun wasCharacterDeleted(
@@ -270,19 +274,29 @@ private fun wasCharacterDeleted(
     return currentText.length < previousText.length
 }
 
+/**
+ * Formats the license plate with dashes as the user types.
+ * Transitions between 7-digit (XX-XXX-XX) and 8-digit (XXX-XX-XXX) formats.
+ */
 private fun formatLicensePlateWithDashes(input: String): String {
     return when (input.length) {
-        SEVEN_DIGIT_FIRST_DASH_INDEX -> "${input.substring(0, SEVEN_DIGIT_FIRST_DASH_INDEX)}-"
-        SEVEN_DIGIT_SECOND_DASH_INDEX -> "${input.substring(0, SEVEN_DIGIT_FIRST_DASH_INDEX)}-${input.substring(
-            SEVEN_DIGIT_SECOND_GROUP_START,
-            SEVEN_DIGIT_SECOND_DASH_INDEX,
-        )}-"
-        in EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES + 1 -> {
-            val firstPart = input.substring(0, SEVEN_DIGIT_FIRST_DASH_INDEX)
-            val secondPart = input.substring(SEVEN_DIGIT_SECOND_GROUP_START, EIGHT_DIGIT_SECOND_GROUP_START)
-            val thirdPart = input.substring(EIGHT_DIGIT_SECOND_GROUP_START, SEVEN_DIGIT_SECOND_DASH_INDEX)
-            val fourthPart = input.substring(SEVEN_DIGIT_THIRD_GROUP_START, input.length)
-            "$firstPart$secondPart-$thirdPart-$fourthPart"
+        FORMAT_7_DIGIT_FIRST_DASH_INDEX -> "$input-"
+        FORMAT_7_DIGIT_SECOND_DASH_INDEX -> {
+            val digits = input.filter { it.isDigit() }
+            if (digits.length == 5) {
+                val g1 = digits.substring(0, RAW_7_DIGIT_G2_START)
+                val g2 = digits.substring(RAW_7_DIGIT_G2_START)
+                "$g1-$g2-"
+            } else input
+        }
+        EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES -> {
+            val digits = input.filter { it.isDigit() }
+            if (digits.length == 8) {
+                val g1 = digits.substring(0, RAW_8_DIGIT_G2_START)
+                val g2 = digits.substring(RAW_8_DIGIT_G2_START, RAW_8_DIGIT_G3_START)
+                val g3 = digits.substring(RAW_8_DIGIT_G3_START)
+                "$g1-$g2-$g3"
+            } else input
         }
         else -> input
     }
