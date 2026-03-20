@@ -14,7 +14,6 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tomerpacific.caridentifier.composable.CameraPreview
 import com.tomerpacific.caridentifier.model.CarViewModel
-import com.tomerpacific.caridentifier.model.IMAGE_URI_KEY
 import com.tomerpacific.caridentifier.model.PermissionViewModel
 import com.tomerpacific.caridentifier.model.Screen
 import com.tomerpacific.caridentifier.screen.CarDetailsScreen
@@ -68,13 +67,13 @@ class MainActivity : ComponentActivity() {
                 route = Screen.VerifyPhoto.route,
                 arguments =
                     listOf(
-                        navArgument(IMAGE_URI_KEY) {
+                        navArgument(Screen.VerifyPhoto.IMAGE_URI_KEY) {
                             type = NavType.StringType
                         },
                     ),
             ) {
                 it.arguments?.let { bundle ->
-                    bundle.getString(IMAGE_URI_KEY)?.let { uri ->
+                    bundle.getString(Screen.VerifyPhoto.IMAGE_URI_KEY)?.let { uri ->
                         VerifyPhotoDialog(uri, navController, carViewModel)
                     }
                 }

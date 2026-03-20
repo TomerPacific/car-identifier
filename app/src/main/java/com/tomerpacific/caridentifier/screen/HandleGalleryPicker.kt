@@ -15,7 +15,7 @@ fun HandleGalleryPicker(navController: NavController) {
             contract = ActivityResultContracts.PickVisualMedia(),
             onResult = { uri ->
                 if (uri != null) {
-                    navController.navigate(Screen.VerifyPhoto.createRoute(uri.toString())) {
+                    navController.navigate(Screen.VerifyPhoto.createRoute(uri)) {
                         popUpTo(Screen.GalleryPicker.route) { inclusive = true }
                     }
                 } else {

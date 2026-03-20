@@ -130,7 +130,7 @@ private fun CaptureButton(
         onClick = {
             takePicture(cameraController, context, executor, { uri ->
                 coroutineScope.launch(Dispatchers.Main) {
-                    navController.navigate(Screen.VerifyPhoto.createRoute(uri.toString()))
+                    navController.navigate(Screen.VerifyPhoto.createRoute(uri))
                 }
             }, { imageCaptureException ->
                 Log.e("CameraPreview", "Error capturing image", imageCaptureException)

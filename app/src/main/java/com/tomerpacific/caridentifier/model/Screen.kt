@@ -2,7 +2,7 @@ package com.tomerpacific.caridentifier.model
 
 import android.net.Uri
 
-const val IMAGE_URI_KEY = "imageUri"
+private const val VERIFY_PHOTO_ARG = "imageUri"
 
 sealed class Screen(val route: String) {
     object MainScreen : Screen("main")
@@ -17,7 +17,8 @@ sealed class Screen(val route: String) {
 
     object GalleryPicker : Screen("gallery_picker")
 
-    object VerifyPhoto : Screen("verify_photo/{$IMAGE_URI_KEY}") {
-        fun createRoute(uri: String) = "verify_photo/${Uri.encode(uri)}"
+    object VerifyPhoto : Screen("verify_photo/{$VERIFY_PHOTO_ARG}") {
+        const val IMAGE_URI_KEY = VERIFY_PHOTO_ARG
+        fun createRoute(uri: Uri) = route.replace("{$IMAGE_URI_KEY}", Uri.encode(uri.toString()))
     }
 }
