@@ -2,8 +2,7 @@ package com.tomerpacific.caridentifier.model
 
 import android.net.Uri
 
-sealed class Screen(route: String) {
-    open val route: String = route
+sealed class Screen(open val route: String) {
 
     object MainScreen : Screen("main")
 

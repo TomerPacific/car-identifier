@@ -250,7 +250,10 @@ private fun handleCharacterDeletion(textFieldValue: TextFieldValue): TextFieldVa
         }${textFieldValue.text.substring(
             EIGHT_DIGIT_SECOND_GROUP_START,
             SEVEN_DIGIT_SECOND_DASH_INDEX,
-        )}-${textFieldValue.text.substring(SEVEN_DIGIT_THIRD_GROUP_START, SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES)}"
+        )}-${textFieldValue.text.substring(
+            SEVEN_DIGIT_THIRD_GROUP_START,
+            SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES
+        )}"
         TextFieldValue(
             text = formattedText,
             selection = TextRange(formattedText.length),
@@ -274,14 +277,13 @@ private fun formatLicensePlateWithDashes(input: String): String {
             SEVEN_DIGIT_SECOND_GROUP_START,
             SEVEN_DIGIT_SECOND_DASH_INDEX,
         )}-"
-        in EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES + 1 ->
-            "${input.substring(
-                0,
-                SEVEN_DIGIT_FIRST_DASH_INDEX,
-            )}${input.substring(SEVEN_DIGIT_SECOND_GROUP_START, EIGHT_DIGIT_SECOND_GROUP_START)}-${input.substring(
-                EIGHT_DIGIT_SECOND_GROUP_START,
-                SEVEN_DIGIT_SECOND_DASH_INDEX,
-            )}-${input.substring(SEVEN_DIGIT_THIRD_GROUP_START, input.length)}"
+        in EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES + 1 -> {
+            val firstPart = input.substring(0, SEVEN_DIGIT_FIRST_DASH_INDEX)
+            val secondPart = input.substring(SEVEN_DIGIT_SECOND_GROUP_START, EIGHT_DIGIT_SECOND_GROUP_START)
+            val thirdPart = input.substring(EIGHT_DIGIT_SECOND_GROUP_START, SEVEN_DIGIT_SECOND_DASH_INDEX)
+            val fourthPart = input.substring(SEVEN_DIGIT_THIRD_GROUP_START, input.length)
+            "$firstPart$secondPart-$thirdPart-$fourthPart"
+        }
         else -> input
     }
 }
