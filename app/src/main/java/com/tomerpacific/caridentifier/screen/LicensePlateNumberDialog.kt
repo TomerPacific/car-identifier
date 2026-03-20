@@ -59,14 +59,18 @@ import com.tomerpacific.caridentifier.model.Screen
 // Digit positions in a raw (numeric) 7-digit license plate: XX (0-1), XXX (2-4), XX (5-6)
 private const val RAW_7_DIGIT_G2_START = 2
 private const val RAW_7_DIGIT_G3_START = 5
+private const val RAW_7_DIGIT_LEN = 7
 
 // Digit positions in a raw (numeric) 8-digit license plate: XXX (0-2), XX (3-4), XXX (5-7)
 private const val RAW_8_DIGIT_G2_START = 3
 private const val RAW_8_DIGIT_G3_START = 5
+private const val RAW_8_DIGIT_LEN = 8
 
 // Character positions for dashes during input formatting
 private const val FORMAT_7_DIGIT_FIRST_DASH_INDEX = 2
 private const val FORMAT_7_DIGIT_SECOND_DASH_INDEX = 6
+
+private const val RAW_5_DIGIT_LEN = 5
 
 @Composable
 fun LicensePlateNumberDialog(
@@ -256,7 +260,7 @@ private fun handleCharacterDeletion(textFieldValue: TextFieldValue): TextFieldVa
     val input = textFieldValue.text
     if (input.length == SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
         val digits = input.filter { it.isDigit() }
-        if (digits.length == 7) {
+        if (digits.length == RAW_7_DIGIT_LEN) {
             val g1 = digits.substring(0, RAW_7_DIGIT_G2_START)
             val g2 = digits.substring(RAW_7_DIGIT_G2_START, RAW_7_DIGIT_G3_START)
             val g3 = digits.substring(RAW_7_DIGIT_G3_START)
@@ -283,7 +287,7 @@ private fun formatLicensePlateWithDashes(input: String): String {
         FORMAT_7_DIGIT_FIRST_DASH_INDEX -> "$input-"
         FORMAT_7_DIGIT_SECOND_DASH_INDEX -> {
             val digits = input.filter { it.isDigit() }
-            if (digits.length == 5) {
+            if (digits.length == RAW_5_DIGIT_LEN) {
                 val g1 = digits.substring(0, RAW_7_DIGIT_G2_START)
                 val g2 = digits.substring(RAW_7_DIGIT_G2_START)
                 "$g1-$g2-"
@@ -291,7 +295,7 @@ private fun formatLicensePlateWithDashes(input: String): String {
         }
         EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES -> {
             val digits = input.filter { it.isDigit() }
-            if (digits.length == 8) {
+            if (digits.length == RAW_8_DIGIT_LEN) {
                 val g1 = digits.substring(0, RAW_8_DIGIT_G2_START)
                 val g2 = digits.substring(RAW_8_DIGIT_G2_START, RAW_8_DIGIT_G3_START)
                 val g3 = digits.substring(RAW_8_DIGIT_G3_START)
