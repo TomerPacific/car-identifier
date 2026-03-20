@@ -16,6 +16,7 @@ import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 
 private const val HTTP_STATUS_OK_LOWER_LIMIT = 200
@@ -94,7 +95,7 @@ class CarLicensePlateSource(private val client: HttpClient = AppHttpClient) {
             try {
                 val serverError = AppJson.decodeFromString<ServerError>(bodyText)
                 serverError.errorMsg
-            } catch (_: Exception) {
+            } catch (_: SerializationException) {
                 bodyText
             }
         } catch (e: CancellationException) {
