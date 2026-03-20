@@ -43,15 +43,31 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.tomerpacific.caridentifier.EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES
 import com.tomerpacific.caridentifier.isLicensePlateNumberValid
 import com.tomerpacific.caridentifier.model.CarViewModel
 import com.tomerpacific.caridentifier.model.Screen
 
-private const val FIRST_DASH_INDEX = 2
-private const val SECOND_DASH_INDEX = 6
+/**
+ * Israeli license plates come in two formats:
+ * 1. 7 digits: XX-XXX-XX (9 characters total with dashes)
+ * 2. 8 digits: XXX-XX-XXX (10 characters total with dashes)
+ */
+
+// Digit positions in a raw (numeric) 7-digit license plate: XX (0-1), XXX (2-4), XX (5-6)
+private const val RAW_7_DIGIT_G2_START = 2
+private const val RAW_7_DIGIT_G3_START = 5
+private const val RAW_7_DIGIT_LEN = 7
+
+// Digit positions in a raw (numeric) 8-digit license plate: XXX (0-2), XX (3-4), XXX (5-7)
+private const val RAW_8_DIGIT_G2_START = 3
+private const val RAW_8_DIGIT_G3_START = 5
+private const val RAW_8_DIGIT_LEN = 8
+
+// Trigger lengths (in digits) for dash insertion
+private const val RAW_2_DIGIT_LEN = 2
+private const val RAW_5_DIGIT_LEN = 5
 
 @Composable
 fun LicensePlateNumberDialog(
@@ -185,8 +201,8 @@ private fun IsraelFlagIcon() {
 }
 
 @Composable
-private fun LicensePlateSupportingText(isLimitReached: Boolean, didClickConfirmBtn: Boolean) {
-    if (isLimitReached) {
+private fun LicensePlateSupportingText(isError: Boolean, didClickConfirmBtn: Boolean) {
+    if (isError) {
         Text(
             stringResource(R.string.license_plate_input_limit_error),
             modifier = Modifier.fillMaxWidth(),
@@ -207,7 +223,11 @@ private fun handleValueChange(
     oldText: String,
     onLimitReached: (Boolean) -> Unit
 ): TextFieldValue {
-    val licensePlateInputPattern = Regex("^[0-9-]*$")
+    val allowedCharsPattern = Regex("^[0-9-]*$")
+
+    if (!allowedCharsPattern.matches(newValue.text)) {
+        return TextFieldValue(text = oldText, selection = TextRange(oldText.length))
+    }
 
     return when {
         doesLicensePlateNumberExceedLimit(newValue) -> {
@@ -218,9 +238,6 @@ private fun handleValueChange(
             onLimitReached(false)
             handleCharacterDeletion(newValue)
         }
-        newValue.text.isNotEmpty() && !licensePlateInputPattern.matches(newValue.text) -> {
-            TextFieldValue(text = oldText, selection = TextRange(oldText.length))
-        }
         else -> {
             val formattedText = formatLicensePlateWithDashes(newValue.text)
             TextFieldValue(text = formattedText, selection = TextRange(formattedText.length))
@@ -229,27 +246,27 @@ private fun handleValueChange(
 }
 
 private fun doesLicensePlateNumberExceedLimit(textFieldValue: TextFieldValue): Boolean {
-    return textFieldValue.text.length > EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES
+    return textFieldValue.text.filter { it.isDigit() }.length > RAW_8_DIGIT_LEN
 }
 
+/**
+ * Handles character deletion.
+ * If we just reduced an 8-digit number back to 7 digits, it might be in a broken format (XXX-XX-XX),
+ * so we force it back to the 7-digit format (XX-XXX-XX).
+ */
 private fun handleCharacterDeletion(textFieldValue: TextFieldValue): TextFieldValue {
-    return if (textFieldValue.text.length == SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
-        val formattedText = "${textFieldValue.text.substring(0, FIRST_DASH_INDEX)}-${
-            textFieldValue.text.substring(
-                FIRST_DASH_INDEX,
-                3,
-            )
-        }${textFieldValue.text.substring(
-            4,
-            SECOND_DASH_INDEX,
-        )}-${textFieldValue.text.substring(7, SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES)}"
-        TextFieldValue(
-            text = formattedText,
-            selection = TextRange(formattedText.length),
-        )
-    } else {
-        textFieldValue
+    val input = textFieldValue.text
+    if (input.length == SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES) {
+        val digits = input.filter { it.isDigit() }
+        if (digits.length == RAW_7_DIGIT_LEN) {
+            val g1 = digits.substring(0, RAW_7_DIGIT_G2_START)
+            val g2 = digits.substring(RAW_7_DIGIT_G2_START, RAW_7_DIGIT_G3_START)
+            val g3 = digits.substring(RAW_7_DIGIT_G3_START)
+            val formattedText = "$g1-$g2-$g3"
+            return TextFieldValue(text = formattedText, selection = TextRange(formattedText.length))
+        }
     }
+    return textFieldValue
 }
 
 private fun wasCharacterDeleted(
@@ -259,18 +276,31 @@ private fun wasCharacterDeleted(
     return currentText.length < previousText.length
 }
 
+/**
+ * Formats the license plate with dashes based on the raw digits present.
+ * Reconstructs the string from digits to ensure consistency and prevent duplicate dashes.
+ */
 private fun formatLicensePlateWithDashes(input: String): String {
-    return when (input.length) {
-        FIRST_DASH_INDEX -> "${input.substring(0, FIRST_DASH_INDEX)}-"
-        SECOND_DASH_INDEX -> "${input.substring(0, FIRST_DASH_INDEX)}-${input.substring(
-            3,
-            SECOND_DASH_INDEX,
-        )}-"
-        in EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES..EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES + 1 ->
-            "${input.substring(
-                0,
-                FIRST_DASH_INDEX,
-            )}${input.substring(3, 4)}-${input.substring(4, SECOND_DASH_INDEX)}-${input.substring(7, input.length)}"
-        else -> input
+    val digits = input.filter { it.isDigit() }
+
+    return when {
+        digits.length >= RAW_8_DIGIT_LEN -> {
+            val g1 = digits.substring(0, RAW_8_DIGIT_G2_START)
+            val g2 = digits.substring(RAW_8_DIGIT_G2_START, RAW_8_DIGIT_G3_START)
+            val g3 = digits.substring(RAW_8_DIGIT_G3_START, RAW_8_DIGIT_LEN)
+            "$g1-$g2-$g3"
+        }
+        digits.length >= RAW_5_DIGIT_LEN -> {
+            val g1 = digits.substring(0, RAW_7_DIGIT_G2_START)
+            val g2 = digits.substring(RAW_7_DIGIT_G2_START, RAW_7_DIGIT_G3_START)
+            val g3 = if (digits.length > RAW_7_DIGIT_G3_START) digits.substring(RAW_7_DIGIT_G3_START) else ""
+            if (g3.isEmpty()) "$g1-$g2-" else "$g1-$g2-$g3"
+        }
+        digits.length >= RAW_2_DIGIT_LEN -> {
+            val g1 = digits.substring(0, RAW_7_DIGIT_G2_START)
+            val g2 = digits.substring(RAW_7_DIGIT_G2_START)
+            if (g2.isEmpty()) "$g1-" else "$g1-$g2"
+        }
+        else -> digits
     }
 }
