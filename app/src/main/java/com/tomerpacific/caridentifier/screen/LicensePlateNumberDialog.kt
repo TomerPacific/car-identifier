@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.tomerpacific.caridentifier.EIGHT_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES
 import com.tomerpacific.caridentifier.R
 import com.tomerpacific.caridentifier.SEVEN_DIGIT_LICENSE_NUMBER_LENGTH_WITH_DASHES
 import com.tomerpacific.caridentifier.isLicensePlateNumberValid
