@@ -1,5 +1,6 @@
 package com.tomerpacific.caridentifier
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class CarManufacturerTranslationsUnitTest {
@@ -9,12 +10,12 @@ class CarManufacturerTranslationsUnitTest {
     @Test
     fun `should return true when translated car manufacturer name is Nissan`() {
         val translatedCarManufacturer = getCarManufacturer(carManufacturerNissan)
-        assert(translatedCarManufacturer == "Nissan")
+        assertEquals("Nissan", translatedCarManufacturer)
     }
 
     @Test
     fun `should return true when translated car manufacturer name is Unknown`() {
         val translatedCarManufacturer = getCarManufacturer(carManufacturerUnknown)
-        assert(translatedCarManufacturer == "Unknown Manufacturer")
+        assertEquals("Unknown Manufacturer", translatedCarManufacturer)
     }
 }
