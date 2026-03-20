@@ -53,12 +53,17 @@ fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
     var commercialName = carDetails.commercialName
 
     if (doesManufacturerNameExistInCommercialName(manufacturerName, commercialName)) {
-        val indexOfManufacturerName = commercialName.indexOf(manufacturerName, ignoreCase = true)
-        commercialName = commercialName.substring(indexOfManufacturerName + manufacturerName.length).trim()
+        val indexOfManufacturer = commercialName.indexOf(manufacturerName, ignoreCase = true)
+        commercialName = commercialName.substring(indexOfManufacturer + manufacturerName.length).trim()
     }
 
-    return "$manufacturerName ${commercialName.lowercase().replaceFirstChar { it.titlecase() }} ${carDetails.trimLevel.lowercase().replaceFirstChar { it.titlecase() }} ${carDetails.yearOfProduction}"
+    val manufacturer = manufacturerName
+    val model = commercialName.lowercase().replaceFirstChar { it.titlecase() }
+    val trimLevel = carDetails.trimLevel.lowercase().replaceFirstChar { it.titlecase() }
+
+    return "$manufacturer $model $trimLevel ${carDetails.yearOfProduction}"
 }
+
 private fun doesManufacturerNameExistInCommercialName(
     manufacturerName: String,
     commercialName: String,
