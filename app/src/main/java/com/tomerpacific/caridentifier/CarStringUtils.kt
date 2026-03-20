@@ -57,12 +57,8 @@ fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
         commercialName = commercialName.substring(indexOfManufacturerName + manufacturerName.length).trim()
     }
 
-    return "$manufacturerName ${commercialName.lowercase().replaceFirstChar { it.titlecase() }
-    } ${
-        carDetails.trimLevel.lowercase().replaceFirstChar { it.titlecase() }
-    } ${carDetails.yearOfProduction}"
+    return "$manufacturerName ${commercialName.lowercase().replaceFirstChar { it.titlecase() }} ${carDetails.trimLevel.lowercase().replaceFirstChar { it.titlecase() }} ${carDetails.yearOfProduction}"
 }
-
 private fun doesManufacturerNameExistInCommercialName(
     manufacturerName: String,
     commercialName: String,
