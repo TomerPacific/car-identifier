@@ -21,6 +21,7 @@
     <string name="air_pollution_rating">רמת זיהום אוויר:</string>
     <string name="car_color">צבע:</string>
     <string name="first_time_on_road">עלה לכביש:</string>
+    <string name="frame_number">מספר שילדה:</string>
     <string name="camera_permission_disclaimer">יש צורך לתת הרשאות למצלמה דרך מסך ההגדרות</string>
     <string name="camera_permission_clarification">צריך לאשר הרשאה למצלמה כדי לסרוק לוחית רישוי</string>
     <string name="amount_of_digits_in_license_plate">הכנס מספר לוחית רישוי בן 7 או 8 ספרות</string>
@@ -37,6 +38,7 @@
     <string name="air_pollution_rating_tooltip_explanation">מציג את דירוג זיהום האוויר של הרכב, שזהו מספר עד 15</string>
     <string name="car_color_tooltip_explanation">מציג את צבע הרכב</string>
     <string name="first_time_on_road_tooltip_explanation">מציג את התאריך שבו הרכב נרשם לראשונה לעלות על הכביש</string>
+    <string name="frame_number_tooltip_explanation">מציג את מספר השילדה של הרכב (VIN)</string>
     <string name="no_tire_pressure_data_for_car_error_msg">לא נמצא מידע על לחץ אוויר בצמיגים עבור רכב זה.</string>
     <string name="tire_pressure">לחץ אוויר בצמיגים</string>
     <string name="front_tire_psi">לחץ אוויר בצמיג קדמי:</string>

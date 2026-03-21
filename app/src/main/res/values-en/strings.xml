@@ -22,6 +22,7 @@
     <string name="air_pollution_rating">Air pollution rating:</string>
     <string name="car_color">Color:</string>
     <string name="first_time_on_road">First time on the road:</string>
+    <string name="frame_number">Vehicle Identification Number (VIN):</string>
     <string name="camera_permission_disclaimer">You need to allow camera permissions through the Settings screen</string>
     <string name="camera_permission_clarification">Camera permission is needed to scan license plate</string>
     <string name="amount_of_digits_in_license_plate">Please enter a 7 or 8 digit license plate number</string>
@@ -38,6 +39,7 @@
     <string name="air_pollution_rating_tooltip_explanation">Displays the air pollution rating of the car, which is a score out of 15</string>
     <string name="car_color_tooltip_explanation">Displays the color of the car</string>
     <string name="first_time_on_road_tooltip_explanation">Displays the date when the car was first registered to be on the road</string>
+    <string name="frame_number_tooltip_explanation">Displays the vehicle identification number (VIN)</string>
     <string name="no_tire_pressure_data_for_car_error_msg">No tire pressure data available for this car.</string>
     <string name="tire_pressure">Tire Pressure</string>
     <string name="front_tire_psi">Front Tire PSI:</string>
