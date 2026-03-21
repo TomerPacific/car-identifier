@@ -226,4 +226,17 @@ fun CarInformation(details: CarDetails) {
             tint = colorResource(R.color.black),
         )
     }
+
+    CarDetailWithIcon(
+        iconId = "frameIcon",
+        labelText = stringResource(R.string.frame_number),
+        content = details.frameNumber,
+        tooltipDescription = stringResource(R.string.frame_number_tooltip_explanation),
+    ) {
+        Icon(
+            painterResource(id = R.drawable.ic_fact_check),
+            "Frame Icon",
+            tint = colorResource(R.color.purple_700),
+        )
+    }
 }
