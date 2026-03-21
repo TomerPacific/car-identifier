@@ -26,6 +26,7 @@ import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,6 +48,8 @@ fun CarDetailWithIcon(
                 append(labelText)
                 append(" ")
             }
+            // Use LRM (Left-to-Right Mark) to ensure the content (like VIN or date) is treated as LTR
+            append("\u200E")
             append(content)
         }
 
@@ -96,6 +99,8 @@ fun CarDetailWithIcon(
                 annotatedString,
                 inlineContent = inlineTextContent,
                 fontSize = 20.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
             )
         }
     }
