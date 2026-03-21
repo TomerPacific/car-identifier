@@ -144,7 +144,7 @@ fun CarInformation(details: CarDetails) {
     ) {
         Icon(
             Icons.Default.Check,
-            contentDescription = "Check Icon",
+            contentDescription = null,
             tint = Color(0, 0, 0),
         )
     }
@@ -157,7 +157,7 @@ fun CarInformation(details: CarDetails) {
     ) {
         Icon(
             painterResource(id = R.drawable.ic_key_icon),
-            "Key Icon",
+            contentDescription = null,
             tint = colorResource(R.color.yellow),
         )
     }
@@ -170,7 +170,7 @@ fun CarInformation(details: CarDetails) {
     ) {
         Icon(
             painterResource(id = R.drawable.ic_fuel_type),
-            "Fuel Icon",
+            contentDescription = null,
             tint = colorResource(R.color.blue),
         )
     }
@@ -183,7 +183,7 @@ fun CarInformation(details: CarDetails) {
     ) {
         Icon(
             painterResource(id = R.drawable.ic_shield),
-            "Safety Icon",
+            contentDescription = null,
             tint = colorResource(R.color.green),
         )
     }
@@ -196,7 +196,7 @@ fun CarInformation(details: CarDetails) {
     ) {
         Icon(
             painterResource(id = R.drawable.ic_car_alert),
-            "Pollution Icon",
+            contentDescription = null,
             tint = colorResource(R.color.red),
         )
     }
@@ -209,7 +209,7 @@ fun CarInformation(details: CarDetails) {
     ) {
         Icon(
             painterResource(id = R.drawable.ic_palette),
-            "Palette Icon",
+            contentDescription = null,
             tint = colorResource(R.color.brown),
         )
     }
@@ -222,7 +222,7 @@ fun CarInformation(details: CarDetails) {
     ) {
         Icon(
             painterResource(id = R.drawable.ic_road),
-            "Road Icon",
+            contentDescription = null,
             tint = colorResource(R.color.black),
         )
     }
@@ -235,7 +235,7 @@ fun CarInformation(details: CarDetails) {
     ) {
         Icon(
             painterResource(id = R.drawable.ic_fact_check),
-            "Frame Icon",
+            contentDescription = null,
             tint = colorResource(R.color.purple_700),
         )
     }
