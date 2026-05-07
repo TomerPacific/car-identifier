@@ -39,6 +39,6 @@ data class CarDetails(
     val commercialName: String,
     @SerialName("manufacturer_name")
     val manufacturerName: String,
-    @SerialName("manufacturer_nameEN")
+    @SerialName("manufacturer_name_translation_to_english")
     val manufacturerNameEN: String,
 )
