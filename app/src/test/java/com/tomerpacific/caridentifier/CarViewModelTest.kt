@@ -204,6 +204,7 @@ class CarViewModelTest {
         fuelType = "Gasoline",
         firstOnRoadDate = "2020-05-05",
         commercialName = "Corolla",
-        manufacturerName = "טויוטה"
+        manufacturerName = "טויוטה",
+        manufacturerNameEN = "Toyota"
     )
 }

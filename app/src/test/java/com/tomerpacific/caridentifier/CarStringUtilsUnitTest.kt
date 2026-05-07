@@ -27,6 +27,7 @@ class CarStringUtilsUnitTest {
                 "2013-5",
                 "FOCUS",
                 "פורד",
+                "Ford"
             )
 
         val concatenatedCarMakeAndModel = concatenateCarMakeAndModel(carDetails)
