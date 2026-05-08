@@ -10,24 +10,24 @@ class CarStringUtilsUnitTest {
     fun `should return true when car make and model are concatenated correctly`() {
         val carDetails =
             CarDetails(
-                1765576,
-                "גרמניה",
-                "SPORT",
-                0,
-                15,
-                2013,
-                "2024-03-21",
-                "2025-04-30",
-                "פרטי",
-                "WF0KXXGCBKDU75517",
-                "כחול מטלי",
-                "215/55R16",
-                "215/55R16",
-                "בנזין",
-                "2013-5",
-                "FOCUS",
-                "פורד",
-                "Ford"
+                licensePlateNumber = 1765576,
+                manufacturerCountry = "גרמניה",
+                trimLevel = "SPORT",
+                safetyFeatureLevel = 0,
+                pollutionLevel = 15,
+                yearOfProduction = 2013,
+                lastTestDate = "2024-03-21",
+                validDate = "2025-04-30",
+                ownership = "פרטי",
+                frameNumber = "WF0KXXGCBKDU75517",
+                color = "כחול מטלי",
+                frontWheel = "215/55R16",
+                rearWheel = "215/55R16",
+                fuelType = "בנזין",
+                firstOnRoadDate = "2013-5",
+                commercialName = "FOCUS",
+                manufacturerName = "פורד",
+                manufacturerNameEN = "Ford"
             )
 
         val concatenatedCarMakeAndModel = concatenateCarMakeAndModel(carDetails)
