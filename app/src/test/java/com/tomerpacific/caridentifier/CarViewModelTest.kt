@@ -205,6 +205,6 @@ class CarViewModelTest {
         firstOnRoadDate = "2020-05-05",
         commercialName = "Corolla",
         manufacturerName = "טויוטה",
-        manufacturerNameEN = "Toyota"
+        manufacturerNameEn = "Toyota"
     )
 }

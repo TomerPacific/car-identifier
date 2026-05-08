@@ -49,26 +49,29 @@ fun formatCarReviewResponse(
 }
 
 fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
-    val manufacturerName = carDetails.manufacturerNameEN
+    val manufacturerName = carDetails.manufacturerNameEn
     var commercialName = carDetails.commercialName
 
-    if (doesManufacturerNameExistInCommercialName(manufacturerName, commercialName)) {
+    if (manufacturerName.isNotEmpty() && doesManufacturerNameExistInCommercialName(manufacturerName, commercialName)) {
         val indexOfManufacturer = commercialName.indexOf(manufacturerName, ignoreCase = true)
         commercialName = commercialName.substring(indexOfManufacturer + manufacturerName.length).trim()
     }
 
-    val manufacturer = manufacturerName
     val model = commercialName.lowercase().replaceFirstChar { it.titlecase() }
     val trimLevel = carDetails.trimLevel.lowercase().replaceFirstChar { it.titlecase() }
 
-    return "$manufacturer $model $trimLevel ${carDetails.yearOfProduction}"
+    return if (manufacturerName.isNotEmpty()) {
+        "$manufacturerName $model $trimLevel ${carDetails.yearOfProduction}"
+    } else {
+        "$model $trimLevel ${carDetails.yearOfProduction}"
+    }
 }
 
 private fun doesManufacturerNameExistInCommercialName(
     manufacturerName: String,
     commercialName: String,
 ): Boolean {
-    return commercialName.contains(manufacturerName, ignoreCase = true)
+    return manufacturerName.isNotEmpty() && commercialName.contains(manufacturerName, ignoreCase = true)
 }
 
 fun handleErrorMessage(exception: Throwable): String {

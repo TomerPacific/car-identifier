@@ -40,5 +40,5 @@ data class CarDetails(
     @SerialName("manufacturer_name")
     val manufacturerName: String,
     @SerialName("manufacturer_name_en")
-    val manufacturerNameEN: String = manufacturerName,
+    val manufacturerNameEn: String = "",
 )
