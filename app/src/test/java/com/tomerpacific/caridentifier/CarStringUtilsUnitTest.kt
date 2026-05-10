@@ -7,7 +7,7 @@ import org.junit.Test
 class CarStringUtilsUnitTest {
 
     @Test
-    fun `should return true when car make and model are concatenated correctly`() {
+    fun `should concatenate car make and model correctly`() {
         val carDetails =
             CarDetails(
                 licensePlateNumber = 1765576,
