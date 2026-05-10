@@ -35,7 +35,7 @@ class CarStringUtilsUnitTest {
     }
 
     @Test
-    fun `should fall back to manufacturerName when manufacturerNameEn is missing`() {
+    fun `should fall back to manufacturerName when manufacturerNameEn is null`() {
         val carDetails =
             CarDetails(
                 licensePlateNumber = 1765576,
@@ -66,11 +66,22 @@ class CarStringUtilsUnitTest {
     fun `should fall back to manufacturerName when manufacturerNameEn is blank`() {
         val carDetails = createCarDetailsForTest(
             manufacturerName = "פורד",
-            manufacturerNameEn = ""
+            manufacturerNameEn = "   "
         )
 
         val concatenatedCarMakeAndModel = concatenateCarMakeAndModel(carDetails)
         assertEquals("פורד Focus Sport 2013", concatenatedCarMakeAndModel)
+    }
+
+    @Test
+    fun `should trim manufacturer names`() {
+        val carDetails = createCarDetailsForTest(
+            manufacturerName = "  פורד  ",
+            manufacturerNameEn = "  Ford  "
+        )
+
+        val concatenatedCarMakeAndModel = concatenateCarMakeAndModel(carDetails)
+        assertEquals("Ford Focus Sport 2013", concatenatedCarMakeAndModel)
     }
 
     @Test
