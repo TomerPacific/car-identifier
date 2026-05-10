@@ -49,7 +49,11 @@ fun formatCarReviewResponse(
 }
 
 fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
-    val manufacturerName = carDetails.manufacturerNameEn
+    val manufacturerName = if (carDetails.manufacturerNameEn.isNullOrEmpty()) {
+        carDetails.manufacturerName
+    } else {
+        carDetails.manufacturerNameEn
+    }
     var commercialName = carDetails.commercialName
 
     if (manufacturerName.isNotEmpty() && doesManufacturerNameExistInCommercialName(manufacturerName, commercialName)) {
