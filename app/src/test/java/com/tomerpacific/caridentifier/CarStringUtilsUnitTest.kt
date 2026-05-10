@@ -35,6 +35,80 @@ class CarStringUtilsUnitTest {
     }
 
     @Test
+    fun `should fall back to manufacturerName when manufacturerNameEn is missing`() {
+        val carDetails =
+            CarDetails(
+                licensePlateNumber = 1765576,
+                manufacturerCountry = "גרמניה",
+                trimLevel = "SPORT",
+                safetyFeatureLevel = 0,
+                pollutionLevel = 15,
+                yearOfProduction = 2013,
+                lastTestDate = "2024-03-21",
+                validDate = "2025-04-30",
+                ownership = "פרטי",
+                frameNumber = "WF0KXXGCBKDU75517",
+                color = "כחול מטלי",
+                frontWheel = "215/55R16",
+                rearWheel = "215/55R16",
+                fuelType = "בנזין",
+                firstOnRoadDate = "2013-5",
+                commercialName = "FOCUS",
+                manufacturerName = "פורד",
+                manufacturerNameEn = null
+            )
+
+        val concatenatedCarMakeAndModel = concatenateCarMakeAndModel(carDetails)
+        assertEquals("פורד Focus Sport 2013", concatenatedCarMakeAndModel)
+    }
+
+    @Test
+    fun `should fall back to manufacturerName when manufacturerNameEn is blank`() {
+        val carDetails = createCarDetailsForTest(
+            manufacturerName = "פורד",
+            manufacturerNameEn = ""
+        )
+
+        val concatenatedCarMakeAndModel = concatenateCarMakeAndModel(carDetails)
+        assertEquals("פורד Focus Sport 2013", concatenatedCarMakeAndModel)
+    }
+
+    @Test
+    fun `should omit manufacturer when both manufacturer names are missing`() {
+        val carDetails = createCarDetailsForTest(
+            manufacturerName = "",
+            manufacturerNameEn = null
+        )
+
+        val concatenatedCarMakeAndModel = concatenateCarMakeAndModel(carDetails)
+        assertEquals("Focus Sport 2013", concatenatedCarMakeAndModel)
+    }
+
+    private fun createCarDetailsForTest(
+        manufacturerName: String,
+        manufacturerNameEn: String?
+    ) = CarDetails(
+        licensePlateNumber = 1765576,
+        manufacturerCountry = "גרמניה",
+        trimLevel = "SPORT",
+        safetyFeatureLevel = 0,
+        pollutionLevel = 15,
+        yearOfProduction = 2013,
+        lastTestDate = "2024-03-21",
+        validDate = "2025-04-30",
+        ownership = "פרטי",
+        frameNumber = "WF0KXXGCBKDU75517",
+        color = "כחול מטלי",
+        frontWheel = "215/55R16",
+        rearWheel = "215/55R16",
+        fuelType = "בנזין",
+        firstOnRoadDate = "2013-5",
+        commercialName = "FOCUS",
+        manufacturerName = manufacturerName,
+        manufacturerNameEn = manufacturerNameEn
+    )
+
+    @Test
     fun `handleErrorMessage should truncate message containing square brackets`() {
         val exception = Exception("Network Error [404] Not Found")
         val result = handleErrorMessage(exception)
