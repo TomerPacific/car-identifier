@@ -11,7 +11,6 @@ private const val REQUEST_TIMEOUT_DURATION = 10000L
 
 internal val AppJson = Json {
     ignoreUnknownKeys = true
-    coerceInputValues = true
 }
 
 val AppHttpClient: HttpClient by lazy {
