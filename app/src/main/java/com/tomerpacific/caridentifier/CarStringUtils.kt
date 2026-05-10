@@ -49,14 +49,15 @@ fun formatCarReviewResponse(
 }
 
 fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
-    val manufacturerName = if (carDetails.manufacturerNameEn.isNullOrEmpty()) {
-        carDetails.manufacturerName
+    val manufacturerName = if (carDetails.manufacturerNameEn.isNullOrBlank()) {
+        carDetails.manufacturerName.trim()
     } else {
-        carDetails.manufacturerNameEn
+        carDetails.manufacturerNameEn.trim()
     }
     var commercialName = carDetails.commercialName
+    val isManufacturerPresent = manufacturerName.isNotBlank()
 
-    if (manufacturerName.isNotEmpty() && doesManufacturerNameExistInCommercialName(manufacturerName, commercialName)) {
+    if (isManufacturerPresent && commercialName.contains(manufacturerName, ignoreCase = true)) {
         val indexOfManufacturer = commercialName.indexOf(manufacturerName, ignoreCase = true)
         commercialName = commercialName.substring(indexOfManufacturer + manufacturerName.length).trim()
     }
@@ -64,18 +65,11 @@ fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
     val model = commercialName.lowercase().replaceFirstChar { it.titlecase() }
     val trimLevel = carDetails.trimLevel.lowercase().replaceFirstChar { it.titlecase() }
 
-    return if (manufacturerName.isNotEmpty()) {
+    return if (isManufacturerPresent) {
         "$manufacturerName $model $trimLevel ${carDetails.yearOfProduction}"
     } else {
         "$model $trimLevel ${carDetails.yearOfProduction}"
     }
-}
-
-private fun doesManufacturerNameExistInCommercialName(
-    manufacturerName: String,
-    commercialName: String,
-): Boolean {
-    return manufacturerName.isNotEmpty() && commercialName.contains(manufacturerName, ignoreCase = true)
 }
 
 fun handleErrorMessage(exception: Throwable): String {
