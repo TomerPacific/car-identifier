@@ -63,8 +63,12 @@ fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
         commercialName = commercialName.substring(indexOfManufacturer + manufacturerName.length).trim()
     }
 
-    val model = commercialName.lowercase(Locale.ROOT).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
-    val trimLevel = carDetails.trimLevel.lowercase(Locale.ROOT).replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+    val model = commercialName.lowercase(Locale.ROOT).replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
+    }
+    val trimLevel = carDetails.trimLevel.lowercase(Locale.ROOT).replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
+    }
 
     return if (isManufacturerPresent) {
         "$manufacturerName $model $trimLevel ${carDetails.yearOfProduction}"
