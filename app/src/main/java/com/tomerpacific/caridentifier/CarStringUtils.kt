@@ -58,9 +58,11 @@ fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
     var commercialName = carDetails.commercialName
     val isManufacturerPresent = manufacturerName.isNotBlank()
 
-    if (isManufacturerPresent && commercialName.contains(manufacturerName, ignoreCase = true)) {
+    if (isManufacturerPresent) {
         val indexOfManufacturer = commercialName.indexOf(manufacturerName, ignoreCase = true)
-        commercialName = commercialName.substring(indexOfManufacturer + manufacturerName.length).trim()
+        if (indexOfManufacturer != -1) {
+            commercialName = commercialName.substring(indexOfManufacturer + manufacturerName.length).trim()
+        }
     }
 
     val model = commercialName.lowercase(Locale.ROOT).replaceFirstChar {
