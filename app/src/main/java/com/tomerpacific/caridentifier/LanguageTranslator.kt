@@ -9,6 +9,8 @@ import com.google.mlkit.nl.translate.Translation
 import com.google.mlkit.nl.translate.Translator
 import com.google.mlkit.nl.translate.TranslatorOptions
 import com.tomerpacific.caridentifier.model.CarDetails
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -52,8 +54,13 @@ class LanguageTranslator {
                 withTimeout(TRANSLATION_TIMEOUT) {
                     modelDownloadTask.await()
                 }
+            } catch (e: TimeoutCancellationException) {
+                Log.e(tag, "Timed out waiting for language model: ${e.message}")
+                return@coroutineScope Result.failure(e)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
-                Log.e(tag, "Failed to download language model or timed out: ${e.message}")
+                Log.e(tag, "Failed to download language model: ${e.message}")
                 return@coroutineScope Result.failure(e)
             }
 
@@ -64,8 +71,13 @@ class LanguageTranslator {
                             withTimeout(TRANSLATION_TIMEOUT) {
                                 translator.translate(t).await()
                             }
+                        } catch (e: TimeoutCancellationException) {
+                            Log.e(tag, "Translation timed out: ${e.message}")
+                            null
+                        } catch (e: CancellationException) {
+                            throw e
                         } catch (e: Exception) {
-                            Log.e(tag, "Translation failed or timed out: ${e.message}")
+                            Log.e(tag, "Translation failed: ${e.message}")
                             null
                         }
                     }
