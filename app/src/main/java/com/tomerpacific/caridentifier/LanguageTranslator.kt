@@ -13,6 +13,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeout
 
 const val HEBREW_LANGUAGE_CODE_UPDATED = "he"
 const val HEBREW_LANGUAGE_CODE = "iw"
@@ -20,6 +21,8 @@ const val HEBREW_LANGUAGE_CODE = "iw"
 const val FAILED_TO_TRANSLATE_MSG = "Failed to translate"
 
 private val tag = LanguageTranslator::class.simpleName
+
+private const val TRANSLATION_TIMEOUT = 10000L
 
 data class TranslationResult(
     val carDetails: CarDetails,
@@ -46,9 +49,11 @@ class LanguageTranslator {
     suspend fun translate(vararg text: String): Result<List<String>> =
         coroutineScope {
             try {
-                modelDownloadTask.await()
+                withTimeout(TRANSLATION_TIMEOUT) {
+                    modelDownloadTask.await()
+                }
             } catch (e: Exception) {
-                Log.e(tag, "Failed to download language model: ${e.message}")
+                Log.e(tag, "Failed to download language model or timed out: ${e.message}")
                 return@coroutineScope Result.failure(e)
             }
 
@@ -56,9 +61,11 @@ class LanguageTranslator {
                 text.map { t ->
                     async {
                         try {
-                            translator.translate(t).await()
+                            withTimeout(TRANSLATION_TIMEOUT) {
+                                translator.translate(t).await()
+                            }
                         } catch (e: Exception) {
-                            Log.e(tag, "Translation failed: ${e.message}")
+                            Log.e(tag, "Translation failed or timed out: ${e.message}")
                             null
                         }
                     }
