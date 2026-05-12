@@ -93,7 +93,7 @@ class LanguageTranslator {
 
     suspend fun translateCarDetails(carDetails: CarDetails): TranslationResult {
         return if (isHebrewLanguage()) {
-            val carMakeAndModel = concatenateCarMakeAndModel(carDetails)
+            val carMakeAndModel = concatenateCarMakeAndModel(carDetails, forceEnglishManufacturer = true)
             val translationResult = translate(carMakeAndModel)
             val translatedText = translationResult.getOrNull()
             val searchTerm = if (translationResult.isSuccess && !translatedText.isNullOrEmpty()) {

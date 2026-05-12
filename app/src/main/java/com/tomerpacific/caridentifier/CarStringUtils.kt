@@ -49,8 +49,13 @@ fun formatCarReviewResponse(
     return CarReview(prosList, consList)
 }
 
-fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
-    val manufacturerName = if (carDetails.manufacturerNameEn.isNullOrBlank()) {
+fun concatenateCarMakeAndModel(
+    carDetails: CarDetails,
+    forceEnglishManufacturer: Boolean = false,
+): String {
+    val manufacturerName = if (forceEnglishManufacturer) {
+        carDetails.manufacturerNameEn?.trim() ?: ""
+    } else if (carDetails.manufacturerNameEn.isNullOrBlank()) {
         carDetails.manufacturerName.trim()
     } else {
         carDetails.manufacturerNameEn.trim()
