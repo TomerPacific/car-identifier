@@ -8,27 +8,10 @@ class CarStringUtilsUnitTest {
 
     @Test
     fun `should concatenate car make and model correctly`() {
-        val carDetails =
-            CarDetails(
-                licensePlateNumber = 1765576,
-                manufacturerCountry = "גרמניה",
-                trimLevel = "SPORT",
-                safetyFeatureLevel = 0,
-                pollutionLevel = 15,
-                yearOfProduction = 2013,
-                lastTestDate = "2024-03-21",
-                validDate = "2025-04-30",
-                ownership = "פרטי",
-                frameNumber = "WF0KXXGCBKDU75517",
-                color = "כחול מטלי",
-                frontWheel = "215/55R16",
-                rearWheel = "215/55R16",
-                fuelType = "בנזין",
-                firstOnRoadDate = "2013-5",
-                commercialName = "FOCUS",
-                manufacturerName = "פורד",
-                manufacturerNameEn = "Ford"
-            )
+        val carDetails = createCarDetailsForTest(
+            manufacturerName = "פורד",
+            manufacturerNameEn = "Ford"
+        )
 
         val concatenatedCarMakeAndModel = concatenateCarMakeAndModel(carDetails)
         assertEquals("Ford Focus Sport 2013", concatenatedCarMakeAndModel)
@@ -36,27 +19,10 @@ class CarStringUtilsUnitTest {
 
     @Test
     fun `should fall back to manufacturerName when manufacturerNameEn is null`() {
-        val carDetails =
-            CarDetails(
-                licensePlateNumber = 1765576,
-                manufacturerCountry = "גרמניה",
-                trimLevel = "SPORT",
-                safetyFeatureLevel = 0,
-                pollutionLevel = 15,
-                yearOfProduction = 2013,
-                lastTestDate = "2024-03-21",
-                validDate = "2025-04-30",
-                ownership = "פרטי",
-                frameNumber = "WF0KXXGCBKDU75517",
-                color = "כחול מטלי",
-                frontWheel = "215/55R16",
-                rearWheel = "215/55R16",
-                fuelType = "בנזין",
-                firstOnRoadDate = "2013-5",
-                commercialName = "FOCUS",
-                manufacturerName = "פורד",
-                manufacturerNameEn = null
-            )
+        val carDetails = createCarDetailsForTest(
+            manufacturerName = "פורד",
+            manufacturerNameEn = null
+        )
 
         val concatenatedCarMakeAndModel = concatenateCarMakeAndModel(carDetails)
         assertEquals("פורד Focus Sport 2013", concatenatedCarMakeAndModel)
@@ -124,6 +90,17 @@ class CarStringUtilsUnitTest {
         val carDetails = createCarDetailsForTest(
             manufacturerName = "פורד",
             manufacturerNameEn = null
+        )
+
+        val concatenatedCarMakeAndModel = concatenateCarMakeAndModel(carDetails, forceEnglishManufacturer = true)
+        assertEquals("Focus Sport 2013", concatenatedCarMakeAndModel)
+    }
+
+    @Test
+    fun `should omit manufacturer when forceEnglishManufacturer is true and manufacturerNameEn is blank`() {
+        val carDetails = createCarDetailsForTest(
+            manufacturerName = "פורד",
+            manufacturerNameEn = "   "
         )
 
         val concatenatedCarMakeAndModel = concatenateCarMakeAndModel(carDetails, forceEnglishManufacturer = true)
