@@ -84,11 +84,12 @@ class LanguageTranslator {
                     }
                 }
 
-            val results = deferredTranslations.awaitAll().filterNotNull()
+            val results = deferredTranslations.awaitAll()
 
-            return@coroutineScope when {
-                results.isEmpty() -> Result.failure(Exception("Failed to translate text"))
-                else -> Result.success(results)
+            return@coroutineScope if (results.any { it == null }) {
+                Result.failure(Exception("Failed to translate all provided texts"))
+            } else {
+                Result.success(results.filterNotNull())
             }
         }
 
