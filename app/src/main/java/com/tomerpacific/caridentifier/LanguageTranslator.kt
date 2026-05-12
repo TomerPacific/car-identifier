@@ -24,6 +24,7 @@ const val FAILED_TO_TRANSLATE_MSG = "Failed to translate"
 
 private val tag = LanguageTranslator::class.simpleName
 
+private const val MODEL_DOWNLOAD_TIMEOUT = 60000L
 private const val TRANSLATION_TIMEOUT = 10000L
 
 data class TranslationResult(
@@ -51,7 +52,7 @@ class LanguageTranslator {
     suspend fun translate(vararg text: String): Result<List<String>> =
         coroutineScope {
             try {
-                withTimeout(TRANSLATION_TIMEOUT) {
+                withTimeout(MODEL_DOWNLOAD_TIMEOUT) {
                     modelDownloadTask.await()
                 }
             } catch (e: TimeoutCancellationException) {
