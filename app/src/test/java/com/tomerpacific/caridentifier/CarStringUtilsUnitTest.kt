@@ -120,6 +120,17 @@ class CarStringUtilsUnitTest {
     )
 
     @Test
+    fun `should omit manufacturer when forceEnglishManufacturer is true and manufacturerNameEn is null`() {
+        val carDetails = createCarDetailsForTest(
+            manufacturerName = "פורד",
+            manufacturerNameEn = null
+        )
+
+        val concatenatedCarMakeAndModel = concatenateCarMakeAndModel(carDetails, forceEnglishManufacturer = true)
+        assertEquals("Focus Sport 2013", concatenatedCarMakeAndModel)
+    }
+
+    @Test
     fun `handleErrorMessage should truncate message containing square brackets`() {
         val exception = Exception("Network Error [404] Not Found")
         val result = handleErrorMessage(exception)
