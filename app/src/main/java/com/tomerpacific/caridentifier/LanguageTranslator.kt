@@ -51,6 +51,10 @@ class LanguageTranslator {
 
     suspend fun translate(vararg text: String): Result<List<String>> =
         coroutineScope {
+            if (text.isEmpty()) {
+                return@coroutineScope Result.failure(IllegalArgumentException("No text provided for translation"))
+            }
+
             try {
                 withTimeout(MODEL_DOWNLOAD_TIMEOUT) {
                     modelDownloadTask.await()
