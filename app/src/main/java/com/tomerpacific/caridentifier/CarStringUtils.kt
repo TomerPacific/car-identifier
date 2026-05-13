@@ -2,6 +2,7 @@ package com.tomerpacific.caridentifier
 
 import com.tomerpacific.caridentifier.model.CarDetails
 import com.tomerpacific.caridentifier.model.CarReview
+import java.util.Locale
 
 const val PROS_SECTION_HEBREW = "יתרונות"
 const val CONS_SECTION_HEBREW = "חסרונות"
@@ -48,27 +49,39 @@ fun formatCarReviewResponse(
     return CarReview(prosList, consList)
 }
 
-fun concatenateCarMakeAndModel(carDetails: CarDetails): String {
-    val manufacturerName = getCarManufacturer(carDetails.manufacturerName)
+fun concatenateCarMakeAndModel(
+    carDetails: CarDetails,
+    forceEnglishManufacturer: Boolean = false,
+): String {
+    val manufacturerName = if (forceEnglishManufacturer) {
+        carDetails.manufacturerNameEn?.trim() ?: ""
+    } else if (carDetails.manufacturerNameEn.isNullOrBlank()) {
+        carDetails.manufacturerName.trim()
+    } else {
+        carDetails.manufacturerNameEn.trim()
+    }
     var commercialName = carDetails.commercialName
+    val isManufacturerPresent = manufacturerName.isNotBlank()
 
-    if (doesManufacturerNameExistInCommercialName(manufacturerName, commercialName)) {
+    if (isManufacturerPresent) {
         val indexOfManufacturer = commercialName.indexOf(manufacturerName, ignoreCase = true)
-        commercialName = commercialName.substring(indexOfManufacturer + manufacturerName.length).trim()
+        if (indexOfManufacturer != -1) {
+            commercialName = commercialName.substring(indexOfManufacturer + manufacturerName.length).trim()
+        }
     }
 
-    val manufacturer = manufacturerName
-    val model = commercialName.lowercase().replaceFirstChar { it.titlecase() }
-    val trimLevel = carDetails.trimLevel.lowercase().replaceFirstChar { it.titlecase() }
+    val model = commercialName.lowercase(Locale.ROOT).replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
+    }
+    val trimLevel = carDetails.trimLevel.lowercase(Locale.ROOT).replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString()
+    }
 
-    return "$manufacturer $model $trimLevel ${carDetails.yearOfProduction}"
-}
-
-private fun doesManufacturerNameExistInCommercialName(
-    manufacturerName: String,
-    commercialName: String,
-): Boolean {
-    return commercialName.contains(manufacturerName, ignoreCase = true)
+    return if (isManufacturerPresent) {
+        "$manufacturerName $model $trimLevel ${carDetails.yearOfProduction}"
+    } else {
+        "$model $trimLevel ${carDetails.yearOfProduction}"
+    }
 }
 
 fun handleErrorMessage(exception: Throwable): String {

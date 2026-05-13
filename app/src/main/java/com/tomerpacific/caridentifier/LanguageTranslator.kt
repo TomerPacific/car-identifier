@@ -9,10 +9,13 @@ import com.google.mlkit.nl.translate.Translation
 import com.google.mlkit.nl.translate.Translator
 import com.google.mlkit.nl.translate.TranslatorOptions
 import com.tomerpacific.caridentifier.model.CarDetails
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeout
 
 const val HEBREW_LANGUAGE_CODE_UPDATED = "he"
 const val HEBREW_LANGUAGE_CODE = "iw"
@@ -20,6 +23,9 @@ const val HEBREW_LANGUAGE_CODE = "iw"
 const val FAILED_TO_TRANSLATE_MSG = "Failed to translate"
 
 private val tag = LanguageTranslator::class.simpleName
+
+private const val MODEL_DOWNLOAD_TIMEOUT = 60000L
+private const val TRANSLATION_TIMEOUT = 10000L
 
 data class TranslationResult(
     val carDetails: CarDetails,
@@ -45,8 +51,19 @@ class LanguageTranslator {
 
     suspend fun translate(vararg text: String): Result<List<String>> =
         coroutineScope {
+            if (text.isEmpty()) {
+                return@coroutineScope Result.failure(IllegalArgumentException("No text provided for translation"))
+            }
+
             try {
-                modelDownloadTask.await()
+                withTimeout(MODEL_DOWNLOAD_TIMEOUT) {
+                    modelDownloadTask.await()
+                }
+            } catch (e: TimeoutCancellationException) {
+                Log.e(tag, "Timed out waiting for language model: ${e.message}")
+                return@coroutineScope Result.failure(e)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 Log.e(tag, "Failed to download language model: ${e.message}")
                 return@coroutineScope Result.failure(e)
@@ -56,7 +73,14 @@ class LanguageTranslator {
                 text.map { t ->
                     async {
                         try {
-                            translator.translate(t).await()
+                            withTimeout(TRANSLATION_TIMEOUT) {
+                                translator.translate(t).await()
+                            }
+                        } catch (e: TimeoutCancellationException) {
+                            Log.e(tag, "Translation timed out: ${e.message}")
+                            null
+                        } catch (e: CancellationException) {
+                            throw e
                         } catch (e: Exception) {
                             Log.e(tag, "Translation failed: ${e.message}")
                             null
@@ -64,17 +88,18 @@ class LanguageTranslator {
                     }
                 }
 
-            val results = deferredTranslations.awaitAll().filterNotNull()
+            val results = deferredTranslations.awaitAll()
 
-            return@coroutineScope when {
-                results.isEmpty() -> Result.failure(Exception("Failed to translate text"))
-                else -> Result.success(results)
+            return@coroutineScope if (results.any { it == null }) {
+                Result.failure(Exception("Failed to translate all provided texts"))
+            } else {
+                Result.success(results.filterNotNull())
             }
         }
 
     suspend fun translateCarDetails(carDetails: CarDetails): TranslationResult {
         return if (isHebrewLanguage()) {
-            val carMakeAndModel = concatenateCarMakeAndModel(carDetails)
+            val carMakeAndModel = concatenateCarMakeAndModel(carDetails, forceEnglishManufacturer = true)
             val translationResult = translate(carMakeAndModel)
             val translatedText = translationResult.getOrNull()
             val searchTerm = if (translationResult.isSuccess && !translatedText.isNullOrEmpty()) {
