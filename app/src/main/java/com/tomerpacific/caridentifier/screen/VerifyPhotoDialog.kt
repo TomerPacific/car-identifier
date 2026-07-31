@@ -86,11 +86,9 @@ fun VerifyPhotoDialog(
     Dialog(onDismissRequest = { navController.popBackStack() }) {
         VerifyPhotoCard(
             uri = uri,
-            onCancel = { navController.popBackStack() },
-            onConfirm = {
-                processImage(context, uri, carViewModel, navController, textRecognizer)
-            }
-        )
+            onCancel = { navController.popBackStack() }) {
+            processImage(context, uri, carViewModel, navController, textRecognizer)
+        }
     }
 }
 
@@ -182,6 +180,8 @@ private fun processImage(
     try {
         bitmap = getBitmapFromUri(context, imageUri)
         grayscaleBitmap = toGrayscale(bitmap)
+        bitmap.recycle()
+        bitmap = null
         val image = InputImage.fromBitmap(grayscaleBitmap, 0)
 
         textRecognizer.process(image)
@@ -236,8 +236,8 @@ private fun getBitmapWithImageDecoder(
 
 private fun toGrayscale(bmpOriginal: Bitmap): Bitmap {
     val bmpToProcess =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
-            bmpOriginal.config == Bitmap.Config.HARDWARE
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) &&
+            (bmpOriginal.config == Bitmap.Config.HARDWARE)
         ) {
             bmpOriginal.copy(Bitmap.Config.ARGB_8888, false)
         } else {
