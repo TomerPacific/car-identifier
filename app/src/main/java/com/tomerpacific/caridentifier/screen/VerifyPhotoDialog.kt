@@ -175,13 +175,18 @@ private fun processImage(
     navController: NavController,
     textRecognizer: TextRecognizer,
 ) {
-    var bitmap: Bitmap? = null
-    var grayscaleBitmap: Bitmap? = null
+    var bitmapToRecycle: Bitmap? = null
+    var grayscaleBitmapToRecycle: Bitmap? = null
     try {
-        bitmap = getBitmapFromUri(context, imageUri)
-        grayscaleBitmap = toGrayscale(bitmap)
+        val bitmap = getBitmapFromUri(context, imageUri)
+        bitmapToRecycle = bitmap
+
+        val grayscaleBitmap = toGrayscale(bitmap)
+        grayscaleBitmapToRecycle = grayscaleBitmap
+
         bitmap.recycle()
-        bitmap = null
+        bitmapToRecycle = null
+
         val image = InputImage.fromBitmap(grayscaleBitmap, 0)
 
         textRecognizer.process(image)
@@ -200,12 +205,12 @@ private fun processImage(
                 carViewModel.triggerSnackBarEvent(context.getString(R.string.no_license_plate_error))
                 navController.popBackStack()
             }.addOnCompleteListener {
-                grayscaleBitmap?.recycle()
-                bitmap?.recycle()
+                grayscaleBitmapToRecycle?.recycle()
+                bitmapToRecycle?.recycle()
             }
     } catch (e: Exception) {
-        grayscaleBitmap?.recycle()
-        bitmap?.recycle()
+        grayscaleBitmapToRecycle?.recycle()
+        bitmapToRecycle?.recycle()
         carViewModel.triggerSnackBarEvent(e.message ?: context.getString(R.string.error_processing_image))
         navController.popBackStack()
     }
