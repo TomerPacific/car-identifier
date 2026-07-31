@@ -86,11 +86,9 @@ fun VerifyPhotoDialog(
     Dialog(onDismissRequest = { navController.popBackStack() }) {
         VerifyPhotoCard(
             uri = uri,
-            onCancel = { navController.popBackStack() },
-            onConfirm = {
-                processImage(context, uri, carViewModel, navController, textRecognizer)
-            }
-        )
+            onCancel = { navController.popBackStack() }) {
+            processImage(context, uri, carViewModel, navController, textRecognizer)
+        }
     }
 }
 
@@ -177,11 +175,18 @@ private fun processImage(
     navController: NavController,
     textRecognizer: TextRecognizer,
 ) {
-    var bitmap: Bitmap? = null
-    var grayscaleBitmap: Bitmap? = null
+    var bitmapToRecycle: Bitmap? = null
+    var grayscaleBitmapToRecycle: Bitmap? = null
     try {
-        bitmap = getBitmapFromUri(context, imageUri)
-        grayscaleBitmap = toGrayscale(bitmap)
+        val bitmap = getBitmapFromUri(context, imageUri)
+        bitmapToRecycle = bitmap
+
+        val grayscaleBitmap = toGrayscale(bitmap)
+        grayscaleBitmapToRecycle = grayscaleBitmap
+
+        bitmap.recycle()
+        bitmapToRecycle = null
+
         val image = InputImage.fromBitmap(grayscaleBitmap, 0)
 
         textRecognizer.process(image)
@@ -200,12 +205,12 @@ private fun processImage(
                 carViewModel.triggerSnackBarEvent(context.getString(R.string.no_license_plate_error))
                 navController.popBackStack()
             }.addOnCompleteListener {
-                grayscaleBitmap?.recycle()
-                bitmap?.recycle()
+                grayscaleBitmapToRecycle?.recycle()
+                bitmapToRecycle?.recycle()
             }
     } catch (e: Exception) {
-        grayscaleBitmap?.recycle()
-        bitmap?.recycle()
+        grayscaleBitmapToRecycle?.recycle()
+        bitmapToRecycle?.recycle()
         carViewModel.triggerSnackBarEvent(e.message ?: context.getString(R.string.error_processing_image))
         navController.popBackStack()
     }
@@ -236,8 +241,8 @@ private fun getBitmapWithImageDecoder(
 
 private fun toGrayscale(bmpOriginal: Bitmap): Bitmap {
     val bmpToProcess =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
-            bmpOriginal.config == Bitmap.Config.HARDWARE
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) &&
+            (bmpOriginal.config == Bitmap.Config.HARDWARE)
         ) {
             bmpOriginal.copy(Bitmap.Config.ARGB_8888, false)
         } else {
